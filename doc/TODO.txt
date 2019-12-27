@@ -1,0 +1,171 @@
+﻿- Scripting (javascript?) support.
+
+- Symbol tree generation speedup ideas:
+	- Split symbol list by first letter and symbol tree proper
+	  The symbol list by first letter can be updated on the fly.
+	  The symbol tree is always rebuilt (?)
+
+	- Use two sets of members in the symbol tree objects
+	  One set is the "current" one: actual.
+	  The other set is used on a slave thread to rebuild the tree.
+	  Then ATOMICALLY switch the trees (maybe just swap the pointers: the old tree will be deleted on the slave thread?)
+
+- Search files recursively by regexp
+  (instead of searching them manually)
+  [kind-of-done?]
+
+- "Find" file in workspace with completion, so you don't need to browse
+  around to open a file in a different directory
+  [kind-of-done?]
+
+- When a completion is made, show a popup with the completed function declaration
+  So arguments are suggested.
+
+- Make external commands cached password shared across all commands!
+  
+- Better command management: we have MANY of them.
+  Central command repository (with global shortcut management & so...)
+  Maybe a popup with commands: "ALT -> open popup "gr" -> "grepSymbolInWorkspace"
+
+- The tooltips in the completion dialog now point to the wrong function!
+  Maybe its because the meaning of line numbers changed?
+
+- Improve switch() generation: add only the missing members.
+
+- Reorder includes
+
+- Override members dialog
+
+- Handle multiple base classes (kind of done?)
+
+- Handle type definitions
+
+- Comments containing the text "WARNING" might be treated as FIXME/TODO
+
+- Editing of colors should have a real-time preview!
+
+- Javascript regexp highlighting ? //g
+  It seems that ([{; and all the binary operators can only be followed by a regexp while )]},identifiers and
+  string/number literals can only be followed by a division.
+  See also: http://stackoverflow.com/questions/4726295/division-regexp-conflict-while-tokenizing-javascript
+
+- Completion in the file browser line edit
+- Bookmarks in the file browser
+
+- Alt+127 and similar insertion methods
+- Character map?
+
+- Multiline comments in strings? (in js they aren't valid but in C they are)
+
+- Specific mode for *.patch files?
+
+- Handle clicks on private text labels
+	- Double click on row/col calls goToLine()
+	- Right click on row/col shows pGoToMenu (search for it)
+	- Double click on mode guesses mode (?)
+	- Right click on mode opens pModeMenu (search for it)
+
+- Move left/right one token
+
+- Double clicks
+
+- Paste by middle click (bah)
+
+- FX: Indent function line by splitting parentheses
+		from
+			call1(call2(param,param),param)
+		to
+			call1(
+					call2(
+							param,
+							param
+						),
+					param
+				)
+	and viceversa?
+
+- Code folding?
+
+- When pressing "Enter" within a comment maybe comment also the next line?
+  IntelliJ does this and it's nice.
+
+- Allow renaming files both in the file browser AND the workspace browser.
+  Renaming in one should also rename in another.
+  Renaming an open file on disk should rename it in the editor(s).
+
+- Find an icon for *.c3workspace files.
+  Create matching *.desktop files and register file types on windows
+
+- Save and load options!
+
+- reindent javascript (to un-minify it)
+- reindent css (to un-minify it)
+
+- These tools might be fx that:
+	- save the selection or the entire buffer to a file
+	- run a tool on it
+	- reload the file and paste it back
+	- see: astyle, bcpp, node-uglify, jshon
+	- try to have these tools available for windows (so we will be able to distribute them)
+
+- Other text formats
+
+- "Pre-parsing" read only format.
+	- pipe through hexdump
+	- pipe through objdump
+	- pipe through anything else
+
+- PHP HEREDOCS!
+
+- redo?
+
+- FX: Insert method. Specify signature and it adds it to *BOTH* header and implementation, generates a comment if needed etc.
+
+- Caption. It should be "workspace name" - C3 and not vice-versa.
+
+- With ctags one can highlight workspace classes, out-of-workspace classes and other language constructs.
+
+- Theme support.
+
+- Make the UI cooler.
+
+- Rewrite new C class generator
+	List of method descriptors
+		- name
+		- signature
+		- body (in list of lines, indentable)
+		- public or private
+		- preamble (for constructors " : Base()")
+
+- Input in console (so one can use gdb)
+
+- Open file by CTRL+click
+
+- Go to definition by CTRL + click
+
+- Bug: sometimes the "save all" action/button remains enabled even if all the files have been saved
+       confirmed.
+
+- Replace in all files in workspace!
+
+- Popup to show "transient" messages and "loadig %X" (the loading window should be shown if we receive a data packet with a percent different than 100%)
+	Also identifyLinkAt() should show the link CTRL+Click would jump to
+
+- Cache the completion results. If the completion is at the same position and the underlying data source isn't changed...
+
+- Completion hint: when assigning to a member variable match the local variable with a similar name
+			m_oSomething = oSomething
+
+- asm file highlighting
+
+- If there are too many completions, filter them by initial characters (so tab will complete all of them)
+
+- Find all references to symbol (better than grep)
+   
+- Icon selection dialog for the external commands
+
+- when a file is renamed the main window caption is not updated
+
+- When loading a workspace temporairly disable updates in the Workspace Browser.
+  This will avoid updates and sorting at each new editor that comes in.
+  With many editors on a "normal" PC it's visible, takes some time.

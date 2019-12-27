@@ -1,0 +1,142 @@
+
+include_directories(
+		${PROJECT_BINARY_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}/main
+		${CMAKE_CURRENT_SOURCE_DIR}/parsers
+		${CMAKE_CURRENT_SOURCE_DIR}/parsers/cxx
+	)
+
+set(
+	code3tags_SRCS
+	main/args.c
+	main/cmd.c
+	main/colprint.c
+	main/debug.c
+	main/dependency.c
+	main/entry.c
+	main/entry_private.c
+	main/error.c
+	main/field.c
+	main/flags.c
+	main/fmt.c
+	#main/get.c
+	main/htable.c
+	main/keyword.c
+	main/kind.c
+	main/lregex.c
+	#main/lxcmd.c
+	main/lxpath.c
+	main/main.c
+	main/mbcs.c
+	main/mio.c
+	main/nestlevel.c
+	main/numarray.c
+	main/objpool.c
+	main/options.c
+	main/param.c
+	main/parse.c
+	main/pcoproc.c
+	main/portable-scandir.c
+	main/promise.c
+	main/ptag.c
+	main/ptrarray.c
+	main/read.c
+	main/repoinfo.c
+	main/routines.c
+	main/selectors.c
+	main/sort.c
+	main/stats.c
+	main/strlist.c
+	main/tokeninfo.c
+	main/trashbox.c
+	main/vstring.c
+	main/xtag.c
+	main/unwindi.c
+	main/writer.c
+	main/writer-ctags.c
+	main/writer-etags.c
+	main/writer-json.c
+	main/writer-xref.c
+	#optlib/m4.c
+	optlib/cmake.c
+	optlib/gdbinit.c
+	optlib/pod.c
+	optlib/man.c
+	optlib/markdown.c
+	optlib/elm.c
+	optlib/passwd.c
+	optlib/puppetManifest.c
+	optlib/qemuhx.c
+	optlib/RSpec.c
+	optlib/ctags-optlib.c
+	parsers/asm.c
+	parsers/asp.c
+	parsers/basic.c
+	parsers/c.c
+	parsers/clojure.c
+	parsers/cobol.c
+	parsers/cpreprocessor.c
+	parsers/css.c
+	parsers/cxx/cxx.c
+	parsers/cxx/cxx_debug.c
+	parsers/cxx/cxx_keyword.c
+	parsers/cxx/cxx_parser.c
+	parsers/cxx/cxx_parser_block.c
+	parsers/cxx/cxx_parser_function.c
+	parsers/cxx/cxx_parser_lambda.c
+	parsers/cxx/cxx_parser_namespace.c
+	parsers/cxx/cxx_parser_template.c
+	parsers/cxx/cxx_parser_tokenizer.c
+	parsers/cxx/cxx_parser_typedef.c
+	parsers/cxx/cxx_parser_using.c
+	parsers/cxx/cxx_parser_variable.c
+	parsers/cxx/cxx_qtmoc.c
+	parsers/cxx/cxx_scope.c
+	parsers/cxx/cxx_subparser.c
+	parsers/cxx/cxx_tag.c
+	parsers/cxx/cxx_token.c
+	parsers/cxx/cxx_token_chain.c
+	parsers/diff.c
+	parsers/fortran.c
+	parsers/go.c
+	parsers/html.c
+	parsers/jprop.c
+	parsers/jscript.c
+	parsers/json.c
+	parsers/objc.c
+	parsers/ocaml.c
+	parsers/pascal.c
+	parsers/perl.c
+	parsers/perl6.c
+	parsers/php.c
+	parsers/python.c
+	parsers/r.c
+	parsers/rst.c
+	parsers/ruby.c
+	parsers/rust.c
+	parsers/scheme.c
+	parsers/sh.c
+	parsers/slang.c
+	parsers/sml.c
+	parsers/sql.c
+	parsers/tcl.c
+	parsers/tcloo.c
+	parsers/ttcn.c
+	parsers/typescript.c
+	parsers/verilog.c
+	parsers/vhdl.c
+)
+
+#qdos.c
+# mac.c
+
+add_executable(code3tags ${code3tags_SRCS})
+
+set_property(TARGET code3tags PROPERTY C_STANDARD 99)
+
+add_definitions(-DHAVE_CONFIG_H)
+
+set_property(TARGET code3tags PROPERTY CXX_STANDARD 11)
+
+install(TARGETS code3tags RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")

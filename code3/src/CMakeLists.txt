@@ -1,0 +1,286 @@
+﻿include_directories(
+		${PROJECT_BINARY_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}/core
+		${CMAKE_CURRENT_SOURCE_DIR}/dock
+		${CMAKE_CURRENT_SOURCE_DIR}/editor
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/completion
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/editor
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/format
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/format/8bit
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/asm
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/bash
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/chatscript
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cmake
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cpp/codeedit
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cpp/codeedit/addinclude
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cpp/codeedit/genenumswitch
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cpp/codeedit/membergen
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/css
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/html
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/java
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/javascript
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/php
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/plaintext
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/python
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/sql
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/xml
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/vhdl
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/options
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/image
+		${CMAKE_CURRENT_SOURCE_DIR}/externalcommand
+		${CMAKE_CURRENT_SOURCE_DIR}/find
+		${CMAKE_CURRENT_SOURCE_DIR}/lib
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/symbol
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/symbol/manager
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/symbol/manager/request
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/symbol/manager/worker
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/symbol/symbol
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/symbol/tools
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/system
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/tools
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/ui
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/ui/options
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/ui/options/editor
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/utils
+		${CMAKE_CURRENT_SOURCE_DIR}/link
+		${CMAKE_CURRENT_SOURCE_DIR}/message
+		${CMAKE_CURRENT_SOURCE_DIR}/new
+		${CMAKE_CURRENT_SOURCE_DIR}/new/creator
+		${CMAKE_CURRENT_SOURCE_DIR}/new/creator/emptytext
+		${CMAKE_CURRENT_SOURCE_DIR}/new/creator/cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/new/creator/java
+		${CMAKE_CURRENT_SOURCE_DIR}/new/creator/php
+		${CMAKE_CURRENT_SOURCE_DIR}/settings
+		${CMAKE_CURRENT_SOURCE_DIR}/settings/dialog
+		${CMAKE_CURRENT_SOURCE_DIR}/settings/highlighting
+		${CMAKE_CURRENT_SOURCE_DIR}/workspace
+		${CMAKE_CURRENT_SOURCE_DIR}/workspace/properties
+		${CMAKE_CURRENT_SOURCE_DIR}/workspace/worker
+	)
+
+SET(
+		c3_SRCS
+		core/c3_main.cpp
+		core/C3AlertSource.cpp
+		core/C3Application.cpp
+		core/C3ExternalToolManager.cpp
+		core/C3CentralWidget.cpp
+		core/C3GeneralActions.cpp
+		core/C3MainWindow.cpp
+		core/C3PixmapCache.cpp
+		dock/C3DockTextConsole.cpp
+		dock/C3DockFileBrowser.cpp
+		dock/C3DockWidgetTitleBar.cpp
+		dock/C3DockWorkspaceBrowser.cpp
+		editor/C3Editor.cpp
+		editor/C3EditorFactory.cpp
+		editor/C3EditorFormat.cpp
+		editor/image/C3ImageEditor.cpp
+		editor/image/C3ImageEditorFactory.cpp
+		editor/image/C3ImageEditorView.cpp
+		editor/text/C3TextEditorFactory.cpp
+		editor/text/C3TextEditorLine.cpp
+		editor/text/C3TextEditorMargin.cpp
+		editor/text/C3TextEditorSymbolContext.cpp
+		editor/text/C3TextEditorUndo.cpp
+		editor/text/C3TextEditorViewport.cpp
+		editor/text/completion/C3TextEditorCompletionWidget.cpp
+		editor/text/editor/C3TextEditor.cpp
+		editor/text/editor/C3TextEditor_completion.cpp
+		editor/text/editor/C3TextEditor_coordinates.cpp
+		editor/text/editor/C3TextEditor_copyPaste.cpp
+		editor/text/editor/C3TextEditor_cursor.cpp
+		editor/text/editor/C3TextEditor_find.cpp
+		editor/text/editor/C3TextEditor_fx.cpp
+		editor/text/editor/C3TextEditor_insertDelete.cpp
+		editor/text/editor/C3TextEditor_link.cpp
+		editor/text/editor/C3TextEditor_read.cpp
+		editor/text/editor/C3TextEditor_symbol.cpp
+		editor/text/editor/C3TextEditor_undo.cpp
+		editor/text/format/C3TextEditorFormat.cpp
+		editor/text/format/C3TextEditorFormatReader.cpp
+		editor/text/format/C3TextEditorFormatWriter.cpp
+		editor/text/format/8bit/C3TextEditorFormat8Bit.cpp
+		editor/text/format/8bit/C3TextEditorFormatReader8Bit.cpp
+		editor/text/format/8bit/C3TextEditorFormatWriter8Bit.cpp
+		editor/text/mode/C3TextEditorMode.cpp
+		editor/text/mode/C3TextEditorModeWithSymbolAnalysis.cpp
+		editor/text/mode/C3TextEditorModeParser.cpp
+		editor/text/mode/C3TextEditorModeWithInterLineState.cpp
+		editor/text/mode/asm/C3TextEditorModeASM.cpp
+		editor/text/mode/asm/C3TextEditorModeParserASM.cpp
+		editor/text/mode/asm/C3TextEditorModeASMSharedData.cpp
+		editor/text/mode/bash/C3TextEditorModeBash.cpp
+		editor/text/mode/bash/C3TextEditorModeParserBash.cpp
+		editor/text/mode/chatscript/C3TextEditorModeChatScript.cpp
+		editor/text/mode/chatscript/C3TextEditorModeParserChatScript.cpp
+		editor/text/mode/cmake/C3TextEditorModeCMake.cpp
+		editor/text/mode/cmake/C3TextEditorModeParserCMake.cpp
+		editor/text/mode/cpp/C3TextEditorModeCPP.cpp
+		editor/text/mode/cpp/C3TextEditorModeParserCPP.cpp
+		editor/text/mode/cpp/C3TextEditorModeCPPCodeGenerationUtils.cpp
+		editor/text/mode/cpp/C3TextEditorModeCPPSharedData.cpp
+		editor/text/mode/cpp/codeedit/C3TextEditorModeCPPCodeEditDialog.cpp
+		editor/text/mode/cpp/codeedit/addinclude/C3TextEditorModeCPPAddIncludeDialog.cpp
+		editor/text/mode/cpp/codeedit/genenumswitch/C3TextEditorModeCPPGenerateEnumSwitchDialog.cpp
+		editor/text/mode/cpp/codeedit/membergen/C3TextEditorModeCPPMemberFunctionGenerator.cpp
+		editor/text/mode/cpp/codeedit/membergen/C3TextEditorModeCPPMemberFunctionGeneratorDialog.cpp
+		editor/text/mode/cpp/codeedit/membergen/C3TextEditorModeCPPMemberGenerator.cpp
+		editor/text/mode/cpp/codeedit/membergen/C3TextEditorModeCPPMemberVariableGenerator.cpp
+		editor/text/mode/cpp/codeedit/membergen/C3TextEditorModeCPPMemberVariableGeneratorDialog.cpp
+		editor/text/mode/css/C3TextEditorModeCSS.cpp
+		editor/text/mode/css/C3TextEditorModeParserCSS.cpp
+		editor/text/mode/html/C3TextEditorModeHTML.cpp
+		editor/text/mode/java/C3TextEditorModeJava.cpp
+		editor/text/mode/java/C3TextEditorModeParserJava.cpp
+		editor/text/mode/java/C3TextEditorModeJavaSharedData.cpp
+		editor/text/mode/javascript/C3TextEditorModeJavascript.cpp
+		editor/text/mode/javascript/C3TextEditorModeParserJavascript.cpp
+		editor/text/mode/php/C3TextEditorModePHP.cpp
+		editor/text/mode/php/C3TextEditorModePHPSharedData.cpp
+		editor/text/mode/php/C3TextEditorModeParserPHP.cpp
+		editor/text/mode/plaintext/C3TextEditorModePlainText.cpp
+		editor/text/mode/python/C3TextEditorModePython.cpp
+		editor/text/mode/python/C3TextEditorModeParserPython.cpp
+		editor/text/mode/sql/C3TextEditorModeSQL.cpp
+		editor/text/mode/sql/C3TextEditorModeParserSQL.cpp
+		editor/text/mode/xml/C3TextEditorModeXML.cpp
+		editor/text/mode/xml/C3TextEditorModeParserXML.cpp
+		editor/text/mode/vhdl/C3TextEditorModeVHDL.cpp
+		editor/text/mode/vhdl/C3TextEditorModeVHDLSharedData.cpp
+		editor/text/mode/vhdl/C3TextEditorModeParserVHDL.cpp
+		editor/text/options/C3TextEditorOptions.cpp
+		editor/text/options/C3TextEditorOptionsColors.cpp
+		editor/text/options/C3TextEditorOptionsWidgetColors.cpp
+		editor/text/options/C3TextEditorOptionsWidgetFonts.cpp
+		externalcommand/C3ExternalCommand.cpp
+		externalcommand/C3ExternalCommandEditorWidget.cpp
+		externalcommand/C3ExternalCommandManager.cpp
+		find/C3FindOperation.cpp
+		find/C3FindTarget.cpp
+		find/C3FindWidget.cpp
+		lib/symbol/manager/C3SymbolManager.cpp
+		lib/symbol/manager/C3SymbolManagerBase.cpp
+		lib/symbol/manager/request/C3SymbolManagerRequest.cpp
+		lib/symbol/manager/request/C3SymbolManagerRequestDescribeClass.cpp
+		lib/symbol/manager/request/C3SymbolManagerRequestIdentifyContext.cpp
+		lib/symbol/manager/request/C3SymbolManagerRequestIdentifySymbol.cpp
+		lib/symbol/manager/request/C3SymbolManagerRequestPerformCompletion.cpp
+		lib/symbol/manager/request/C3SymbolManagerRequestResetSymbolStore.cpp
+		lib/symbol/manager/request/C3SymbolManagerRequestScanEditorFile.cpp
+		lib/symbol/manager/worker/C3SymbolManagerCTagsWorker.cpp
+		lib/symbol/symbol/C3Symbol.cpp
+		lib/symbol/symbol/C3SymbolClass.cpp
+		lib/symbol/symbol/C3SymbolFunctionDefinition.cpp
+		lib/symbol/symbol/C3SymbolFunctionPrototype.cpp
+		lib/symbol/symbol/C3SymbolFunctionSignature.cpp
+		lib/symbol/symbol/C3SymbolImportedScope.cpp
+		lib/symbol/symbol/C3SymbolNamespace.cpp
+		lib/symbol/symbol/C3SymbolScope.cpp
+		lib/symbol/symbol/C3SymbolTypeDefinition.cpp
+		lib/symbol/symbol/C3SymbolVariable.cpp
+		lib/symbol/tools/C3SymbolCTagsParser.cpp
+		lib/symbol/tools/C3SymbolCTagsRunner.cpp
+		lib/symbol/tools/C3SymbolFile.cpp
+		lib/symbol/tools/C3SymbolStore.cpp
+		lib/symbol/tools/C3SymbolsByLanguage.cpp
+		lib/system/C3Process.cpp
+		lib/tools/C3CompletionStore.cpp
+		lib/tools/C3FileSnippetExtractorWorker.cpp
+		lib/ui/C3TextOutputWidget.cpp
+		lib/ui/C3RichTextItemDelegate.cpp
+		lib/ui/options/C3OptionsDialog.cpp
+		lib/ui/options/C3OptionsWidget.cpp
+		lib/ui/options/C3OptionsWidgetContainer.cpp
+		lib/ui/options/C3OptionsWidgetDescriptor.cpp
+		lib/ui/options/editor/C3OptionEditor.cpp
+		lib/ui/options/editor/C3OptionEditorBoolean.cpp
+		lib/ui/options/editor/C3OptionEditorColor.cpp
+		lib/ui/options/editor/C3OptionEditorEnumerationAsInt.cpp
+		lib/ui/options/editor/C3OptionEditorFile.cpp
+		lib/ui/options/editor/C3OptionEditorFont.cpp
+		lib/ui/options/editor/C3OptionEditorGroup.cpp
+		lib/ui/options/editor/C3OptionEditorInteger.cpp
+		lib/ui/options/editor/C3OptionEditorScrollArea.cpp
+		lib/ui/options/editor/C3OptionEditorString.cpp
+		lib/ui/options/editor/C3OptionEditorStringList.cpp
+		lib/ui/options/editor/C3OptionEditorText.cpp
+		lib/utils/C3DebugContext.cpp
+		lib/utils/C3FileUtils.cpp
+		lib/utils/C3JsonUtils.cpp
+		lib/utils/C3StringUtils.cpp
+		link/C3Link.cpp
+		link/C3LinkHistory.cpp
+		link/C3LinkSelectionDialog.cpp
+		message/C3MessageContainerWidget.cpp
+		message/C3MessageWidget.cpp
+		new/C3NewDialog.cpp
+		new/C3NewObjectCreator.cpp
+		new/creator/C3NewObjectUtils.cpp
+		new/creator/emptytext/C3NewEmptyTextFileCreator.cpp
+		new/creator/cpp/C3NewCPPClassCreator.cpp
+		new/creator/cpp/C3NewCPPClassDialog.cpp
+		new/creator/cpp/C3NewCPPClassGenerator.cpp
+		new/creator/cpp/C3NewCPPClassSettings.cpp
+		new/creator/java/C3NewJavaClassCreator.cpp
+		new/creator/java/C3NewJavaClassDialog.cpp
+		new/creator/java/C3NewJavaClassGenerator.cpp
+		new/creator/java/C3NewJavaClassSettings.cpp
+		new/creator/php/C3NewPHPFileCreator.cpp
+		settings/C3Settings.cpp
+		settings/dialog/C3SettingsDialog.cpp
+		settings/dialog/C3SettingsWidgetFileHeader.cpp
+		settings/dialog/C3SettingsWidgetUser.cpp
+		settings/highlighting/C3SettingsUserHighlightingSet.cpp
+		settings/highlighting/C3SettingsUserHighlightingSetOptionsWidget.cpp
+		workspace/C3Workspace.cpp
+		workspace/C3Workspace_fileScan.cpp
+		workspace/C3Workspace_openFile.cpp
+		workspace/properties/C3WorkspacePropertiesDialog.cpp
+		workspace/properties/C3WorkspacePropertiesWidgetExternalCommands.cpp
+		workspace/properties/C3WorkspacePropertiesWidgetExternalPaths.cpp
+		workspace/properties/C3WorkspacePropertiesWidgetFileHeader.cpp
+		workspace/properties/C3WorkspacePropertiesWidgetGeneral.cpp
+		workspace/worker/C3WorkspaceFileScanWorker.cpp
+		workspace/worker/C3WorkspaceOpenFileWorker.cpp
+		qdarkstyle/style.qrc
+	)
+
+
+find_package(Qt5Widgets)
+if(Qt5Widgets_FOUND)
+	set(CMAKE_STATUS_QT_VERSION "${Qt5Widgets_VERSION_STRING}")
+	set(qt5_c3_modules)
+else()
+	message(FATAL_ERROR "No Qt5 found!")
+endif()
+
+find_package(Qt5Xml)
+if(Qt5Xml_FOUND)
+	set(CMAKE_STATUS_QT_VERSION "${Qt5Xml_VERSION_STRING}")
+	set(qt5_c3_modules)
+else()
+	message(FATAL_ERROR "No Qt5 found!")
+endif()
+
+set(CMAKE_AUTOMOC TRUE)
+set(CMAKE_AUTORCC TRUE)
+
+add_executable(code3 ${c3_SRCS})
+
+set_property(TARGET code3 PROPERTY CXX_STANDARD 11)
+
+include_directories(${Qt5Widgets_INCLUDES})
+add_definitions(${Qt5Widgets_DEFINITIONS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} ${Qt5Xml_EXECUTABLE_COMPILE_FLAGS}")
+
+target_link_libraries(code3 ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES})
+
+#IF( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+#  SET_TARGET_PROPERTIES(code3 PROPERTIES COMPILE_FLAGS "-fPIC")
+#ENDIF( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+
+install(TARGETS code3 RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
