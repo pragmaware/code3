@@ -20,7 +20,7 @@ Features:
 
 Dependancies:
 
-- Qt5
+- Qt >= 5.0
 - CMake
 
 To build it on linux open a shell in the source root and type:
@@ -31,14 +31,14 @@ cd build
 ccmake ..
 ```
 
-hit c a few times and if cmake doesn't complain hit g to generate the build scripts. Then:
+Hit c a few times and if cmake doesn't complain hit g to generate the build scripts. Then:
 
 ```sh
 make
 make install
 ```
 
-start with 
+Start with 
 
 ```sh
 code3
@@ -67,5 +67,5 @@ another major redesign.
 Now, in 2019 the project is being made public as **Code 3**, which is a better sounding
 and less controversial name. "Code 3" reflects the fact that it's the third design iteration
 and sounds a bit like "Code Free" (as in "Free Speech" not "Free Beer"). You may also
-find the name spelled as Code-3, Cod3, Code^3 or Code<sup>3</sup>. I claim all the names :)
+find the name spelled as Code-3, Cod3, Code^3 or Code<sup>3</sup>. I claim all these names :)
 
