@@ -20,9 +20,16 @@
 
 #include "c3_sysconfig.h"
 
-#define __utf8(_text) QString::fromUtf8(_text)
-#define __ascii(_text) QString::fromUtf8(_text)
+#include <QString>
 
+// FIXME: Kill this
+#define __utf8(_text) QStringLiteral(_text)
+// FIXME: Kill this
+#define __ascii(_text) QStringLiteral(_text)
+
+#define __literal(_text) QStringLiteral(_text)
+
+// FIXME: Translations
 #define __tr(_text) __utf8(_text)
 
 #define C3_COMPILE_DEBUG_MODE

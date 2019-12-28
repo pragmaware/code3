@@ -31,8 +31,14 @@
 class C3SymbolStore
 {
 private:
-	// The hash of symbol files. The files are owned pointers.
+	// The hash of symbol files. The files are owned pointers and the files OWN the symbols.
 	QHash<QString,C3SymbolFile *> m_hFiles;
+
+
+	// The list of global scopes by language.
+	// The containers are owned but each container has non owned pointers to C3Symbol instances
+	// (which are actually owned by C3SymbolFile).
+	C3SymbolNamespace * m_aGlobalScopes[C3Symbol::LanguageCount];
 
 	// The map of C3Symbol::Language -> C3SymbolsByLanguage.
 	// The containers are owned but each container has non owned pointers to C3Symbol instances
@@ -58,15 +64,14 @@ public:
 	// The returned value may be NULL!
 	C3SymbolScope * globalScopeForLanguage(C3Symbol::Language eLanguage)
 	{
-		C3SymbolsByLanguage * pSyms = m_aSymbolsByLanguage[eLanguage];
-		if(!pSyms)
-		{
-			rebuildSymbolsByLanguage(eLanguage);
-			pSyms = m_aSymbolsByLanguage[eLanguage];
-			if(!pSyms)
-				return NULL;
-		}
-		return pSyms->globalScope();
+		C3SymbolNamespace * pNS = m_aGlobalScopes[eLanguage];
+	
+		if(pNS)
+			return pNS;
+
+		rebuildSymbolsByLanguage(eLanguage);
+
+		return m_aGlobalScopes[eLanguage];
 	}
 
 	C3SymbolMap * allSymbolsForFirstLetter(const QString &szText,C3Symbol::Language eLanguage)

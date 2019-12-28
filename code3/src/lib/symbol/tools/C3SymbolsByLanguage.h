@@ -26,21 +26,15 @@
 class C3SymbolsByLanguage
 {
 private:
-	C3SymbolNamespace m_oNamespace;
 
 	// Hash of <first-letter> -> sorted C3SymbolList
 	QHash<quint16,C3SymbolMap *> m_hAllSymbols;
 
 public:
-	C3SymbolsByLanguage(C3SymbolFile * pRootFile,C3Symbol::Language eLanguage);
+	C3SymbolsByLanguage(C3Symbol::Language eLanguage);
 	~C3SymbolsByLanguage();
 
 public:
-
-	C3SymbolNamespace * globalScope()
-	{
-		return &m_oNamespace;
-	}
 
 	void addToAllSymbols(C3Symbol * pSymbol);
 

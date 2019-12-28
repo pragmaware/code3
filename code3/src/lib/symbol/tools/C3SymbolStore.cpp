@@ -30,7 +30,10 @@ C3SymbolStore::C3SymbolStore()
 	m_oRootFile(QString())
 {
 	for(int i=0;i<C3Symbol::LanguageCount;i++)
+	{
 		m_aSymbolsByLanguage[i] = NULL;
+		m_aGlobalScopes[i] = NULL;
+	}
 }
 
 C3SymbolStore::~C3SymbolStore()
@@ -39,6 +42,8 @@ C3SymbolStore::~C3SymbolStore()
 	{
 		if(m_aSymbolsByLanguage[i])
 			delete m_aSymbolsByLanguage[i];
+		if(m_aGlobalScopes[i])
+			delete m_aGlobalScopes[i];
 	}
 
 	//QHash<QString,C3SymbolFile *>::Iterator end = m_hFiles.end();
@@ -64,19 +69,31 @@ void C3SymbolStore::rebuildSymbolsByLanguage(C3Symbol::Language eLanguage)
 	oTimer.start();
 #endif
 
-	if(m_aSymbolsByLanguage[eLanguage])
-	{
-		// This delete actually runs a clear() operation on the symbol tree.
-		// FIXME: Really ? Keep something? Clear only? Doh?
-		delete m_aSymbolsByLanguage[eLanguage];
-	}
 
 #ifdef DEBUG_SYMBOL_STORE
 	qDebug("Rebuild symbols: checkpoint 0: %lld msecs",oTimer.elapsed());
 #endif
 
-	m_aSymbolsByLanguage[eLanguage] = new C3SymbolsByLanguage(&m_oRootFile,eLanguage);
-
+	if(m_aSymbolsByLanguage[eLanguage])
+		m_aSymbolsByLanguage[eLanguage]->clear();
+	else
+		m_aSymbolsByLanguage[eLanguage] = new C3SymbolsByLanguage(eLanguage);
+	
+	if(m_aGlobalScopes[eLanguage])
+	{
+		m_aGlobalScopes[eLanguage]->clear();
+	} else {
+		m_aGlobalScopes[eLanguage] = new C3SymbolNamespace(
+				&m_oRootFile,
+				eLanguage,
+				__literal("<global>"),
+				QString(),
+				C3Symbol::AccessLevelPublic,
+				0,
+				0
+			);
+	}
+	
 	// Gather the super-mega-list of symbols to build
 	C3SymbolList lSymbols;
 	
@@ -151,7 +168,7 @@ void C3SymbolStore::rebuildSymbolsByLanguage(C3Symbol::Language eLanguage)
 	// resolve base classes
 
 	// THIS IS NOW DONE ON-THE-FLY
-	m_aSymbolsByLanguage[eLanguage]->globalScope()->resolveTypedefsAndBaseClasses();
+	m_aGlobalScopes[eLanguage]->resolveTypedefsAndBaseClasses();
 #endif
 
 #ifdef DEBUG_SYMBOL_STORE
@@ -176,16 +193,15 @@ void C3SymbolStore::resolveImportedScopes(C3SymbolFile * pFile,C3Symbol::Languag
 	C3SymbolsByLanguage * pSyms = m_aSymbolsByLanguage[eLanguage];
 	Q_ASSERT(pSyms);
 
+	C3SymbolNamespace * pGlobalScope = m_aGlobalScopes[eLanguage];
+	Q_ASSERT(pGlobalScope);
+
 	// FIXME: Use a hash to speed up resolving scopes
 
 	Q_FOREACH(C3SymbolImportedScope * pScope,lScopes)
 	{
 		if(pScope->language() != eLanguage)
 			continue;
-
-		C3SymbolNamespace * pGlobalScope = pSyms->globalScope();
-		
-		Q_ASSERT(pGlobalScope);
 
 		QString szToResolve = pScope->identifier();
 		szToResolve.replace(__ascii("::"),__ascii("."));
@@ -267,7 +283,7 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 	C3SymbolsByLanguage * pSymbolsByLanguage = m_aSymbolsByLanguage[eLanguage];
 	Q_ASSERT(pSymbolsByLanguage); // Thist MUST have been set up by the caller
 	
-	C3SymbolScope * pGlobalScope = pSymbolsByLanguage->globalScope();
+	C3SymbolScope * pGlobalScope = m_aGlobalScopes[eLanguage];
 	Q_ASSERT(pGlobalScope);
 
 	static QString szScopeSeparator1 = __ascii(".");
@@ -803,18 +819,31 @@ void C3SymbolStore::addFiles(QHash<QString,C3SymbolFile *> & hFiles)
 		m_hFiles.insert(pFile->path(),pFile);
 	}
 
+	if(hFiles.count() > (m_hFiles.count() / 4))
+	{
+		// too many files: drop everything
+	} else {
+		// few files only, remove 
+	}
+
 	for(quint16 i=0;i<C3Symbol::LanguageCount;i++)
 	{
-		if(!m_aSymbolsByLanguage[i])
-			continue;
-		
 		if(!(uLanguageFlags & (1 << i)))
 			continue;
 
-		// FIXME: Really mark as dirty only instead of destroying?
-		delete m_aSymbolsByLanguage[i];
-		m_aSymbolsByLanguage[i] = NULL;
+		if(m_aSymbolsByLanguage[i])
+		{
+			delete m_aSymbolsByLanguage[i];
+			m_aSymbolsByLanguage[i] = NULL;
+		}
+		
+		if(m_aGlobalScopes[i])
+		{
+			delete m_aGlobalScopes[i];
+			m_aGlobalScopes[i] = NULL;
+		}
 	}
+	
 
 	// remove it
 	

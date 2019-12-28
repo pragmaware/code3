@@ -18,18 +18,8 @@
 #include "C3SymbolsByLanguage.h"
 
 C3SymbolsByLanguage::C3SymbolsByLanguage(
-		C3SymbolFile * pFile,
 		C3Symbol::Language eLanguage
 	)
-	: m_oNamespace(
-			pFile,
-			eLanguage,
-			__ascii("<global>"),
-			QString(),
-			C3Symbol::AccessLevelPublic,
-			0,
-			0
-		)
 {
 	
 }
@@ -43,7 +33,6 @@ void C3SymbolsByLanguage::clear()
 {
 	qDeleteAll(m_hAllSymbols);
 	m_hAllSymbols.clear();
-	m_oNamespace.clear();
 }
 
 void C3SymbolsByLanguage::addToAllSymbols(C3Symbol * pSymbol)
