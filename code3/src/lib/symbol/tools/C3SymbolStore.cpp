@@ -780,35 +780,40 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolListOLD(C3SymbolList &lSymbol
 
 */
 
-void C3SymbolStore::addFile(C3SymbolFile * pFile)
+void C3SymbolStore::addFiles(QHash<QString,C3SymbolFile *> & hFiles)
 {
-	for(int i=0;i<C3Symbol::LanguageCount;i++)
+	QHash<QString,C3SymbolFile *>::Iterator it;
+	QHash<QString,C3SymbolFile *>::Iterator end = hFiles.end();
+
+	quint16 uLanguageFlags = 0;
+
+	for(it = hFiles.begin();it != end;it++)
+	{
+		C3SymbolFile * pFile = it.value();
+
+		uLanguageFlags |= pFile->languageFlags();
+
+		C3SymbolFile * pOld = m_hFiles.value(pFile->path(),NULL);
+		if(pOld)
+		{
+			m_hFiles.remove(pOld->path());
+			delete pOld;
+		}
+	
+		m_hFiles.insert(pFile->path(),pFile);
+	}
+
+	for(quint16 i=0;i<C3Symbol::LanguageCount;i++)
 	{
 		if(!m_aSymbolsByLanguage[i])
 			continue;
-		if(!pFile->containsLanguage((C3Symbol::Language)i))
+		
+		if(!(uLanguageFlags & (1 << i)))
 			continue;
 
 		// FIXME: Really mark as dirty only instead of destroying?
 		delete m_aSymbolsByLanguage[i];
 		m_aSymbolsByLanguage[i] = NULL;
-	}
-
-	C3SymbolFile * pOld = m_hFiles.value(pFile->path(),NULL);
-	if(!pOld)
-	{
-		// New file.
-		m_hFiles.insert(pFile->path(),pFile);
-
-		// Problematic: if the file contains base/container classes they won't be used.
-		//if((!m_uFlags & SymbolsByLanguageDirty))
-		//{
-			// Do it incrementally
-			//C3SymbolList lSymbols = pFile->symbols(); // copy!
-			//buildSymbolsByLanguageForSymbolList(lSymbols);
-		//}
-		// else will rebuild everything at the next opportunity
-		return;
 	}
 
 	// remove it
@@ -835,9 +840,6 @@ void C3SymbolStore::addFile(C3SymbolFile * pFile)
 	//        It might be worth to try again a sorted-QList + QHash based approach
 	//        to see if it's better.
 
-	m_hFiles.remove(pOld->path());
-	delete pOld;
-	m_hFiles.insert(pFile->path(),pFile);
 }
 
 C3SymbolScope * C3SymbolStore::findScope(const QString &szScope,C3Symbol::Language eLanguage)

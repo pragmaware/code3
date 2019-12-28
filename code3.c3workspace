@@ -11,7 +11,7 @@
             "saveAllFiles": true,
             "shortctut": "F4",
             "type": "controlledShellScript",
-            "workingDirectory": "../build"
+            "workingDirectory": "build"
         },
         {
             "clearOutputOnStart": true,

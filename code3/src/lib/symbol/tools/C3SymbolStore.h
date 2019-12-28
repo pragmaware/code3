@@ -88,7 +88,7 @@ public:
 	C3SymbolScope * findScope(const QString &szScope,C3Symbol::Language eLanguage);
 
 	// Add a symbol file, eventually removing an existing one.
-	void addFile(C3SymbolFile * pFile);
+	void addFiles(QHash<QString,C3SymbolFile *> & hFiles);
 
 	C3SymbolFile * rootFile()
 	{

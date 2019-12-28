@@ -2624,11 +2624,8 @@ void C3SymbolManager::idleStep()
 		oTimer.start();
 	
 		//qDebug("[C3SymbolManager::idleStep] Got %d symbol files to insert",_p->hSymbolFiles.count());
-		QHash<QString,C3SymbolFile *>::Iterator it;
-		QHash<QString,C3SymbolFile *>::Iterator end = _p->hSymbolFiles.end();
 		_p->oStoreMutex.lock();
-		for(it = _p->hSymbolFiles.begin();it != end;it++)
-			_p->pStore->addFile(it.value());
+		_p->pStore->addFiles(_p->hSymbolFiles);
 		_p->oStoreMutex.unlock();
 
 		_p->hSymbolFiles.clear();

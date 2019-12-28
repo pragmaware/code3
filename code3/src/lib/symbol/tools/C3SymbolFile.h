@@ -65,7 +65,7 @@ private:
 	quint16 m_uFlags;
 
 	// combination of (1 << C3Symbol::Language)
-	quint16 m_uLanguages;
+	quint16 m_uLanguageFlags;
 	
 	// a symbol used for searching
 	C3Symbol m_oSearchSymbol;
@@ -76,7 +76,7 @@ public:
 		: m_szPath(szPath),
 		m_uFlags(ContextMapDirty),
 		m_oSearchSymbol(this),
-		m_uLanguages(0)
+		m_uLanguageFlags(0)
 	{
 		m_oTimestamp = QDateTime::currentDateTime();
 	}
@@ -96,18 +96,23 @@ public:
 
 	inline bool containsLanguage(C3Symbol::Language eLanguage) const
 	{
-		return m_uLanguages & (1 << eLanguage);
+		return m_uLanguageFlags & (1 << eLanguage);
 	}
 	
 	// this expect the bit to be already shifted, it's faster
 	inline bool containsLanguageFlag(quint16 uFlag) const
 	{
-		return m_uLanguages & uFlag;
+		return m_uLanguageFlags & uFlag;
 	}
 
 	inline bool containsOnlyLanguageFlag(quint16 uFlag) const
 	{
-		return (m_uLanguages & (~uFlag)) == 0;
+		return (m_uLanguageFlags & (~uFlag)) == 0;
+	}
+
+	inline quint16 languageFlags() const
+	{
+		return m_uLanguageFlags;
 	}
 
 	inline const QDateTime & timestamp() const
@@ -162,7 +167,7 @@ public:
 #endif //C3SYMBOLFILE_PARANOID
 		m_lSymbols.append(pSymbol);
 
-		m_uLanguages |= (1 << pSymbol->language());
+		m_uLanguageFlags |= (1 << pSymbol->language());
 
 #ifdef C3SYMBOLFILE_PARANOID
 		// This should be called before the context map is built
