@@ -186,7 +186,7 @@ SET(
 		lib/symbol/tools/C3SymbolCTagsRunner.cpp
 		lib/symbol/tools/C3SymbolFile.cpp
 		lib/symbol/tools/C3SymbolStore.cpp
-		lib/symbol/tools/C3SymbolsByLanguage.cpp
+		lib/symbol/tools/C3SortedSymbols.cpp
 		lib/system/C3Process.cpp
 		lib/tools/C3CompletionStore.cpp
 		lib/tools/C3FileSnippetExtractorWorker.cpp

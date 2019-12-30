@@ -469,6 +469,8 @@ void C3TextEditor::deleteRangeInternal(const C3TextEditorRange &oRange,bool bAdd
 				if(pLine->fWidth > fMaximumInitialLineWidth)
 					fMaximumInitialLineWidth = pLine->fWidth;
 	
+				delete pLine; // ! (see erase() below)
+	
 				iRow++;
 			}
 	
@@ -484,6 +486,8 @@ void C3TextEditor::deleteRangeInternal(const C3TextEditorRange &oRange,bool bAdd
 	
 			if(pFirstLine->fWidth > fMaximumFinalLineWidth)
 				fMaximumFinalLineWidth = pFirstLine->fWidth;
+				
+			delete pLastLine; // !
 	
 			QList<C3TextEditorLine *>::iterator it1 = _p->lLines.begin() + oSafeRange.start.row + 1;
 			QList<C3TextEditorLine *>::iterator it2 = _p->lLines.begin() + oSafeRange.end.row + 1;

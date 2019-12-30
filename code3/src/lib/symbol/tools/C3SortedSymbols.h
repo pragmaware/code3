@@ -1,6 +1,8 @@
+#ifndef _C3SortedSymbols_h_
+#define _C3SortedSymbols_h_
 //=============================================================================
 //
-//   File : C3SymbolsByLanguage.cpp
+//   File : C3SortedSymbols.h
 //   Creation Date : 2015/12/14 21:29:32
 //   Project : Code 3
 //   Author : Szymon Tomasz Stefanek <sts at pragmaware dot net>
@@ -15,41 +17,37 @@
 //
 //=============================================================================
 
-#include "C3SymbolsByLanguage.h"
+#include "c3_config.h"
 
-C3SymbolsByLanguage::C3SymbolsByLanguage(
-		C3Symbol::Language eLanguage
-	)
+#include <C3SymbolNamespace.h>
+
+#include <QHash>
+
+class C3SortedSymbols
 {
-	
-}
+private:
 
-C3SymbolsByLanguage::~C3SymbolsByLanguage()
-{
-	clear();
-}
+	// Hash of <first-letter> -> sorted C3SymbolList
+	QHash<quint16,C3SymbolMap *> m_hAllSymbols;
 
-void C3SymbolsByLanguage::clear()
-{
-	qDeleteAll(m_hAllSymbols);
-	m_hAllSymbols.clear();
-}
+public:
+	C3SortedSymbols(C3Symbol::Language eLanguage);
+	~C3SortedSymbols();
 
-void C3SymbolsByLanguage::addToAllSymbols(C3Symbol * pSymbol)
-{
-	const QString & szText = pSymbol->identifier();
+public:
 
-	Q_ASSERT(!szText.isEmpty());
+	void add(C3Symbol * pSymbol);
+	void remove(C3Symbol * pSymbol);
 
-	quint16 uu = szText.at(0).unicode();
-
-	C3SymbolMap * map = m_hAllSymbols.value(uu);
-	if(!map)
+	C3SymbolMap * allSymbolsForFirstLetter(const QString &szText)
 	{
-		map = new C3SymbolMap();
-		m_hAllSymbols.insert(uu,map);
+		if(szText.isEmpty())
+			return NULL;
+		return m_hAllSymbols.value(szText.at(0).unicode(),NULL);
 	}
 
-	// This is very costly (QMultiMap is sorted)
-	map->insert(szText,pSymbol);
-}
+	void clear();
+
+}; // class C3SortedSymbols
+
+#endif //!_C3SortedSymbols_h_

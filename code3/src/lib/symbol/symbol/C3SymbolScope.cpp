@@ -428,7 +428,6 @@ C3Symbol * C3SymbolScope::findSymbol(const QString &szIdentifier,quint16 uTypeMa
 	if(!m_pSymbols)
 		return NULL;
 
-
 	QList<C3Symbol *> lSyms = m_pSymbols->values(szIdentifier);
 
 	int c = lSyms.count();
@@ -459,7 +458,6 @@ C3SymbolScope * C3SymbolScope::findScope(const QString &szIdentifier)
 		if(pSym->isScope())
 			return static_cast<C3SymbolScope *>(pSym);
 	}
-
 
 	return NULL;
 }

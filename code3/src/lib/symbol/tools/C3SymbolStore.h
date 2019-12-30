@@ -22,7 +22,7 @@
 #include "C3Symbol.h"
 #include "C3SymbolFile.h"
 #include "C3SymbolScope.h"
-#include "C3SymbolsByLanguage.h"
+#include "C3SortedSymbols.h"
 
 #include <QHash>
 #include <QString>
@@ -35,15 +35,15 @@ private:
 	QHash<QString,C3SymbolFile *> m_hFiles;
 
 
-	// The list of global scopes by language.
+	// Global scopes for each language. Each global scope contains the whole symbol subtree.
 	// The containers are owned but each container has non owned pointers to C3Symbol instances
 	// (which are actually owned by C3SymbolFile).
 	C3SymbolNamespace * m_aGlobalScopes[C3Symbol::LanguageCount];
 
-	// The map of C3Symbol::Language -> C3SymbolsByLanguage.
+	// The map of C3Symbol::Language -> C3SortedSymbols.
 	// The containers are owned but each container has non owned pointers to C3Symbol instances
 	// (which are actually owned by C3SymbolFile).
-	C3SymbolsByLanguage * m_aSymbolsByLanguage[C3Symbol::LanguageCount];
+	C3SortedSymbols * m_aSortedSymbols[C3Symbol::LanguageCount];
 
 	C3SymbolFile m_oRootFile;
 
@@ -56,8 +56,7 @@ private:
 
 	void resolveImportedScopes(C3SymbolFile * pFile,C3Symbol::Language eLanguage);
 	void rebuildSymbolsByLanguage(C3Symbol::Language eLanguage);
-	void buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolList,C3Symbol::Language eLanguage);
-	void buildSymbolsByLanguageForSymbolListOLD(C3SymbolList &lSymbolList,C3Symbol::Language eLanguage);
+	void buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolList,C3Symbol::Language eLanguage,bool bBuildSortedSymbols);
 
 public:
 
@@ -76,11 +75,11 @@ public:
 
 	C3SymbolMap * allSymbolsForFirstLetter(const QString &szText,C3Symbol::Language eLanguage)
 	{
-		C3SymbolsByLanguage * pSyms = m_aSymbolsByLanguage[eLanguage];
+		C3SortedSymbols * pSyms = m_aSortedSymbols[eLanguage];
 		if(!pSyms)
 		{
 			rebuildSymbolsByLanguage(eLanguage);
-			pSyms = m_aSymbolsByLanguage[eLanguage];
+			pSyms = m_aSortedSymbols[eLanguage];
 			if(!pSyms)
 				return NULL;
 		}

@@ -89,20 +89,37 @@ C3SymbolManager::C3SymbolManager(const QString &szCTagsToolPath)
 	_p->bDying = false;
 	_p->iNextCTagsWorkerId = 0;
 	_p->szCTagsToolPath = szCTagsToolPath;
-	_p->hTokensToFilterInTypes.insert(__ascii("const"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("enum"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("struct"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("class"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("union"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("volatile"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("mutable"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("static"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("explicit"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("virtual"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("override"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("inline"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("__inline"),1);
-	_p->hTokensToFilterInTypes.insert(__ascii("extern"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("const"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("enum"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("struct"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("class"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("union"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("volatile"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("mutable"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("static"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("explicit"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("virtual"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("override"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("inline"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("__inline"),1);
+	_p->hTokensToFilterInTypes.insert(__literal("extern"),1);
+
+	m_szArrow = __literal("->");
+	m_szSquareArrow = __literal("[]->");
+	m_szSquareDot = __literal("[].");
+	m_szDot = __literal(".");
+	m_szParenthesisArrow = __literal("()->");
+	m_szParenthesisDot = __literal("().");
+	m_szTwoColons = __literal("::");
+	m_szNew = __literal("new");
+	m_szConst = __literal("const");
+	m_szStatic = __literal("static");
+	m_szInline = __literal("inline");
+	m_szDelete = __literal("delete");
+	m_szThis = __literal("this");
+	m_szP = __literal("_p");
+	m_szParenthesis = __literal("(");
+	m_szClosedParenthesis = __literal(")");
 
 }
 
@@ -341,12 +358,9 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveSimpleCppTypeToSymbolScope(
 
 	SYMBOL_MANAGER_TRACE("Attempt to resolve type '%s' with type scope '%s'",szType.toUtf8().data(),pTypeScope->description().toUtf8().data());
 
-	static QString szTwoColons(__ascii("::"));
-	//static QString szDot(__ascii(".")); // dots are also used around...
-
 	QString szRealType = szType;
 
-	int idx = szRealType.indexOf(szTwoColons);
+	int idx = szRealType.indexOf(m_szTwoColons);
 	
 	C3SymbolScope * pGlobalScope = _p->pStore->globalScopeForLanguage(pTypeScope->language());
 	if(!pGlobalScope)
@@ -362,7 +376,7 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveSimpleCppTypeToSymbolScope(
 		pTypeScope = pGlobalScope;
 		Q_ASSERT(pTypeScope);
 		szRealType = szRealType.mid(2);
-		idx = szRealType.indexOf(szTwoColons);
+		idx = szRealType.indexOf(m_szTwoColons);
 	}
 	
 	if(szRealType.isEmpty())
@@ -592,12 +606,10 @@ C3SymbolScope * C3SymbolManager::resolveP(
 		return NULL;
 	}
 
-	static QStringLiteral sP("_p");
-
 	// ordered by line
 	Q_FOREACH(C3Symbol * sym,pFile->symbols())
 	{
-		if((sym->type() == C3Symbol::Macro) && (sym->identifier() == sP))
+		if((sym->type() == C3Symbol::Macro) && (sym->identifier() == m_szP))
 		{
 			// gotcha!
 			
@@ -650,14 +662,6 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 	
 	Q_ASSERT(pContext->lLeftContext.count() >= 1);
 	Q_ASSERT(pGlobalScope);
-	
-	static QString szArrow("->");
-	static QString szSquareArrow("[]->");
-	static QString szSquareDot("[].");
-	static QString szDot(".");
-	static QString szParenthesisArrow("()->");
-	static QString szParenthesisDot("().");
-	static QString szTwoColons("::");
 
 	// FIXME: Optimize the "int", "unsigned int" and other simple cases
 	
@@ -677,13 +681,13 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 		if(
 				pCtxOnLeft->szOperator.isEmpty() ||
 				(
-					(pCtxOnLeft->szOperator != szParenthesisArrow) &&
-					(pCtxOnLeft->szOperator != szParenthesisDot) &&
-					(pCtxOnLeft->szOperator != szArrow) &&
-					(pCtxOnLeft->szOperator != szDot) &&
-					(pCtxOnLeft->szOperator != szSquareArrow) &&
-					(pCtxOnLeft->szOperator != szSquareDot) &&
-					(pCtxOnLeft->szOperator != szTwoColons)
+					(pCtxOnLeft->szOperator != m_szParenthesisArrow) &&
+					(pCtxOnLeft->szOperator != m_szParenthesisDot) &&
+					(pCtxOnLeft->szOperator != m_szArrow) &&
+					(pCtxOnLeft->szOperator != m_szDot) &&
+					(pCtxOnLeft->szOperator != m_szSquareArrow) &&
+					(pCtxOnLeft->szOperator != m_szSquareDot) &&
+					(pCtxOnLeft->szOperator != m_szTwoColons)
 				)
 			)
 			break;
@@ -701,7 +705,7 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 
 	if(pCtx->szText.isEmpty())
 	{
-		if(pCtx->szOperator != szTwoColons)
+		if(pCtx->szOperator != m_szTwoColons)
 		{
 			SYMBOL_MANAGER_TRACE("Initial context has empty text and operator %s, which is not ::",pCtx->szOperator.toUtf8().data());
 			return NULL;
@@ -718,10 +722,7 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 
 		SYMBOL_MANAGER_TRACE("Look for initial symbol '%s'",pCtx->szText.toUtf8().data());
 
-		static QString szThis("this");
-		static QString sz_p("_p");
-
-		if(pCtx->szText == szThis)
+		if(pCtx->szText == m_szThis)
 		{
 			if(!pFileContext)
 			{
@@ -742,7 +743,7 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 				// lambda
 				pTypeScope = pTypeScope->resolvedContainingScope();
 
-		} else if(pCtx->szText == sz_p)
+		} else if(pCtx->szText == m_szP)
 		{
 			// magic _p macro :)
 			// look for <local class>Private class definition
@@ -784,7 +785,7 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 
 		quint16 uTypeMask;
 
-		if((pCtx->szOperator == szParenthesisArrow) || (pCtx->szOperator == szParenthesisDot))
+		if((pCtx->szOperator == m_szParenthesisArrow) || (pCtx->szOperator == m_szParenthesisDot))
 		{
 			// function call
 
@@ -818,7 +819,7 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 			if(pTypeScope)
 				szLastTypeScopeName = pFun->returnType();
 
-		} else if(pCtx->szOperator == szTwoColons)
+		} else if(pCtx->szOperator == m_szTwoColons)
 		{
 			// class name / namespace
 			
@@ -909,7 +910,7 @@ C3SymbolScope * C3SymbolManager::storeLockedResolveCppArrowOrDotTypeScope(
 
 		bDoAdditionalLookups = false;
 	
-		if(pCtx->szOperator == szArrow)
+		if(pCtx->szOperator == m_szArrow)
 		{
 			// look for operator ->
 			C3SymbolFunctionSignature * pOperatorArrow = dynamic_cast<C3SymbolFunctionSignature *>(
@@ -1096,22 +1097,8 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 {
 	SYMBOL_MANAGER_TRACE_FUNCTION;
 
-	static QString szArrow("->");
-	static QString szDot(".");
-	static QString szParenthesisArrow("()->");
-	static QString szSquareParenthesisArrow("[]->");
-	static QString szParenthesisDot("().");
-	static QString szSquareParenthesisDot("[].");
-	static QString szNew("new");
-	static QString szConst("const");
-	static QString szStatic("static");
-	static QString szInline("inline");
-	static QString szDelete("delete");
-	static QString szEmit("emit");
-	static QString szEquals("=");
-	static QString szStar("*");
 	// FIXME: enum X, struct X, union X
-	static QString szTwoColons("::");
+
 	// FIXME: complete language keywords here?
 	
 	// FIXME: handle case:
@@ -1150,10 +1137,10 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 		{
 			// no left operator
 			if(
-					(pLeft->szText == szNew) ||
-					(pLeft->szText == szConst) ||
-					(pLeft->szText == szStatic) ||
-					(pLeft->szText == szInline)
+					(pLeft->szText == m_szNew) ||
+					(pLeft->szText == m_szConst) ||
+					(pLeft->szText == m_szStatic) ||
+					(pLeft->szText == m_szInline)
 				)
 			{
 				storeLockedSelectSymbolsForCppCompleteVisibleSymbolsInScope(
@@ -1169,7 +1156,7 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 				return true;
 			}
 			
-			if(pLeft->szText == szDelete)
+			if(pLeft->szText == m_szDelete)
 			{
 				DO_GLOBAL_SYMBOL_LOOKUP(
 						C3Symbol::GlobalVariable,
@@ -1211,21 +1198,21 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 				return true;
 			}
 
-			if(pLeft->szText == szEmit)
-			{
+			//if(pLeft->szText == m_szEmit)
+			//{
 				// FIXME: local class functions!
-			}
+			//}
 
 			goto complete_any_visible_symbol;
 		}
 		
 		if(
-				(pLeft->szOperator == szParenthesisArrow) ||
-				(pLeft->szOperator == szParenthesisDot) ||
-				(pLeft->szOperator == szArrow) ||
-				(pLeft->szOperator == szDot) ||
-				(pLeft->szOperator == szSquareParenthesisArrow) ||
-				(pLeft->szOperator == szSquareParenthesisDot)
+				(pLeft->szOperator == m_szParenthesisArrow) ||
+				(pLeft->szOperator == m_szParenthesisDot) ||
+				(pLeft->szOperator == m_szArrow) ||
+				(pLeft->szOperator == m_szDot) ||
+				(pLeft->szOperator == m_szSquareArrow) ||
+				(pLeft->szOperator == m_szSquareDot)
 			)
 		{
 			C3SymbolScope * pTypeScope = storeLockedResolveCppArrowOrDotTypeScope(
@@ -1280,7 +1267,7 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 			return true;
 		}
 		
-		if(pLeft->szOperator == szTwoColons)
+		if(pLeft->szOperator == m_szTwoColons)
 		{
 			if(pLeft->szText.isEmpty())
 			{
@@ -1373,79 +1360,79 @@ void C3SymbolManager::buildCPPKeywordList()
 {
 	_p->lCPPKeywords.clear();
 	
-	_p->lCPPKeywords.append(__ascii("break"));
-	_p->lCPPKeywords.append(__ascii("catch"));
-	_p->lCPPKeywords.append(__ascii("class"));
-	_p->lCPPKeywords.append(__ascii("const"));
-	_p->lCPPKeywords.append(__ascii("continue"));
-	_p->lCPPKeywords.append(__ascii("delete"));
-	_p->lCPPKeywords.append(__ascii("do"));
-	_p->lCPPKeywords.append(__ascii("double"));
-	_p->lCPPKeywords.append(__ascii("dynamic_cast"));
-	_p->lCPPKeywords.append(__ascii("else"));
-	_p->lCPPKeywords.append(__ascii("enum"));
-	_p->lCPPKeywords.append(__ascii("false"));
-	_p->lCPPKeywords.append(__ascii("float"));
-	_p->lCPPKeywords.append(__ascii("for"));
-	_p->lCPPKeywords.append(__ascii("if"));
-	_p->lCPPKeywords.append(__ascii("inline"));
-	_p->lCPPKeywords.append(__ascii("int"));
-	_p->lCPPKeywords.append(__ascii("long"));
-	_p->lCPPKeywords.append(__ascii("mutable"));
-	_p->lCPPKeywords.append(__ascii("reinterpret_cast"));
-	_p->lCPPKeywords.append(__ascii("return"));
-	_p->lCPPKeywords.append(__ascii("short"));
-	_p->lCPPKeywords.append(__ascii("sizeof"));
-	_p->lCPPKeywords.append(__ascii("static_cast"));
-	_p->lCPPKeywords.append(__ascii("struct"));
-	_p->lCPPKeywords.append(__ascii("switch"));
-	_p->lCPPKeywords.append(__ascii("this")); // <-- fixme: we should check context for this?
-	_p->lCPPKeywords.append(__ascii("throw"));
-	_p->lCPPKeywords.append(__ascii("true"));
-	_p->lCPPKeywords.append(__ascii("try"));
-	_p->lCPPKeywords.append(__ascii("typeof"));
-	_p->lCPPKeywords.append(__ascii("typeid"));
-	_p->lCPPKeywords.append(__ascii("unsigned"));
-	_p->lCPPKeywords.append(__ascii("virtual"));
-	_p->lCPPKeywords.append(__ascii("void"));
-	_p->lCPPKeywords.append(__ascii("volatile"));
-	_p->lCPPKeywords.append(__ascii("while"));
-	_p->lCPPKeywords.append(__ascii("FALSE"));
-	_p->lCPPKeywords.append(__ascii("NULL"));
-	_p->lCPPKeywords.append(__ascii("TRUE"));
+	_p->lCPPKeywords.append(__literal("break"));
+	_p->lCPPKeywords.append(__literal("catch"));
+	_p->lCPPKeywords.append(__literal("class"));
+	_p->lCPPKeywords.append(__literal("const"));
+	_p->lCPPKeywords.append(__literal("continue"));
+	_p->lCPPKeywords.append(__literal("delete"));
+	_p->lCPPKeywords.append(__literal("do"));
+	_p->lCPPKeywords.append(__literal("double"));
+	_p->lCPPKeywords.append(__literal("dynamic_cast"));
+	_p->lCPPKeywords.append(__literal("else"));
+	_p->lCPPKeywords.append(__literal("enum"));
+	_p->lCPPKeywords.append(__literal("false"));
+	_p->lCPPKeywords.append(__literal("float"));
+	_p->lCPPKeywords.append(__literal("for"));
+	_p->lCPPKeywords.append(__literal("if"));
+	_p->lCPPKeywords.append(__literal("inline"));
+	_p->lCPPKeywords.append(__literal("int"));
+	_p->lCPPKeywords.append(__literal("long"));
+	_p->lCPPKeywords.append(__literal("mutable"));
+	_p->lCPPKeywords.append(__literal("reinterpret_cast"));
+	_p->lCPPKeywords.append(__literal("return"));
+	_p->lCPPKeywords.append(__literal("short"));
+	_p->lCPPKeywords.append(__literal("sizeof"));
+	_p->lCPPKeywords.append(__literal("static_cast"));
+	_p->lCPPKeywords.append(__literal("struct"));
+	_p->lCPPKeywords.append(__literal("switch"));
+	_p->lCPPKeywords.append(__literal("this")); // <-- fixme: we should check context for this?
+	_p->lCPPKeywords.append(__literal("throw"));
+	_p->lCPPKeywords.append(__literal("true"));
+	_p->lCPPKeywords.append(__literal("try"));
+	_p->lCPPKeywords.append(__literal("typeof"));
+	_p->lCPPKeywords.append(__literal("typeid"));
+	_p->lCPPKeywords.append(__literal("unsigned"));
+	_p->lCPPKeywords.append(__literal("virtual"));
+	_p->lCPPKeywords.append(__literal("void"));
+	_p->lCPPKeywords.append(__literal("volatile"));
+	_p->lCPPKeywords.append(__literal("while"));
+	_p->lCPPKeywords.append(__literal("FALSE"));
+	_p->lCPPKeywords.append(__literal("NULL"));
+	_p->lCPPKeywords.append(__literal("TRUE"));
 }
 
 void C3SymbolManager::buildPHPKeywordList()
 {
 	_p->lPHPKeywords.clear();
 	
-	_p->lPHPKeywords.append(__ascii("break;"));
-	_p->lPHPKeywords.append(__ascii("catch("));
-	_p->lPHPKeywords.append(__ascii("class "));
-	_p->lPHPKeywords.append(__ascii("continue;"));
-	_p->lPHPKeywords.append(__ascii("do "));
-	_p->lPHPKeywords.append(__ascii("false"));
-	_p->lPHPKeywords.append(__ascii("for("));
-	_p->lPHPKeywords.append(__ascii("function "));
-	_p->lPHPKeywords.append(__ascii("private "));
-	_p->lPHPKeywords.append(__ascii("protected "));
-	_p->lPHPKeywords.append(__ascii("public "));
-	_p->lPHPKeywords.append(__ascii("return"));
-	_p->lPHPKeywords.append(__ascii("switch("));
-	_p->lPHPKeywords.append(__ascii("throw"));
-	_p->lPHPKeywords.append(__ascii("true"));
-	_p->lPHPKeywords.append(__ascii("try"));
-	_p->lPHPKeywords.append(__ascii("while("));
-	_p->lPHPKeywords.append(__ascii("FALSE"));
-	_p->lPHPKeywords.append(__ascii("NULL"));
-	_p->lPHPKeywords.append(__ascii("TRUE"));
-	_p->lPHPKeywords.append(__ascii("$GLOBALS"));
-	_p->lPHPKeywords.append(__ascii("$_GET"));
-	_p->lPHPKeywords.append(__ascii("$_POST"));
-	_p->lPHPKeywords.append(__ascii("$_REQUEST"));
-	_p->lPHPKeywords.append(__ascii("$_SESSION"));
-	_p->lPHPKeywords.append(__ascii("$_SERVER"));
-	_p->lPHPKeywords.append(__ascii("$this"));
+	_p->lPHPKeywords.append(__literal("break;"));
+	_p->lPHPKeywords.append(__literal("catch("));
+	_p->lPHPKeywords.append(__literal("class "));
+	_p->lPHPKeywords.append(__literal("continue;"));
+	_p->lPHPKeywords.append(__literal("do "));
+	_p->lPHPKeywords.append(__literal("false"));
+	_p->lPHPKeywords.append(__literal("for("));
+	_p->lPHPKeywords.append(__literal("function "));
+	_p->lPHPKeywords.append(__literal("private "));
+	_p->lPHPKeywords.append(__literal("protected "));
+	_p->lPHPKeywords.append(__literal("public "));
+	_p->lPHPKeywords.append(__literal("return"));
+	_p->lPHPKeywords.append(__literal("switch("));
+	_p->lPHPKeywords.append(__literal("throw"));
+	_p->lPHPKeywords.append(__literal("true"));
+	_p->lPHPKeywords.append(__literal("try"));
+	_p->lPHPKeywords.append(__literal("while("));
+	_p->lPHPKeywords.append(__literal("FALSE"));
+	_p->lPHPKeywords.append(__literal("NULL"));
+	_p->lPHPKeywords.append(__literal("TRUE"));
+	_p->lPHPKeywords.append(__literal("$GLOBALS"));
+	_p->lPHPKeywords.append(__literal("$_GET"));
+	_p->lPHPKeywords.append(__literal("$_POST"));
+	_p->lPHPKeywords.append(__literal("$_REQUEST"));
+	_p->lPHPKeywords.append(__literal("$_SESSION"));
+	_p->lPHPKeywords.append(__literal("$_SERVER"));
+	_p->lPHPKeywords.append(__literal("$this"));
 }
 
 C3SymbolScope * C3SymbolManager::storeLockedResolveFileContext(
@@ -1775,9 +1762,6 @@ void C3SymbolManager::storeLockedAddCompletions(
 		return;
 	}
 
-	static QString szParenthesis("(");
-	static QString szClosedParenthesis("()");
-
 	C3SymbolMap::iterator end = pSymbols->end();
 	C3SymbolMap::iterator it;
 
@@ -1984,11 +1968,11 @@ void C3SymbolManager::storeLockedAddCompletions(
 		{
 			case C3Symbol::FunctionDefinition:
 				if(!dynamic_cast<C3SymbolFunctionDefinition *>(pSym)->returnType().isEmpty()) // filters out constructors
-					szTrailer = dynamic_cast<C3SymbolFunctionDefinition *>(pSym)->signature().isEmpty() ? szClosedParenthesis : szParenthesis;
+					szTrailer = dynamic_cast<C3SymbolFunctionDefinition *>(pSym)->signature().isEmpty() ? m_szClosedParenthesis : m_szParenthesis;
 			break;
 			case C3Symbol::FunctionPrototype:
 				if(!dynamic_cast<C3SymbolFunctionPrototype *>(pSym)->returnType().isEmpty()) // filters out constructors
-					szTrailer = dynamic_cast<C3SymbolFunctionPrototype *>(pSym)->signature().isEmpty() ? szClosedParenthesis : szParenthesis;
+					szTrailer = dynamic_cast<C3SymbolFunctionPrototype *>(pSym)->signature().isEmpty() ? m_szClosedParenthesis : m_szParenthesis;
 			break;
 			default:
 				// should not happen!
@@ -2286,8 +2270,8 @@ void C3SymbolManager::storeLockedAddSymbolInfos(
 	
 		C3TextEditorSymbolInfo * li = new C3TextEditorSymbolInfo();
 		li->oRange = oRange;
-		li->oLink.insert(__ascii("symbol"),pSym->identifier());
-		li->oLink.insert(__ascii("isCpp"),__ascii("true"));
+		li->oLink.insert(__literal("symbol"),pSym->identifier());
+		li->oLink.insert(__literal("isCpp"),__literal("true"));
 		li->oLink.setText(pSym->description());
 		li->oLink.setDescription(pSym->typeString());
 		li->oLink.setPath(pSym->filePath());
@@ -2305,8 +2289,8 @@ void C3SymbolManager::storeLockedAddSymbolInfos(
 			{
 				li = new C3TextEditorSymbolInfo();
 				li->oRange = oRange;
-				li->oLink.insert(__ascii("symbol"),pSym2->identifier());
-				li->oLink.insert(__ascii("isCpp"),__ascii("true"));
+				li->oLink.insert(__literal("symbol"),pSym2->identifier());
+				li->oLink.insert(__literal("isCpp"),__literal("true"));
 				li->oLink.setText(pSym2->description());
 				li->oLink.setDescription(pSym2->typeString());
 				li->oLink.setPath(pSym2->filePath());
@@ -2620,8 +2604,8 @@ void C3SymbolManager::idleStep()
 	_p->oCTagsWorkersMutex.lock();
 	if(_p->hSymbolFiles.count() > 0)
 	{
-		QElapsedTimer oTimer;
-		oTimer.start();
+		//QElapsedTimer oTimer;
+		//oTimer.start();
 	
 		//qDebug("[C3SymbolManager::idleStep] Got %d symbol files to insert",_p->hSymbolFiles.count());
 		_p->oStoreMutex.lock();

@@ -31,7 +31,7 @@ C3SymbolStore::C3SymbolStore()
 {
 	for(int i=0;i<C3Symbol::LanguageCount;i++)
 	{
-		m_aSymbolsByLanguage[i] = NULL;
+		m_aSortedSymbols[i] = NULL;
 		m_aGlobalScopes[i] = NULL;
 	}
 }
@@ -40,8 +40,8 @@ C3SymbolStore::~C3SymbolStore()
 {
 	for(int i=0;i<C3Symbol::LanguageCount;i++)
 	{
-		if(m_aSymbolsByLanguage[i])
-			delete m_aSymbolsByLanguage[i];
+		if(m_aSortedSymbols[i])
+			delete m_aSortedSymbols[i];
 		if(m_aGlobalScopes[i])
 			delete m_aGlobalScopes[i];
 	}
@@ -61,7 +61,7 @@ void C3SymbolStore::rebuildSymbolsByLanguage(C3Symbol::Language eLanguage)
 	// FIXME: In Release mode the cost of rebuilding symbols drops to 30%
 
 #ifdef DEBUG_SYMBOL_STORE
-	qDebug("Rebuild symbols for language %d",eLanguage);
+	qDebug("Rebuild symbols for language %d (got %d files)",eLanguage,m_hFiles.count());
 #endif
 
 #ifdef DEBUG_SYMBOL_STORE
@@ -74,15 +74,34 @@ void C3SymbolStore::rebuildSymbolsByLanguage(C3Symbol::Language eLanguage)
 	qDebug("Rebuild symbols: checkpoint 0: %lld msecs",oTimer.elapsed());
 #endif
 
-	if(m_aSymbolsByLanguage[eLanguage])
-		m_aSymbolsByLanguage[eLanguage]->clear();
-	else
-		m_aSymbolsByLanguage[eLanguage] = new C3SymbolsByLanguage(eLanguage);
+	bool bBuildSortedSymbols;
+
+	if(m_aSortedSymbols[eLanguage])
+	{
+		// If this pointer is non-null then it is up to date (it already contains all the symbols we got)
+		bBuildSortedSymbols = false;
+#ifdef DEBUG_SYMBOL_STORE
+		qDebug("Will not rebuild sorted symbols for language %d",eLanguage);
+#endif
+
+	} else {
+#ifdef DEBUG_SYMBOL_STORE
+		qDebug("Will rebuild sorted symbols for language %d",eLanguage);
+#endif
+		m_aSortedSymbols[eLanguage] = new C3SortedSymbols(eLanguage);
+		bBuildSortedSymbols = true;
+	}
 	
 	if(m_aGlobalScopes[eLanguage])
 	{
+#ifdef DEBUG_SYMBOL_STORE
+		qDebug("Global scope already exists: clearing");
+#endif
 		m_aGlobalScopes[eLanguage]->clear();
 	} else {
+#ifdef DEBUG_SYMBOL_STORE
+		qDebug("Global scope does not exist yet: creating");
+#endif
 		m_aGlobalScopes[eLanguage] = new C3SymbolNamespace(
 				&m_oRootFile,
 				eLanguage,
@@ -135,7 +154,7 @@ void C3SymbolStore::rebuildSymbolsByLanguage(C3Symbol::Language eLanguage)
 	qDebug("Rebuild symbols: checkpoint 1: %lld msecs",oTimer.elapsed());
 #endif
 
-	buildSymbolsByLanguageForSymbolList(lSymbols,eLanguage);
+	buildSymbolsByLanguageForSymbolList(lSymbols,eLanguage,bBuildSortedSymbols);
 
 #ifdef DEBUG_SYMBOL_STORE
 	qDebug("Rebuild symbols: checkpoint 2: %lld msecs",oTimer.elapsed());
@@ -174,7 +193,7 @@ void C3SymbolStore::rebuildSymbolsByLanguage(C3Symbol::Language eLanguage)
 #ifdef DEBUG_SYMBOL_STORE
 	qDebug("Rebuild symbols: built in %lld msecs",oTimer.elapsed());
 
-	//m_aSymbolsByLanguage[eLanguage]->globalScope()->dump(QString(""));
+	//m_aSortedSymbols[eLanguage]->globalScope()->dump(QString(""));
 #endif
 
 #ifdef DEBUG_SYMBOL_STORE
@@ -190,7 +209,7 @@ void C3SymbolStore::resolveImportedScopes(C3SymbolFile * pFile,C3Symbol::Languag
 	if(lScopes.isEmpty())
 		return;
 
-	C3SymbolsByLanguage * pSyms = m_aSymbolsByLanguage[eLanguage];
+	C3SortedSymbols * pSyms = m_aSortedSymbols[eLanguage];
 	Q_ASSERT(pSyms);
 
 	C3SymbolNamespace * pGlobalScope = m_aGlobalScopes[eLanguage];
@@ -267,7 +286,7 @@ void C3SymbolStore::resolveImportedScopes(C3SymbolFile * pFile,C3Symbol::Languag
 }
 
 
-void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolList,C3Symbol::Language eLanguage)
+void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolList,C3Symbol::Language eLanguage,bool bBuildSortedSymbols)
 {
 	if(lSymbolList.isEmpty())
 		return;
@@ -280,7 +299,7 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 
 #define MAX_SCOPE_LEVELS 20
 
-	C3SymbolsByLanguage * pSymbolsByLanguage = m_aSymbolsByLanguage[eLanguage];
+	C3SortedSymbols * pSymbolsByLanguage = m_aSortedSymbols[eLanguage];
 	Q_ASSERT(pSymbolsByLanguage); // Thist MUST have been set up by the caller
 	
 	C3SymbolScope * pGlobalScope = m_aGlobalScopes[eLanguage];
@@ -314,11 +333,9 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 #endif
 
 		// FIXME: This could be probably sped up a bit
-		
-		// A LOT OF TIME IS SPENT INSIDE THIS FUNCTION (WHICH BUILDS A SYMBOLS-BY-FIRST-LETTER SORTED-LIST MAP)
-		// FIXME: When a file is updated we need to rebuild the tree but
-		//        we COULD keep (and update incrementally) the SYMBOLS BY FIRST LETTER.
-		pSymbolsByLanguage->addToAllSymbols(pSymbol);
+
+		if(bBuildSortedSymbols) // FIXME: Optimize away this check in some way?
+			pSymbolsByLanguage->add(pSymbol);
 
 		int iScopeParts = pSymbol->unresolvedScopePartCount();
 		
@@ -407,12 +424,15 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 	for(i=1;i<MAX_SCOPE_LEVELS;i++)
 	{
 		if(!aSymbols[i])
+		{
+			Q_ASSERT(!aScopes[i]);
 			continue;
+		}
 
 		if(!aScopes[i])
 		{
-			delete aSymbols[i];
 			qDebug("WARNING: There are no scopes at level %d: %d symbols will remain floating",i,aSymbols[i]->count());
+			delete aSymbols[i];
 			continue;
 		}
 
@@ -515,359 +535,139 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 			}
 		}
 
+		qDeleteAll(*(aScopes[i]));
 		delete aSymbols[i];
 		delete aScopes[i];
 	}
 }
 
-/*
-
-// THIS IS AN OLD VERSION THAT WAS WORKING AND (AT THE TIME) HAD COMPARABLE PERFORMANCE BUT WAS A MORE COMPLICATED
-
-void C3SymbolStore::buildSymbolsByLanguageForSymbolListOLD(C3SymbolList &lSymbolList,C3Symbol::Language eLanguage)
-{
-
-	if(lSymbolList.isEmpty())
-		return;
-
-	// FIXME: What happens with typedefs here?
-
-#ifdef DEBUG_SYMBOL_STORE
-	qDebug("Rebuilding symbols: %d symbols to analyze",lSymbolList.count());
-#endif
-
-	C3SymbolsByLanguage * pSymbolsByLanguage = m_aSymbolsByLanguage[eLanguage];
-	Q_ASSERT(pSymbolsByLanguage); // Thist MUST have been set up by the caller
-	
-	C3SymbolScope * pGlobalScope = pSymbolsByLanguage->globalScope();
-	Q_ASSERT(pGlobalScope);
-
-	C3SymbolList lRemainingSymbols;
-	
-	C3Symbol * pSymbol;
-
-	QHash<QString,C3SymbolScopeList *> hNextLevelScopes;
-
-	// First pass. Assign anything without a scope.
-	foreach(pSymbol,lSymbolList)
-	{
-#ifdef DEBUG_SYMBOL_STORE
-		Q_ASSERT(pSymbol->language() == eLanguage);
-#endif
-
-		// FIXME: This could be probably sped up a bit
-		pSymbolsByLanguage->addToAllSymbols(pSymbol);
-
-		if(pSymbol->unresolvedScopePartCount() > 0)
-		{
-			// Has a scope. Will be resolved later.
-			lRemainingSymbols.append(pSymbol);
-			continue;
-		}
-
-		// Has no scope
-
-		if(!pSymbol->isScope())
-		{
-			// not a scope itself: a global symbol
-			pGlobalScope->addSymbol(pSymbol);
-			continue;
-		}
-
-		// Is toplevel scope.
-
-		C3SymbolScopeList * pList = hNextLevelScopes.value(pSymbol->identifier(),NULL);
-		if(!pList)
-		{
-			pList = new C3SymbolScopeList();
-			//qDebug("Add first level scope %s",pSymbol->identifier().toUtf8().data());
-			hNextLevelScopes.insert(pSymbol->identifier(),pList);
-		}
-
-		if(pSymbol->type() == C3Symbol::Namespace)
-		{
-			// do not duplicate namespaces
-			C3SymbolNamespace * pFound = NULL;
-			Q_FOREACH(C3SymbolScope * pDaScope,*pList)
-			{
-				if(pDaScope->type() == C3Symbol::Namespace)
-				{
-					pFound = dynamic_cast<C3SymbolNamespace *>(pDaScope);
-					Q_ASSERT(pFound);
-					break;
-				}
-			}
-			
-			if(!pFound)
-				pList->append(dynamic_cast<C3SymbolScope *>(pSymbol));
-
-			C3SymbolNamespace * pFound2 = pGlobalScope->findNamespace(pSymbol->identifier());
-			if(!pFound2)
-			{
-				Q_ASSERT(!pFound);
-				pGlobalScope->addSymbol(pSymbol);
-			} else {
-				Q_ASSERT(pFound == pFound2);
-				pFound->addAdditionalDefinition(dynamic_cast<C3SymbolNamespace *>(pSymbol));
-			}
-		} else {
-			pList->append(dynamic_cast<C3SymbolScope *>(pSymbol));
-			pGlobalScope->addSymbol(pSymbol);
-		}
-	}
-
-	int iScopeLevel = 1;
-
-	static QString szScopeSeparator1 = __ascii(".");
-	static QString szScopeSeparator2 = __ascii("::");
-	QString szScopeSeparator = (eLanguage == C3Symbol::Cpp) ? szScopeSeparator2 : szScopeSeparator1;
-
-	QHash<QString,C3SymbolScopeList *> hScopes;
-
-	QString szLastNotFoundScope;
-
-	do {
-		// move scopes that were built at the previous level into hScopes
-		hNextLevelScopes.swap(hScopes);
-
-		// hScopes now contains keys with exactly iScopeLevel=N parts (<name1>::<name2>::..::<nameN>)
-		// that point to the related (resololved scopes).
-
-		// clear anything that was present in hScopes (previous level)
-		qDeleteAll(hNextLevelScopes);
-		hNextLevelScopes.clear();
-		
-		// move remaining symbols into lSymbolList
-		lRemainingSymbols.swap(lSymbolList);
-		// clear anything that was present in lSymbolList
-		lRemainingSymbols.clear();
-
-#ifdef DEBUG_SYMBOL_STORE
-		qDebug("Rebuilding symbols: next pass has %d symbols to analyze",lSymbolList.count());
-#endif
-
-		foreach(pSymbol,lSymbolList)
-		{
-			QString szScope = pSymbol->unresolvedScope();
-			
-			Q_ASSERT(!szScope.isEmpty());
-			
-			int iScopeParts = pSymbol->unresolvedScopePartCount();
-			
-			Q_ASSERT(iScopeParts >= iScopeLevel);
-			
-			if(iScopeParts > iScopeLevel)
-			{
-				// has a scope with more parts
-				lRemainingSymbols.append(pSymbol);
-				continue;
-			}
-			
-			// has a scope with exactly iScopeLevel parts
-
-			C3SymbolScopeList * pScopeList = hScopes.value(szScope,NULL);
-			if(pScopeList)
-			{
-				Q_ASSERT(pScopeList->count() > 0);
-
-				// FIXME: Match the scope yet better!!!
-				C3SymbolScope * pBestScope = NULL;
-				
-				if(pScopeList->count() > 1)
-				{
-					foreach(C3SymbolScope * pCandidateScope,*pScopeList)
-					{
-						// same file, better than other ones
-						if(pCandidateScope->file() != pSymbol->file())
-							continue;
-
-						if(pCandidateScope->lineNumber() > pSymbol->lineNumber())
-							continue; // it's defined after??? doesn't really make sense
-
-						if(!pBestScope)
-						{
-							pBestScope = pCandidateScope;
-							continue;
-						}
-
-						// multiple candidates in the same file as the symbol, pick the nearest one
-						if(pCandidateScope->lineNumber() > pBestScope->lineNumber())
-							pBestScope = pCandidateScope;
-					}
-					
-					if(!pBestScope)
-					{
-						int maxl = 0;
-						foreach(C3SymbolScope * pCandidateScope,*pScopeList)
-						{
-							int commonLen = C3StringUtils::commonCharacterCount(
-									pCandidateScope->filePath(),
-									pSymbol->filePath()
-								);
-
-							if(commonLen > maxl)
-							{
-								pBestScope = pCandidateScope;
-								maxl = commonLen;
-							}
-						}
-						
-						if(!pBestScope)
-							pBestScope = pScopeList->first();
-					}
-					
-				} else {
-					pBestScope = pScopeList->first();
-				}
-
-				Q_ASSERT(pBestScope);
-				if(pSymbol->type() == C3Symbol::Namespace)
-				{
-					// do not duplicate namespaces
-					C3SymbolNamespace * pFound = pBestScope->findNamespace(pSymbol->identifier());
-					if(pFound)
-						pFound->addAdditionalDefinition(dynamic_cast<C3SymbolNamespace *>(pSymbol));
-					else
-						pBestScope->addSymbol(pSymbol);
-				} else {
-					pBestScope->addSymbol(pSymbol);
-
-					if(pSymbol->type() == C3Symbol::EnumerationMember)
-					{
-						// add it also to the containing scope!
-						// FIXME: This may fail if the enumeration member comes before the enumeration itself (?)
-						if(pBestScope->resolvedContainingScope())
-							pBestScope->resolvedContainingScope()->addSymbol(pSymbol);
-						else
-							qDebug("WARNING: Enumeration member %s has no containing scope",pSymbol->identifier().toUtf8().data());
-					}
-				}
-				
-			} else {
-				// Scope not found. Symbol will remain "floating" without a scope.
-
-				if(szScope != szLastNotFoundScope)
-				{
-					qDebug("WARNING: Scope %s not found",szScope.toUtf8().data());
-					szLastNotFoundScope = szScope;
-				}
-			}
-			
-			if(pSymbol->isScope())
-			{
-				QString szFullScope = szScope + szScopeSeparator + pSymbol->identifier();
-				//qDebug("Add %d level scope %s",iScopeLevel,szFullScope.toUtf8().data());
-				C3SymbolScopeList * pList = hNextLevelScopes.value(szFullScope,NULL);
-				if(!pList)
-				{
-					pList = new C3SymbolScopeList();
-					hNextLevelScopes.insert(szFullScope,pList);
-					pList->append(dynamic_cast<C3SymbolScope *>(pSymbol));
-				} else {
-					if(pSymbol->type() == C3Symbol::Namespace)
-					{
-						// do not duplicate namespaces
-						bool bFound = false;
-						Q_FOREACH(C3SymbolScope * pDaScope,*pList)
-						{
-							if(pDaScope->type() == C3Symbol::Namespace)
-							{
-								bFound = true;
-								break;
-							}
-						}
-						
-						if(!bFound)
-							pList->append(dynamic_cast<C3SymbolScope *>(pSymbol));
-					} else {
-						pList->append(dynamic_cast<C3SymbolScope *>(pSymbol));
-					}
-				}
-			}
-		}
-		
-		iScopeLevel++;
-
-	} while(!lRemainingSymbols.isEmpty());
-
-	qDeleteAll(hNextLevelScopes);
-	qDeleteAll(hScopes);
-}
-
-*/
 
 void C3SymbolStore::addFiles(QHash<QString,C3SymbolFile *> & hFiles)
 {
+#ifdef DEBUG_SYMBOL_STORE
+	C3_TRACE("Add %d files (internally got %d files)",hFiles.count(),m_hFiles.count());
+	
+	QElapsedTimer oTimer;
+	oTimer.start();
+#endif
+
+	// Strategy
+	//
+	// Above a certain theshold (FIXME: which one?) we destroy both the symbol
+	// tree AND the sorted symbol list. Below the treshold we destroy
+	// the symbol tree and update the sorted symbol list.
+	//
+	// FIXME: The threshould should probably be based on the number of symbols,
+	//        not the number of files.
+	//
+	
+	bool bDropEverything = (hFiles.count() > (m_hFiles.count() / 4));
+
 	QHash<QString,C3SymbolFile *>::Iterator it;
 	QHash<QString,C3SymbolFile *>::Iterator end = hFiles.end();
 
 	quint16 uLanguageFlags = 0;
 
-	for(it = hFiles.begin();it != end;it++)
+	// The global namespaces must be cleared before the files are deleted.
+	// So we first scan the files, remove them from the store and gather
+	// the list of languages. Then, at once, we clear/delete the global namespaces
+	// that were present in the files. And finally we delete the files.
+	QList<C3SymbolFile *> lToDelete;
+
+	if(bDropEverything)
 	{
-		C3SymbolFile * pFile = it.value();
-
-		uLanguageFlags |= pFile->languageFlags();
-
-		C3SymbolFile * pOld = m_hFiles.value(pFile->path(),NULL);
-		if(pOld)
+		for(it = hFiles.begin();it != end;it++)
 		{
-			m_hFiles.remove(pOld->path());
-			delete pOld;
+			C3SymbolFile * pFile = it.value();
+	
+			uLanguageFlags |= pFile->languageFlags();
+	
+			C3SymbolFile * pOld = m_hFiles.value(pFile->path(),NULL);
+			if(pOld)
+			{
+				uLanguageFlags |= pOld->languageFlags();
+#ifdef DEBUG_SYMBOL_STORE
+				if(m_hFiles.remove(pOld->path()) != 1)
+					qDebug("WARNING: Remove of file %s did not return 1",pOld->path().toUtf8().data());
+#endif
+				lToDelete.append(pOld);
+			}
+		
+			m_hFiles.insert(pFile->path(),pFile); // WILL REPLACE pOld (so do NOT call remove() above)
 		}
 	
-		m_hFiles.insert(pFile->path(),pFile);
+	} else {
+	
+		// We keep (and update) the sorted symbols.
+		// This is a bit harder.
+	
+		for(it = hFiles.begin();it != end;it++)
+		{
+			C3SymbolFile * pFile = it.value();
+	
+			uLanguageFlags |= pFile->languageFlags();
+	
+			C3SymbolFile * pOld = m_hFiles.value(pFile->path(),NULL);
+			if(pOld)
+			{
+				uLanguageFlags |= pOld->languageFlags();
+
+				Q_FOREACH(C3Symbol * pSym,pOld->symbols())
+				{
+					if(m_aSortedSymbols[pSym->language()])
+						m_aSortedSymbols[pSym->language()]->remove(pSym);
+				}
+#ifdef DEBUG_SYMBOL_STORE
+				if(m_hFiles.remove(pOld->path()) != 1)
+					qDebug("WARNING: Remove of file %s did not return 1",pOld->path().toUtf8().data());
+#endif
+				lToDelete.append(pOld);
+			}
+		
+			m_hFiles.insert(pFile->path(),pFile); // WILL REPLACE pOld (so do NOT call remove() above)
+
+			Q_FOREACH(C3Symbol * pSym,pFile->symbols())
+			{
+				if(m_aSortedSymbols[pSym->language()])
+					m_aSortedSymbols[pSym->language()]->add(pSym);
+			}
+		}
 	}
 
-	if(hFiles.count() > (m_hFiles.count() / 4))
-	{
-		// too many files: drop everything
-	} else {
-		// few files only, remove 
-	}
+#ifdef DEBUG_SYMBOL_STORE
+	C3_TRACE("DropEverything=%d, languageFlags=%d",bDropEverything,uLanguageFlags);
+#endif
 
 	for(quint16 i=0;i<C3Symbol::LanguageCount;i++)
 	{
 		if(!(uLanguageFlags & (1 << i)))
 			continue;
 
-		if(m_aSymbolsByLanguage[i])
+		if(bDropEverything && m_aSortedSymbols[i])
 		{
-			delete m_aSymbolsByLanguage[i];
-			m_aSymbolsByLanguage[i] = NULL;
+#ifdef DEBUG_SYMBOL_STORE
+			C3_TRACE("Dropping sorted symbols for language %d",i);
+#endif
+			delete m_aSortedSymbols[i];
+			m_aSortedSymbols[i] = NULL;
 		}
 		
 		if(m_aGlobalScopes[i])
 		{
+#ifdef DEBUG_SYMBOL_STORE
+			C3_TRACE("Dropping global scope for language %d",i);
+#endif
+			m_aGlobalScopes[i]->clear(); // must be cleared first, so the lists in the scopes will be emptied!
 			delete m_aGlobalScopes[i];
 			m_aGlobalScopes[i] = NULL;
 		}
 	}
-	
 
-	// remove it
-	
-	// FIXME: Here we could check if the file has few (maybe non-root) symbols.
-	// If it's the case then we could selectively remove them from their parents
-	// and gather their children. We could then purge the children that belong to
-	// the file being removed to obtain a list of orphans. Then we insert the
-	// new file, readd its symbols and finally reset the orphans.
-	// This could work as long as the structure doesn't change too much
-	// (that is it doesn't happen that an orphan actually becomes a parent
-	// scope of one of the newly inserted symbols...)
-	
-	// FIXME: We could also separate the "symbols-by-first-letter" and the
-	//        "symbol-tree-rooted-at-global-namespace" that are currently
-	//        in C3SymbolsByLanguage. "symbols-by-first-letter" could be
-	//        updated incrementally while the "symbol-tree" could be
-	//        updated all at once."
-	
-	// WARNING: EnumerationMembers are added to multiple scopes!
-	
-	// FIXME: C3SymbolMap is actually a QMultiMap, which is a red-black tree
-	//        and performs poorly when there are MANY symbols.
-	//        It might be worth to try again a sorted-QList + QHash based approach
-	//        to see if it's better.
+	qDeleteAll(lToDelete);
+
+#ifdef DEBUG_SYMBOL_STORE
+	C3_TRACE("Adding %d files took %lld msecs, now got %d files",hFiles.count(),oTimer.elapsed(),m_hFiles.count());
+#endif
 
 }
 
@@ -910,7 +710,7 @@ C3SymbolFile * C3SymbolStore::file(const QString &szName)
 	{
 		if(!pFile->containsLanguage((C3Symbol::Language)i))
 			continue;
-		if(!m_aSymbolsByLanguage[i])
+		if(!m_aGlobalScopes[i])
 			rebuildSymbolsByLanguage((C3Symbol::Language)i);
 	}
 	

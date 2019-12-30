@@ -53,6 +53,24 @@ public:
 
 private:
 	static C3SymbolManager * m_pInstance;
+
+	QString m_szArrow;
+	QString m_szSquareArrow;
+	QString m_szSquareDot;
+	QString m_szDot;
+	QString m_szParenthesisArrow;
+	QString m_szParenthesisDot;
+	QString m_szTwoColons;
+	QString m_szNew;
+	QString m_szConst;
+	QString m_szStatic;
+	QString m_szInline;
+	QString m_szDelete;
+	QString m_szThis;
+	QString m_szP;
+	QString m_szParenthesis;
+	QString m_szClosedParenthesis;
+
 	C3SymbolManagerPrivate * m_pC3SM;
 
 public:

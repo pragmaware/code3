@@ -27,7 +27,7 @@
 
 #define DEBUG_RUNNER 1
 
-//#define DEBUG_RUNNER_WITH_CALLGRIND 1
+#define DEBUG_RUNNER_WITH_CALLGRIND 1
 
 
 
@@ -116,55 +116,55 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 	
 	QStringList lArgs;
 	
-	lArgs.append(__ascii("-f"));
-	lArgs.append(__ascii("-"));
-	lArgs.append(__ascii("-R"));
-	lArgs.append(__ascii("-u"));
-	lArgs.append(__ascii("-G")); // guess language eagerly : will open the file and look at first line even if extensionless (needed for STL)
-	lArgs.append(__ascii("--languages=c,c++,c#,java,php,javascript,cuda,cpreprocessor"));
-	lArgs.append(__ascii("--excmd=pattern"));
-	lArgs.append(__ascii("--extras=-qf"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("Q_REQUIRED_RESULT"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("Q_INLINE_TEMPLATE"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("cc_foreach(arg,...)=for(arg;;)"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("daa_foreach(arg,...)=for(arg;;)"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("foreach(arg,...)=for(arg;;)"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("Q_FOREACH(arg,...)=for(arg;;)"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("CC_INLINE=inline"));
-	lArgs.append(__ascii("-D"));
-	lArgs.append(__ascii("Q_DECLARE_FLAGS(a,b)=typedef QFlags<b> a;"));
-	lArgs.append(__ascii("--format=2"));
-	lArgs.append(__ascii("--file-scope=yes"));
-	lArgs.append(__ascii("--c++-kinds=*"));
-	lArgs.append(__ascii("--c-kinds=*"));
-	lArgs.append(__ascii("--php-kinds=cdfinltv"));
-	lArgs.append(__ascii("--javascript-kinds=fcmpv"));
-	lArgs.append(__ascii("--java-kinds=cefgilmp"));
-	lArgs.append(__ascii("--kinds-CPreProcessor=*"));
-	lArgs.append(__ascii("--fields=NFPaeiKlmnrSstzZ"));
+	lArgs.append(__literal("-f"));
+	lArgs.append(__literal("-"));
+	lArgs.append(__literal("-R"));
+	lArgs.append(__literal("-u"));
+	lArgs.append(__literal("-G")); // guess language eagerly : will open the file and look at first line even if extensionless (needed for STL)
+	lArgs.append(__literal("--languages=c,c++,c#,java,php,javascript,cuda,cpreprocessor"));
+	lArgs.append(__literal("--excmd=pattern"));
+	lArgs.append(__literal("--extras=-qf"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("Q_REQUIRED_RESULT"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("Q_INLINE_TEMPLATE"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("cc_foreach(arg,...)=for(arg;;)"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("daa_foreach(arg,...)=for(arg;;)"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("foreach(arg,...)=for(arg;;)"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("Q_FOREACH(arg,...)=for(arg;;)"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("CC_INLINE=inline"));
+	lArgs.append(__literal("-D"));
+	lArgs.append(__literal("Q_DECLARE_FLAGS(a,b)=typedef QFlags<b> a;"));
+	lArgs.append(__literal("--format=2"));
+	lArgs.append(__literal("--file-scope=yes"));
+	lArgs.append(__literal("--c++-kinds=*"));
+	lArgs.append(__literal("--c-kinds=*"));
+	lArgs.append(__literal("--php-kinds=cdfinltv"));
+	lArgs.append(__literal("--javascript-kinds=fcmpv"));
+	lArgs.append(__literal("--java-kinds=cefgilmp"));
+	lArgs.append(__literal("--kinds-CPreProcessor=*"));
+	lArgs.append(__literal("--fields=NFPaeiKlmnrSstzZ"));
 	// FIXME: We aren't using the properties now!
-	lArgs.append(__ascii("--fields-c=+{properties}"));
-	lArgs.append(__ascii("--fields-c++=+{properties}+{template}+{captures}"));
+	lArgs.append(__literal("--fields-c=+{properties}"));
+	lArgs.append(__literal("--fields-c++=+{properties}+{template}+{captures}"));
 
 	if(pJob->uFlags & JobLimitRecursionDepthTo1)
-		lArgs.append(__ascii("--maxdepth=1"));
+		lArgs.append(__literal("--maxdepth=1"));
 
 	QString szSlash("/");
 	
 	foreach(QString szPattern,pJob->lExclusionPatterns)
 	{
 		szPattern.replace(szSlash,QString());
-		lArgs.append(__ascii("--exclude=%1").arg(szPattern));
+		lArgs.append(__literal("--exclude=%1").arg(szPattern));
 	}
 
-	lArgs.append(__ascii("--exclude=tags.txt")); // FIXME: would also like to exclude "tags" file but not "tags" directories.
+	lArgs.append(__literal("--exclude=tags.txt")); // FIXME: would also like to exclude "tags" file but not "tags" directories.
 	lArgs.append(szPath);
  
 	_p->oInputBuffer.clear();
@@ -172,11 +172,11 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 #ifdef DEBUG_RUNNER
 	QString szCmd;
 	szCmd = _p->szCTagsExecutablePath;
-	szCmd += __ascii(" ");
+	szCmd += __literal(" ");
 	foreach(QString s,lArgs)
 	{
 		szCmd += s;
-		szCmd += __ascii(" ");
+		szCmd += __literal(" ");
 	}
 
 	qDebug("[C3SymbolCTagsRunner] Starting job %s",szCmd.toUtf8().data());
@@ -399,12 +399,12 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 					return false;
 				}
 			}
-			_p->oInputBuffer.remove(0,iLen + 1);
-
-			d = _p->oInputBuffer.data();
-			p = d;
-			e = d + _p->oInputBuffer.size();
+			
+			p++; // skip newline
+			d = p; // new start
 		}
+
+		_p->oInputBuffer.remove(0,d - _p->oInputBuffer.data());
 	}
 
 	// last line?
