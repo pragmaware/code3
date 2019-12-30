@@ -37,11 +37,15 @@ private:
 
 public:
 
+	// If the replacement is empty, no replacement is made
+	void setReplaceInPath(const QString &sPath,const QString &sReplacement);
+
 	// This is meant to run on a slave thread.
 	// if(*pbAbortSignal) then the process should be aborted
 	bool parseFile(const QString &szPath,QString &szError,bool * pbAbortSignal);
 	
-	bool parseLine(const QString &szLine,QString &szError);
+	bool parseLine(const char * pLine,int len,QString &szError);
+	//bool parseLineOld(const QString &szLine,QString &szError);
 
 	QHash<QString,C3SymbolFile *> * takeSymbolFiles();
 

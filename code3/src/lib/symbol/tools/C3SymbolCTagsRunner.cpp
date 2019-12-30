@@ -243,7 +243,7 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 	// It turns out that we may have data to read with state still "starting".
 	// This is probably a Qt bug.
 	
-	bool bDoReplace = !pJob->szReplacePath.isEmpty();
+	_p->oParser.setReplaceInPath(pJob->szPath,pJob->szReplacePath);
 
 	while(
 			(proc.state() == QProcess::Running) ||
@@ -372,13 +372,8 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 			int iLen = p - d;
 			if(iLen > 0)
 			{
-				QString szLine = QString::fromUtf8(d,iLen);
-				
-				if(bDoReplace)
-					szLine.replace(pJob->szPath,pJob->szReplacePath);
-				
 				//qDebug("TAG LINE: %s",szLine.toUtf8().data());
-				if(!_p->oParser.parseLine(szLine,szError))
+				if(!_p->oParser.parseLine(d,iLen,szError))
 				{
 #ifdef DEBUG_RUNNER
 					qDebug("[C3SymbolCTagsRunner] Failed to parse tag line: %s",szError.toUtf8().data());
@@ -410,13 +405,8 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 	// last line?
 	if(_p->oInputBuffer.size() > 0)
 	{
-		QString szLine = QString::fromUtf8(_p->oInputBuffer);
-
-		if(bDoReplace)
-			szLine.replace(pJob->szPath,pJob->szReplacePath);
-
 		//qDebug("LAST TAG LINE: %s",szLine.toUtf8().data());
-		if(!_p->oParser.parseLine(szLine,szError))
+		if(!_p->oParser.parseLine(_p->oInputBuffer.data(),_p->oInputBuffer.length(),szError))
 		{
 #ifdef DEBUG_RUNNER
 			qDebug("[C3SymbolCTagsRunner] Failed to parse last line: %s",szError.toUtf8().data());

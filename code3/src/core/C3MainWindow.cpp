@@ -600,18 +600,27 @@ void C3MainWindow::updateFilePathLabel(C3Editor * pEditor)
 
 void C3MainWindow::updateCaption()
 {
-	QString szWorkspace = _p->pWorkspace->isDefault() ? __utf8("no workspace") : _p->pWorkspace->name();
+	QString szWorkspace;
+	
+	if(_p->pWorkspace->isDefault())
+	{
+		szWorkspace = __utf8("no workspace");
+	} else {
+		szWorkspace = _p->pWorkspace->projectName();
+		if(szWorkspace.isEmpty())
+			szWorkspace = _p->pWorkspace->name();
+	}
 
 	QString szCaption;
 	
 	if(_p->pCurrentEditor)
 	{
 		if(_p->pCurrentEditor->modified())
-			szCaption = __utf8("C3 [%1] * %2").arg(szWorkspace).arg(_p->pCurrentEditor->title());
+			szCaption = __utf8("Code-3 [%1] * %2").arg(szWorkspace).arg(_p->pCurrentEditor->title());
 		else
-			szCaption = __utf8("C3 [%1] %2").arg(szWorkspace).arg(_p->pCurrentEditor->title());
+			szCaption = __utf8("Code-3 [%1] %2").arg(szWorkspace).arg(_p->pCurrentEditor->title());
 	} else { 
-		szCaption = __utf8("C3 [%1]").arg(szWorkspace);
+		szCaption = __utf8("Code-3 [%1]").arg(szWorkspace);
 	}
 	
 	setWindowTitle(szCaption);

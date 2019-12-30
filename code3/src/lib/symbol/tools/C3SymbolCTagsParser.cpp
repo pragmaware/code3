@@ -50,6 +50,9 @@ public:
 	QHash<QString,quint16> hAccessMap;
 
 	QHash<QString,int> hDiscardInTypes; // tokens to discard in type names
+	
+	QString sPathToReplace;
+	QString sPathReplacement;
 };
 
 #define _p m_pC3SCTP
@@ -144,6 +147,16 @@ C3SymbolCTagsParser::~C3SymbolCTagsParser()
 		delete _p->pFiles;
 	}
 	delete _p;
+}
+
+void C3SymbolCTagsParser::setReplaceInPath(const QString &sPath,const QString &sReplacement)
+{
+	_p->sPathToReplace = sPath;
+	_p->sPathReplacement = sReplacement;
+	
+#ifdef DEBUG_CTAGS_PARSER
+	qDebug("PATH REPLACEMENT %s -> %s",sPath.toUtf8().data(),sReplacement.toUtf8().data());
+#endif
 }
 
 QHash<QString,C3SymbolFile *> * C3SymbolCTagsParser::takeSymbolFiles()
@@ -261,7 +274,8 @@ QString C3SymbolCTagsParser::filterTypeFromSearchPattern(const QString &szType)
 	return szFiltered;
 }
 
-bool C3SymbolCTagsParser::parseLine(const QString &szLine,QString &szError)
+/*
+bool C3SymbolCTagsParser::parseLineOld(const QString &szLine,QString &szError)
 {
 #ifdef DEBUG_CTAGS_PARSER
 	qDebug("TAGLINE: %s",szLine.toUtf8().data());
@@ -293,6 +307,10 @@ bool C3SymbolCTagsParser::parseLine(const QString &szLine,QString &szError)
 		return true; // something unreadable
 
 	QString szFileName = szLeft.left(idx);
+	
+	if(!_p->sPathReplacement.isEmpty())
+		szFileName.replace(_p->sPathToReplace,_p->sPathReplacement);
+	
 	QString szPattern = szLeft.mid(idx+1);
 
 	QString szKind;
@@ -322,6 +340,7 @@ bool C3SymbolCTagsParser::parseLine(const QString &szLine,QString &szError)
 
 	static QChar cOpenParenthesis('(');
 	static QChar cClosedParenthesis(')');
+
 	static QString szClosedParenthesisConst(") const");
 
 	QStringList sl = szRest.split(_p->cTab);
@@ -398,7 +417,6 @@ bool C3SymbolCTagsParser::parseLine(const QString &szLine,QString &szError)
 			szProperties = szTagValue;
 			//qDebug("Properties: %s",szProperties.toUtf8().data());
 		}
-
 	}
 
 	if(szLanguage.isEmpty())
@@ -474,15 +492,469 @@ bool C3SymbolCTagsParser::parseLine(const QString &szLine,QString &szError)
 		qDebug("Type is %s",szType.toUtf8().data());
 #endif
 
-	/*
-	if(uType & (C3Symbol::GlobalVariable | C3Symbol::MemberVariable | C3Symbol::LocalVariable))
+	Q_ASSERT(_p->pFiles);
+	C3SymbolFile * pFile = _p->pFiles->value(szFileName,NULL);
+	if(!pFile)
 	{
-		static QString szEmit("emit");
-		
-		if(szType == szEmit)
-			return true; // ignore (very likely a Qt's "emit signal()" interpreted as variable with type emit).
+		pFile = new C3SymbolFile(szFileName);
+		_p->pFiles->insert(szFileName,pFile);
 	}
-	*/
+
+	switch(uType)
+	{
+		case C3Symbol::Class:
+		{
+			C3SymbolClass * pTag = new C3SymbolClass(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					szIdentifier,
+					szInherits,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber
+				);
+		
+			pFile->addSymbol(pTag);
+		}
+		break;
+		case C3Symbol::Namespace:
+		{
+			C3SymbolNamespace * pTag = new C3SymbolNamespace(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber
+				);
+		
+			pFile->addSymbol(pTag);
+		}
+		break;
+		case C3Symbol::Union:
+		case C3Symbol::Enumeration:
+		{
+			C3SymbolScope * pTag = new C3SymbolScope(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					(C3Symbol::Type)uType,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber
+				);
+		
+			pFile->addSymbol(pTag);
+		}
+		break;
+		case C3Symbol::FunctionDefinition:
+		{
+			quint8 uFunctionFlags = 0;
+		
+			if(szProperties.contains(szConst))
+				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsConst;
+		
+			C3SymbolFunctionDefinition * pTag = new C3SymbolFunctionDefinition(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber,
+					szSignature,
+					szType,
+					uFunctionFlags
+				);
+
+			pFile->addSymbol(pTag);
+		}
+		break;
+		case C3Symbol::FunctionPrototype:
+		{
+			quint8 uFunctionFlags = 0;
+		
+			if(szProperties.contains(szConst))
+				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsConst;
+
+			C3SymbolFunctionPrototype * pTag = new C3SymbolFunctionPrototype(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber,
+					szSignature,
+					szType,
+					uFunctionFlags
+				);
+
+			pFile->addSymbol(pTag);
+		}
+		break;
+		case C3Symbol::GlobalVariable:
+		case C3Symbol::MemberVariable:
+		case C3Symbol::LocalVariable:
+		{
+			C3SymbolVariable * pTag = new C3SymbolVariable(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					(C3Symbol::Type)uType,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber,
+					szType
+				);
+
+			pFile->addSymbol(pTag);
+		}
+		break;
+		case C3Symbol::TypeDefinition:
+		{
+			C3SymbolTypeDefinition * pTag = new C3SymbolTypeDefinition(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					(C3Symbol::Type)uType,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber,
+					szType
+				);
+
+			pFile->addSymbol(pTag);
+		}
+		break;
+		case C3Symbol::ImportedScope:
+		{
+			C3SymbolImportedScope * pTag = new C3SymbolImportedScope(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					(C3Symbol::Type)uType,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber
+				);
+
+			pFile->addImportedScope(pTag);
+		}
+		break;
+		default:
+		{
+			C3Symbol * pTag = new C3Symbol(
+					pFile,
+					(C3Symbol::Language)uLanguage,
+					(C3Symbol::Type)uType,
+					szIdentifier,
+					szScope,
+					eAccessLevel,
+					uLineNumber,
+					uEndLineNumber
+				);
+		
+			pFile->addSymbol(pTag);
+		}
+		break;
+	}
+
+#ifdef DEBUG_CTAGS_PARSER
+	qDebug("TAG(%s) %s %s:%d",szLanguage.toUtf8().data(),szIdentifier.toUtf8().data(),szFileName.toUtf8().data(),uLineNumber);
+#endif
+	return true;
+}*/
+
+
+bool C3SymbolCTagsParser::parseLine(const char * pLine,int len,QString &szError)
+{
+#ifdef DEBUG_CTAGS_PARSER
+	qDebug("TAGLINE: %s",pLine);
+#endif
+
+	Q_ASSERT(pLine);
+
+	const char * p = pLine;
+	const char * e = pLine + len;
+
+	while((p < e) && ((*p == ' ') || (*p == '\r') || (*p == '\n')))
+		p++;
+
+	if(p >= e)
+		return true;
+	
+	if(*p == '!')
+		return true; // ctags meta-tag
+
+	// tag_name<TAB>file_name<TAB>ex_cmd;"<TAB>extension_field<TAB>extension_field<TAB>...
+
+	// Identifier
+	const char * b = p;
+	while((p < e) && (*p != '\t'))
+		p++;
+	if((p >= e) || (p == b))
+		return true; // something unreadable
+
+	QString szIdentifier = QString::fromUtf8(b,p-b);
+
+	p++;
+	if(p >= e)
+		return true; // something unreadable
+
+	// File name
+	b = p;
+	while((p < e) && (*p != '\t'))
+		p++;
+	if((p >= e) || (p == b))
+		return true; // something unreadable
+
+	QString szFileName = QString::fromUtf8(b,p-b);
+
+	if(!_p->sPathReplacement.isEmpty())
+		szFileName.replace(_p->sPathToReplace,_p->sPathReplacement);
+
+	p++;
+	if(p >= e)
+		return true; // something unreadable
+
+	// End of ex_cmd
+	b = p;
+	while(p < e)
+	{
+		while((p < e) && (*p != ';'))
+			p++;
+		if(p >= (e-1))
+			return true;
+		if(*(p + 1) == '\"')
+			break;
+		p++;
+	}
+	if((p >= e) || (p == b))
+		return true; // something unreadable
+
+	QString szPattern = QString::fromUtf8(b,p-b);
+
+	p += 2;
+
+	// kill trailing \r\n, if any
+
+	while(p < e)
+	{
+		char x = *(e-1);
+		if((x != '\r') && (x != '\n') && (x != ' '))
+			break;
+		e--;
+	}
+
+	if(p >= e)
+		return true; // something unreadable
+
+	qint16 uType = C3Symbol::InvalidType;
+	quint16 uLanguage = C3Symbol::InvalidLanguage;
+
+	QString szInherits;
+	QString szType;
+	QString szScope;
+	QString szLineNumber;
+	QString szEndLineNumber;
+	QString szSignature;
+	QString szProperties;
+
+	C3Symbol::AccessLevel eAccessLevel = C3Symbol::AccessLevelUnknown;
+
+	static QChar cOpenParenthesis('(');
+	static QChar cClosedParenthesis(')');
+
+	static QString szClosedParenthesisConst(") const");
+
+	while(p < e)
+	{
+		b = p;
+
+		while((p < e) && (*p != ':') && (*p != '\t'))
+			p++;
+		if(p >= e)
+			break; // no colon
+		if(*p == '\t')
+		{
+			p++;
+			continue; // no colon
+		}
+		
+		int iTagTypeLen = p - b;
+
+		p++;
+		const char * pAfterColon = p;
+
+		while((p < e) && (*p != '\t'))
+			p++;
+
+		if(iTagTypeLen > 0)
+		{
+			// got tag name and tag value
+			switch(iTagTypeLen)
+			{
+				case 3:
+					if(memcmp(b,"end",3) == 0)
+						szEndLineNumber = QString::fromUtf8(pAfterColon,p - pAfterColon);
+				break;
+				case 4:
+					if(memcmp(b,"kind",4) == 0)
+						uType = _p->hKindMap.value(QString::fromUtf8(pAfterColon,p - pAfterColon),C3Symbol::InvalidType);
+					else if(memcmp(b,"line",4) == 0)
+						szLineNumber = QString::fromUtf8(pAfterColon,p - pAfterColon);
+				break;
+				case 5:
+					if(memcmp(b,"scope",5) == 0)
+					{
+						// skip initial ::, if any
+						while((pAfterColon < p) && (*pAfterColon == ':'))
+							pAfterColon++;
+
+						// the scope also contains "class:" "namespace:" etc.. prefix.
+					
+						const char * x = pAfterColon;
+						while((x < p) && (*x != ':'))
+							x++;
+						if(x < p)
+							x++;
+						if(x >= p)
+							szScope = QString::fromUtf8(pAfterColon,p-pAfterColon);
+						else
+							szScope = QString::fromUtf8(x,p-x);
+					}
+				break;
+				case 6:
+					if(memcmp(b,"access",6) == 0)
+						eAccessLevel = (C3Symbol::AccessLevel)_p->hAccessMap.value(QString::fromUtf8(pAfterColon,p - pAfterColon),C3Symbol::AccessLevelUnknown);
+				break;
+				case 7:
+					if(memcmp(b,"typeref",7) == 0)
+					{
+						const char * x = pAfterColon;
+						while((x < p) && (*x != ':'))
+							x++;
+						if(x < p)
+							x++;
+						if(x >= p)
+							szType = QString::fromUtf8(pAfterColon,p-pAfterColon);
+						else
+							szType = QString::fromUtf8(x,p-x);			
+					}
+				break;
+				case 8:
+					if(memcmp(b,"language",8) == 0)
+						uLanguage = _p->hLanguageMap.value(QString::fromUtf8(pAfterColon,p - pAfterColon),C3Symbol::InvalidLanguage);
+					else if(memcmp(b,"inherits",8) == 0)
+						szInherits = QString::fromUtf8(pAfterColon,p - pAfterColon);
+				break;
+				case 9:
+					if(memcmp(b,"signature",9) == 0)
+					{
+						// FIXME: Optimize this!
+	
+						int iSigLen = p - pAfterColon;
+					
+						if((iSigLen >= 2) && (*pAfterColon == '('))
+						{
+							// (...) ?
+							if(*(p-1) == ')')
+								szSignature = QString::fromUtf8(pAfterColon+1,p - pAfterColon - 2);
+							// (...) const ?
+							else if((iSigLen >= 8) && (memcmp(p-7,") const",7) == 0))
+								szSignature = QString::fromUtf8(pAfterColon+1,p - pAfterColon - 8);
+							else
+								szSignature = QString::fromUtf8(pAfterColon,p - pAfterColon);
+						} else {
+							szSignature = QString::fromUtf8(pAfterColon,p - pAfterColon);
+						}
+					}
+				break;
+				case 10:
+					if(memcmp(b,"properties",10) == 0)
+						szProperties = QString::fromUtf8(pAfterColon,p - pAfterColon);
+				break;
+			}
+		}
+
+		if(p >= e)
+			break;
+		p++;
+	}
+
+	if(uType >= C3Symbol::InvalidType)
+		return true; // ignore
+
+	if(uLanguage >= C3Symbol::InvalidLanguage)
+		return true; // ignore
+
+	if(szLineNumber.isEmpty())
+		return true;
+
+	static QString szConst("const");
+
+	bool ok;
+	
+	unsigned int uLineNumber = szLineNumber.toUInt(&ok);
+	if(!ok)
+		return true;
+
+	unsigned int uEndLineNumber;
+	if(szEndLineNumber.isEmpty())
+	{
+		uEndLineNumber = uLineNumber;
+	} else {
+		uEndLineNumber = szEndLineNumber.toUInt(&ok);
+		if(!ok)
+			uEndLineNumber = uLineNumber;
+	}
+
+	// ctags returns 1-based lines!
+	if(uLineNumber > 0)
+		uLineNumber--;
+	if(uEndLineNumber > 0)
+		uEndLineNumber--;
+
+	// C/C++:
+	// kind: enum -> enum declaration
+	// kind: enumerator -> enum entry (enum stuff { ..., X, ... })
+	// kind: function -> function implementation (may have class:Y attribute)
+	// kind: prototype -> function prototype (may have class:Y attribute)
+	// kind: class -> class declaration (class X)
+	// kind: typedef -> typedef someting X
+	// kind: member -> member variable (has class:Y attribute too)
+	// kind: using -> using namespace X
+
+	//qDebug("Language %s, kind %s, line num %s",szLanguage.toUtf8().data(),szKind.toUtf8().data(),szLineNumber.toUtf8().data());
+
+	if(szType.isEmpty() && ((uLanguage == C3Symbol::Cpp) || (uLanguage == C3Symbol::Java) || (uLanguage == C3Symbol::CSharp)))
+	{
+		if(uType & (C3Symbol::FunctionDefinition | C3Symbol::FunctionPrototype | C3Symbol::GlobalVariable | C3Symbol::MemberVariable | C3Symbol::LocalVariable))
+		{
+			// look up the type in the pattern
+			int idx = szPattern.indexOf(szIdentifier);
+			if(idx > 0)
+			{
+				// FIXME: Do this better. Do this faster.
+				if(szPattern.startsWith("/^"))
+					szType = filterTypeFromSearchPattern(szPattern.mid(2,idx-2));
+				else
+					szType = filterTypeFromSearchPattern(szPattern.left(idx));
+			}
+		}
+	}
+
+#ifdef DEBUG_CTAGS_PARSER
+	if(!szType.isEmpty())
+		qDebug("Type is %s",szType.toUtf8().data());
+#endif
 
 	Q_ASSERT(_p->pFiles);
 	C3SymbolFile * pFile = _p->pFiles->value(szFileName,NULL);
@@ -680,10 +1152,10 @@ bool C3SymbolCTagsParser::parseFile(const QString &szPath,QString &szError,bool 
 			szError = "Aborted";
 			return false;
 		}
-	
-		QString szLine = QString::fromUtf8(f.readLine(4096)).trimmed();
-	
-		if(!parseLine(szLine,szError))
+
+		QByteArray a = f.readLine(4096);
+
+		if(!parseLine(a.data(),a.length(),szError))
 			return false;
 	}
 
