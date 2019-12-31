@@ -19,6 +19,8 @@
 
 #include "C3Workspace.h"
 #include "C3JsonUtils.h"
+#include "C3TextEditorFactory.h"
+#include <C3TextEditorModeCPPSharedData.h>
 
 C3Link::C3Link(const QJsonObject &ob)
 	: QHash<QString,QVariant>()
@@ -155,13 +157,7 @@ static QString reformatSignature(const QString &s,const QString &sHighlight)
 			case SignaturePart::Identifier:
 				if(sp->sText == sHighlight)
 					sRet += __literal("<span style='color: #ffffff'>%1</span>").arg(sp->sText);
-				else if(
-						(sp->sText == __literal("const")) ||
-						(sp->sText == __literal("virtual")) ||
-						(sp->sText == __literal("static")) ||
-						(sp->sText == __literal("void")) ||
-						(sp->sText == __literal("int"))
-					)
+				else if(C3TextEditorFactory::instance()->modeCPPSharedData()->isCPPKeyword(sp->sText))
 					sRet += __literal("<span style='color: #898940'>%1</span>").arg(sp->sText);
 				else
 					sRet += __literal("<span style='color: #ffff40'>%1</span>").arg(sp->sText);

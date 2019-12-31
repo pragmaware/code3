@@ -901,6 +901,8 @@ bool C3SymbolCTagsParser::parseLine(const char * pLine,int len,QString &szError)
 	static QString szConst("const");
 	static QString szVirtual("virtual");
 	static QString szStatic("static");
+	static QString szInline("inline");
+	static QString szPure("pure");
 
 	bool ok;
 	
@@ -1020,13 +1022,20 @@ bool C3SymbolCTagsParser::parseLine(const char * pLine,int len,QString &szError)
 		{
 			quint8 uFunctionFlags = 0;
 		
-			if(szProperties.contains(szConst))
-				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsConst;
-			if(szProperties.contains(szStatic))
-				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsStatic;
-			if(szProperties.contains(szVirtual))
-				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsVirtual;
-		
+			if(!szProperties.isEmpty())
+			{
+				if(szProperties.contains(szConst))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsConst;
+				if(szProperties.contains(szStatic))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsStatic;
+				if(szProperties.contains(szVirtual))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsVirtual;
+				if(szProperties.contains(szInline))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsInline;
+				if(szProperties.contains(szPure))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsPure;
+			}
+
 			C3SymbolFunctionDefinition * pTag = new C3SymbolFunctionDefinition(
 					pFile,
 					(C3Symbol::Language)uLanguage,
@@ -1047,8 +1056,19 @@ bool C3SymbolCTagsParser::parseLine(const char * pLine,int len,QString &szError)
 		{
 			quint8 uFunctionFlags = 0;
 		
-			if(szProperties.contains(szConst))
-				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsConst;
+			if(!szProperties.isEmpty())
+			{
+				if(szProperties.contains(szConst))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsConst;
+				if(szProperties.contains(szStatic))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsStatic;
+				if(szProperties.contains(szVirtual))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsVirtual;
+				if(szProperties.contains(szInline))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsInline;
+				if(szProperties.contains(szPure))
+					uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsPure;
+			}
 
 			C3SymbolFunctionPrototype * pTag = new C3SymbolFunctionPrototype(
 					pFile,

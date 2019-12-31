@@ -41,6 +41,8 @@ private:
 	C3TextEditorFactory * m_pFactory;
 	C3TextEditorOptions * m_pOptions;
 
+	QHash<QString,int> m_hLanguageKeywords;
+
 	QHash<QString,QColor *> m_hIdentifierColorHash;
 	QHash<QString,QColor *> m_hIdentifierPrefixColorHash;
 	QHash<QString,QColor *> m_hIdentifierPrefixWithUppercaseColorHash;
@@ -48,6 +50,11 @@ private:
 	QHash<QString,QColor *> m_hPreprocessorIdentifierColorHash;
 
 public:
+
+	bool isCPPKeyword(const QString &sText) const
+	{
+		return m_hLanguageKeywords.value(sText,0) != 0;
+	}
 
 	const QHash<QString,QColor *> & preprocessorIdentifierColorHash() const
 	{

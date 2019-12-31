@@ -28,7 +28,9 @@ public:
 	{
 		FunctionIsConst = 1,
 		FunctionIsVirtual = 2,
-		FunctionIsStatic = 4
+		FunctionIsStatic = 4,
+		FunctionIsInline = 8,
+		FunctionIsPure = 16
 	};
 private:
 	QString m_szSignature;

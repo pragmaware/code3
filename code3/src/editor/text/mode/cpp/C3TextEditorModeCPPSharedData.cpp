@@ -53,7 +53,10 @@ void C3TextEditorModeCPPSharedData::rebuildColorHashes()
 #define PREPROCESSOR_IDENTIFIER(_szIdentifier) \
 	m_hPreprocessorIdentifierColorHash.insert(__utf8(_szIdentifier),&(m_pOptions->oPreprocessorTextColor))
 
-#define KEYWORD(_szKeyword) IDENTIFIER(_szKeyword,oKeywordTextColor)
+#define KEYWORD(_szKeyword) \
+		m_hLanguageKeywords.insert(_szKeyword,1); \
+		IDENTIFIER(_szKeyword,oKeywordTextColor)
+
 #define BUILTIN_OBJECT(_szKeyword) IDENTIFIER(_szKeyword,oBuiltinObjectTextColor)
 #define BUILTIN_TYPE(_szKeyword) IDENTIFIER(_szKeyword,oBuiltinTypeTextColor)
 

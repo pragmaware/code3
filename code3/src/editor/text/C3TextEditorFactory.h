@@ -69,11 +69,18 @@ public:
 
 private:
 
+	static C3TextEditorFactory * m_pInstance;
+
 	C3TextEditorFactoryPrivate * m_pC3TEF;
 
 public:
 
 	C3TextEditorOptions * options();
+
+	static inline C3TextEditorFactory * instance()
+	{
+		return m_pInstance;
+	}
 
 	virtual void addWidgetsToSettingsDialog(C3SettingsDialog * pDialog);
 

@@ -1,4 +1,10 @@
-﻿- Scripting (javascript?) support.
+﻿- Use more singletons. There is only one C3MainWindow. There is only one C3TextEditorFactor.
+
+- Decide if the C3 prefix is really necessary/wanted.
+
+- Scripting (javascript?) support.
+
+- Show symbol worker states in status bar (ctags running, processing symbols and so on)
 
 - Symbol tree generation speedup ideas:
 	- Split symbol list by first letter and symbol tree proper

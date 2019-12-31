@@ -48,6 +48,8 @@
 #include <QHash>
 #include <QMenu>
 
+C3TextEditorFactory * C3TextEditorFactory::m_pInstance = NULL;
+
 class C3TextEditorFactoryPrivate
 {
 public:
@@ -70,6 +72,10 @@ public:
 C3TextEditorFactory::C3TextEditorFactory()
 	: C3EditorFactory(__ascii("text"),__tr("Text Editor"))
 {
+	Q_ASSERT(!m_pInstance);
+	
+	m_pInstance = this;
+
 	_p = new C3TextEditorFactoryPrivate();
 	_p->pOptions = NULL;
 	_p->pContextMenu = NULL;
@@ -103,6 +109,8 @@ C3TextEditorFactory::~C3TextEditorFactory()
 	if(_p->pModeASMSharedData)
 		delete _p->pModeASMSharedData;
 	delete _p;
+	
+	m_pInstance = NULL;
 }
 
 C3TextEditorModeVHDLSharedData * C3TextEditorFactory::modeVHDLSharedData()

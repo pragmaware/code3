@@ -51,6 +51,7 @@
 #include <QIcon>
 #include <QPixmap>
 #include <QComboBox>
+#include <QWindow>
 
 C3MainWindow * C3MainWindow::m_pInstance = NULL;
 
@@ -190,6 +191,8 @@ C3MainWindow::C3MainWindow()
 	_p->pGeneralActions->currentEditorChanged(NULL);
 
 	updateCaption();
+	
+	windowHandle()->setIcon(C3PixmapCache::instance()->pixmap(__literal("icon/icon64.png")));
 }
 
 C3MainWindow::~C3MainWindow()
@@ -614,11 +617,11 @@ void C3MainWindow::updateCaption()
 	if(_p->pCurrentEditor)
 	{
 		if(_p->pCurrentEditor->modified())
-			szCaption = __utf8("Code-3 [%1] * %2").arg(szWorkspace).arg(_p->pCurrentEditor->title());
+			szCaption = __utf8("[%1] * %2 -- C3").arg(szWorkspace).arg(_p->pCurrentEditor->title());
 		else
-			szCaption = __utf8("Code-3 [%1] %2").arg(szWorkspace).arg(_p->pCurrentEditor->title());
+			szCaption = __utf8("[%1] %2 -- C3").arg(szWorkspace).arg(_p->pCurrentEditor->title());
 	} else { 
-		szCaption = __utf8("Code-3 [%1]").arg(szWorkspace);
+		szCaption = __utf8("[%1] -- C3").arg(szWorkspace);
 	}
 	
 	setWindowTitle(szCaption);
@@ -800,6 +803,7 @@ void C3MainWindow::slotWorkspacePropertiesChanged()
 	// Please note that the editors have not been notified of the change yet,
 	// but *WILL* be notified by the workspace itself.
 	emit workspacePropertiesChanged();
+	updateCaption();
 	rebuildExternalCommandToolBarControls();
 }
 

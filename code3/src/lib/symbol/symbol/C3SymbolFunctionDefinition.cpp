@@ -41,11 +41,17 @@ QString C3SymbolFunctionDefinition::description() const
 			if(functionFlags() & FunctionIsConst)
 				szSig += __ascii(" const");
 
+			if(functionFlags() & FunctionIsPure)
+				szSig += __ascii(" = 0");
+
 			if(functionFlags() & FunctionIsStatic)
 				szSig = __literal("static %1").arg(szSig);
 
 			if(functionFlags() & FunctionIsVirtual)
 				szSig = __literal("virtual %1").arg(szSig);
+
+			if(functionFlags() & FunctionIsInline)
+				szSig = __literal("inline %1").arg(szSig);
 
 			return szSig;
 		}

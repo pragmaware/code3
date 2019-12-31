@@ -25,6 +25,8 @@ INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/new/64px/*.png" "new/64px")
 
 INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/imageeditor/*.png" "imageeditor")
 
+INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/icon/*.png" "icon")
+
 INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/message/24px/*.png" "message/24px")
 INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/message/32px/*.png" "message/32px")
 INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/message/40px/*.png" "message/40px")
