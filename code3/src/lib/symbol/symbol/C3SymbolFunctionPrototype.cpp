@@ -40,7 +40,13 @@ QString C3SymbolFunctionPrototype::description() const
 			
 			if(functionFlags() & FunctionIsConst)
 				szSig += __ascii(" const");
-			
+
+			if(functionFlags() & FunctionIsStatic)
+				szSig = __literal("static %1").arg(szSig);
+
+			if(functionFlags() & FunctionIsVirtual)
+				szSig = __literal("virtual %1").arg(szSig);
+
 			return szSig;
 		}
 		break;

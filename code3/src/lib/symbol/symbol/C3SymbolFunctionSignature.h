@@ -26,7 +26,9 @@ class C3SymbolFunctionSignature
 public:
 	enum Flags
 	{
-		FunctionIsConst = 1
+		FunctionIsConst = 1,
+		FunctionIsVirtual = 2,
+		FunctionIsStatic = 4
 	};
 private:
 	QString m_szSignature;

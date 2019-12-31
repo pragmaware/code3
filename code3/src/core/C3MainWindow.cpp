@@ -283,8 +283,6 @@ void C3MainWindow::createMenuBar()
 	QObject::connect(_p->pFXMenu,SIGNAL(aboutToShow()),this,SLOT(slotFXMenuAboutToShow()));
 
 
-
-
 	_p->pSettingsMenu = _p->pMenuBar->addMenu(__tr("Settings"));
 
 	_p->pSettingsMenu->addAction(_p->pGeneralActions->configureC3Action());

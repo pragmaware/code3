@@ -757,7 +757,12 @@ void C3TextEditor::insertTextInternal(const QString &szText,bool bAddUndo,bool b
 
 		if(iLineCount == 1)
 		{
+			//qDebug("INSTEXT1[%s][%s]",pLine->szText.toUtf8().data(),szText.toUtf8().data());
+		
 			pLine->szText.insert(_p->oCursor.col,szText);
+
+			//qDebug("INSTEXT2[%s][%s]",pLine->szText.toUtf8().data(),szText.toUtf8().data());
+
 			_p->oCursor.col += szText.length();
 	
 		} else {

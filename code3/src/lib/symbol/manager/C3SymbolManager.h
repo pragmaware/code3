@@ -69,7 +69,7 @@ private:
 	QString m_szThis;
 	QString m_szP;
 	QString m_szParenthesis;
-	QString m_szClosedParenthesis;
+	QString m_szOpenAndClosedParenthesis;
 
 	C3SymbolManagerPrivate * m_pC3SM;
 

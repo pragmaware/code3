@@ -169,7 +169,15 @@ bool C3TextEditor::enterCompletion()
 	_p->oSelection = _p->oCompletionRange;
 	_p->oCursor = _p->oSelection.end;
 
+	//qDebug("INSERT RESULT[%s] SUFFIX[%s]",szResult.toUtf8().data(),szSuffix.toUtf8().data());
+
+	C3TextEditorLine * l = _p->lLines.at(_p->oCursor.row);
+	
+	//qDebug("LINEA [%s]",l->szText.toUtf8().data());
+
 	insertTextInternal(szResult + szSuffix);
+
+	//qDebug("LINEB [%s]",l->szText.toUtf8().data());
 
 #else
 

@@ -119,7 +119,7 @@ C3SymbolManager::C3SymbolManager(const QString &szCTagsToolPath)
 	m_szThis = __literal("this");
 	m_szP = __literal("_p");
 	m_szParenthesis = __literal("(");
-	m_szClosedParenthesis = __literal(")");
+	m_szOpenAndClosedParenthesis = __literal("()");
 
 }
 
@@ -1968,11 +1968,11 @@ void C3SymbolManager::storeLockedAddCompletions(
 		{
 			case C3Symbol::FunctionDefinition:
 				if(!dynamic_cast<C3SymbolFunctionDefinition *>(pSym)->returnType().isEmpty()) // filters out constructors
-					szTrailer = dynamic_cast<C3SymbolFunctionDefinition *>(pSym)->signature().isEmpty() ? m_szClosedParenthesis : m_szParenthesis;
+					szTrailer = dynamic_cast<C3SymbolFunctionDefinition *>(pSym)->signature().isEmpty() ? m_szOpenAndClosedParenthesis : m_szParenthesis;
 			break;
 			case C3Symbol::FunctionPrototype:
 				if(!dynamic_cast<C3SymbolFunctionPrototype *>(pSym)->returnType().isEmpty()) // filters out constructors
-					szTrailer = dynamic_cast<C3SymbolFunctionPrototype *>(pSym)->signature().isEmpty() ? m_szClosedParenthesis : m_szParenthesis;
+					szTrailer = dynamic_cast<C3SymbolFunctionPrototype *>(pSym)->signature().isEmpty() ? m_szOpenAndClosedParenthesis : m_szParenthesis;
 			break;
 			default:
 				// should not happen!

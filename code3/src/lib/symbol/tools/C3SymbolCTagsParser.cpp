@@ -899,6 +899,8 @@ bool C3SymbolCTagsParser::parseLine(const char * pLine,int len,QString &szError)
 		return true;
 
 	static QString szConst("const");
+	static QString szVirtual("virtual");
+	static QString szStatic("static");
 
 	bool ok;
 	
@@ -1020,6 +1022,10 @@ bool C3SymbolCTagsParser::parseLine(const char * pLine,int len,QString &szError)
 		
 			if(szProperties.contains(szConst))
 				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsConst;
+			if(szProperties.contains(szStatic))
+				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsStatic;
+			if(szProperties.contains(szVirtual))
+				uFunctionFlags |= C3SymbolFunctionSignature::FunctionIsVirtual;
 		
 			C3SymbolFunctionDefinition * pTag = new C3SymbolFunctionDefinition(
 					pFile,
