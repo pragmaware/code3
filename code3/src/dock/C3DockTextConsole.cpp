@@ -68,23 +68,23 @@ C3DockTextConsole::C3DockTextConsole(QWidget * pParent)
 
 	_p->pTitleBar = new C3DockWidgetTitleBar(this,__utf8(" %1").arg(__tr("Output")));
 
-	_p->pTerminateButton = _p->pTitleBar->addButton(__utf8("dock/12px/kill.png"),__tr("Terminate Running Process"));
+	_p->pTerminateButton = _p->pTitleBar->addButton(__utf8("dock/14px/kill.png"),__tr("Terminate Running Process"));
 	QObject::connect(_p->pTerminateButton,SIGNAL(clicked()),this,SLOT(slotTerminateButtonClicked()));
 
 	_p->pTitleBar->addSeparator();
 
-	_p->pClearButton = _p->pTitleBar->addButton(__utf8("dock/12px/clear.png"),__tr("Clear Current Console"));
+	_p->pClearButton = _p->pTitleBar->addButton(__utf8("dock/14px/clear.png"),__tr("Clear Current Console"));
 	QObject::connect(_p->pClearButton,SIGNAL(clicked()),this,SLOT(slotClearButtonClicked()));
 
-	QMenu * pMenu = _p->pTitleBar->addMenuButton(__utf8("dock/12px/gear.png"),__tr("View Options"));
+	QMenu * pMenu = _p->pTitleBar->addMenuButton(__utf8("dock/14px/gear.png"),__tr("View Options"));
 	QObject::connect(pMenu,SIGNAL(aboutToShow()),this,SLOT(slotViewOptionsMenuAboutToShow()));
 
-	_p->pGoToFirstErrorButton = _p->pTitleBar->addButton(__utf8("dock/12px/go-to-first-error.png"),__tr("Go to First Error"));
+	_p->pGoToFirstErrorButton = _p->pTitleBar->addButton(__utf8("dock/14px/go-to-first-error.png"),__tr("Go to First Error"));
 	QObject::connect(_p->pGoToFirstErrorButton,SIGNAL(clicked()),this,SLOT(slotGoToFirstErrorButtonClicked()));
 
 	_p->pTitleBar->addSeparator();
 
-	QToolButton * pButton = _p->pTitleBar->addButton(__utf8("dock/12px/x.png"),__tr("Close Console"));
+	QToolButton * pButton = _p->pTitleBar->addButton(__utf8("dock/14px/x.png"),__tr("Close Console"));
 	QObject::connect(pButton,SIGNAL(clicked()),this,SLOT(slotCloseButtonClicked()));
 
 	setTitleBarWidget(_p->pTitleBar);

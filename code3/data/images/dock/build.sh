@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ICONS=$(find src/ -name "*.*")
-FORMATS="12"
+FORMATS="14"
 
 for a in $ICONS; do
 	for b in $FORMATS; do

@@ -49,7 +49,8 @@ C3DockWidgetTitleBar::C3DockWidgetTitleBar(QWidget * pParent,const QString &szTi
 	
 	_p->pLayout->setColumnStretch(0,1000);
 	_p->pLayout->setMargin(0);
-	_p->pLayout->setContentsMargins(QMargins(5,2,1,1));
+	//_p->pLayout->setContentsMargins(QMargins(5,2,1,1));
+	_p->pLayout->setContentsMargins(QMargins(5,0,1,0));
 	_p->pLayout->setSpacing(0);
 	
 	_p->iLastColumn = 0;
@@ -93,7 +94,7 @@ QToolButton * C3DockWidgetTitleBar::addButton(const QString &szIcon,const QStrin
 	QToolButton * pButton = new QToolButton(this);
 	pButton->setStyleSheet("margin: 1; margin-top: 2; padding: 1;");
 	pButton->setIcon(C3PixmapCache::instance()->pixmap(szIcon));
-	pButton->setIconSize(QSize(12,12));
+	pButton->setIconSize(QSize(14,14));
 	if(!szToolTip.isEmpty())
 		pButton->setToolTip(szToolTip);
 	//_p->pMenuButton->setFixedSize(QSize(20,24));
@@ -117,7 +118,7 @@ QMenu * C3DockWidgetTitleBar::addMenuButton(const QString &szIcon,const QString 
 	pMenuButton->setIcon(C3PixmapCache::instance()->pixmap(szIcon));
 	pMenuButton->setPopupMode(QToolButton::InstantPopup);
 	pMenuButton->setMenu(pMenu);
-	pMenuButton->setIconSize(QSize(12,12));
+	pMenuButton->setIconSize(QSize(14,14));
 	if(!szToolTip.isEmpty())
 		pMenuButton->setToolTip(szToolTip);
 	//_p->pMenuButton->setFixedSize(QSize(20,24));

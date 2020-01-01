@@ -191,8 +191,8 @@ C3MainWindow::C3MainWindow()
 	_p->pGeneralActions->currentEditorChanged(NULL);
 
 	updateCaption();
-	
-	windowHandle()->setIcon(C3PixmapCache::instance()->pixmap(__literal("icon/icon64.png")));
+
+	//windowHandle()->setIcon(C3PixmapCache::instance()->pixmap(__literal("icon/icon64.png")));
 }
 
 C3MainWindow::~C3MainWindow()

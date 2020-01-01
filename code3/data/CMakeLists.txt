@@ -17,7 +17,7 @@ INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/general/20px/*.png" "general/
 
 INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/externalcommand/20px/*.png" "externalcommand/20px")
 
-INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/dock/12px/*.png" "dock/12px")
+INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/dock/14px/*.png" "dock/14px")
 
 INSTALL_IMAGES("${CMAKE_CURRENT_SOURCE_DIR}/images/completion/16px/*.png" "completion/16px")
 
