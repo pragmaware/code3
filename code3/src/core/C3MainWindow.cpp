@@ -102,6 +102,7 @@ public:
 	
 	QList<QAction *> lExternalCommandControls;
 	
+	bool bFirstShow;
 	bool bShuttingDown;
 };
 
@@ -113,6 +114,8 @@ C3MainWindow::C3MainWindow()
 	m_pInstance = this;
 
 	_p = new C3MainWindowPrivate();
+
+	_p->bFirstShow = true;
 
 	_p->pCurrentEditor = NULL;
 	_p->pTextConsole = NULL;
@@ -191,8 +194,6 @@ C3MainWindow::C3MainWindow()
 	_p->pGeneralActions->currentEditorChanged(NULL);
 
 	updateCaption();
-
-	//windowHandle()->setIcon(C3PixmapCache::instance()->pixmap(__literal("icon/icon64.png")));
 }
 
 C3MainWindow::~C3MainWindow()
@@ -216,6 +217,15 @@ C3MainWindow::~C3MainWindow()
 	delete _p;
 	
 	m_pInstance = NULL;
+}
+
+void C3MainWindow::showEvent(QShowEvent * e)
+{
+	if(_p->bFirstShow)
+	{
+		windowHandle()->setIcon(C3PixmapCache::instance()->pixmap(__literal("icon/icon64.png")));
+		_p->bFirstShow = false;
+	}
 }
 
 C3DockTextConsole * C3MainWindow::textConsole()

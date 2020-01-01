@@ -152,6 +152,7 @@ private slots:
 private:
 
 	virtual void closeEvent(QCloseEvent * e);
+	virtual void showEvent(QShowEvent * e);
 
 	void currentEditorChanged(C3Editor * pEditor);
 
