@@ -307,7 +307,7 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 
 	static QString szScopeSeparator1 = __ascii(".");
 	static QString szScopeSeparator2 = __ascii("::");
-	QString szScopeSeparator = (eLanguage == C3Symbol::Cpp) ? szScopeSeparator2 : szScopeSeparator1;
+	QString szScopeSeparator = ((eLanguage == C3Symbol::Cpp) || (eLanguage == C3Symbol::Php)) ? szScopeSeparator2 : szScopeSeparator1;
 
 	// symbols at each scope level (level 0 is unused because it's processed "on-the-fly")
 	C3SymbolList * aSymbols[MAX_SCOPE_LEVELS];
@@ -425,7 +425,24 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 	{
 		if(!aSymbols[i])
 		{
-			Q_ASSERT(!aScopes[i]);
+			// no symbols in scopes with i parts (say nothing within namespace::class::function)
+			if(aScopes[i])
+			{
+				// but got scopes with i parts (say namespace::class::function exists)
+#if 0
+				qDebug("Dump at level %d",i);
+				QHash<QString,C3SymbolScopeList *>::Iterator itex = aScopes[i]->begin();
+				while(itex != aScopes[i]->end())
+				{
+					qDebug("Scope list with %d items",itex.value()->count());
+					Q_FOREACH(C3SymbolScope * ssc,*(itex.value()))
+						qDebug("Scope %s",ssc->description().toUtf8().data());
+					++itex;
+				}
+#endif
+				qDeleteAll(*(aScopes[i]));
+				delete aScopes[i];
+			}
 			continue;
 		}
 

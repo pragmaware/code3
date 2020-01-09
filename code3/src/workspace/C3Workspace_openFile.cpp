@@ -70,7 +70,7 @@ void C3Workspace::openFileAsync(const QString &szPath,bool bAddHistoryEntry,bool
 	QString szLocation;
 	
 	int idx = szFileName.indexOf(QChar(':'));
-	if(idx >= 0)
+	if(idx > 3) // present and not windows root marker
 	{
 		QString szFull = szFileName;
 		szFileName = szFull.left(idx);

@@ -1269,7 +1269,7 @@ void C3Workspace::matchFilesRecursive(const QString &szFilePart,const QString &s
 			continue;
 		}
 
-		if(fi.fileName().contains(szFilePart))
+		if(fi.fileName().contains(szFilePart) || fi.absoluteFilePath().startsWith(szFilePart))
 			lRet.append(fi.absoluteFilePath());
 	}
 }

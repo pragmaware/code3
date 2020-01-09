@@ -1181,10 +1181,28 @@ void C3DockFileBrowser::slotPathEditReturnPressed()
 {
 	QString sFile = _p->pPathEdit->text().trimmed();
 
+	QString sLocation;
+
+	int idx = sFile.lastIndexOf(QChar(':'));
+	if(idx > 3)
+	{
+		sLocation = sFile.mid(idx+1);
+		sFile = sFile.left(idx);
+	}
+
 	QFileInfo inf(sFile);
 	if(inf.isDir())
 	{
 		setDirectory(sFile);
+		return;
+	}
+
+	if(inf.isFile())
+	{
+		C3Link oLink(sFile);
+		if(!sLocation.isEmpty())
+			oLink.setLocation(sLocation);
+		C3Workspace::currentWorkspace()->openFileAsync(oLink);
 		return;
 	}
 
@@ -1207,7 +1225,6 @@ void C3DockFileBrowser::slotPathEditReturnPressed()
 		
 		lLinks.append(lnk);
 	}
-
 
 	C3LinkSelectionDialog dlg(this,__tr("File Matches"),lLinks);
 	
