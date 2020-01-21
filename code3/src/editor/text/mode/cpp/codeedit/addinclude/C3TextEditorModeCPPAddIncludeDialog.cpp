@@ -34,6 +34,7 @@
 #include <QCheckBox>
 #include <QMap>
 #include <QDir>
+#include <C3StringUtils.h>
 
 class C3TextEditorModeCPPAddIncludeDialogPrivate
 {
@@ -312,32 +313,44 @@ void C3TextEditorModeCPPAddIncludeDialog::slotCurrentItemChanged(QListWidgetItem
 	
 	bool bAngular;
 	
-	
 	if(!szFullPath.startsWith(szShort))
 	{
 		bAngular = true; // out of workspace
 	} else {
-		// if there are more than 4 levels of difference, assume it's a different project.
+		QFileInfo fi1(szFullPath);
+		QString sz1 = fi1.canonicalFilePath();
+		QFileInfo fi2(_p->pEditor->path());
+		QString sz2 = fi2.canonicalFilePath();
 
-		QString sz1 = szFullPath;
-		QString sz2 = _p->pEditor->path();
-		
-		while((sz1.length() > 0) && (sz2.length() > 0) && (sz1[0] == sz2[0]))
+		int iCC = C3StringUtils::commonCharacterCount(sz1,sz2);
+		QString szCommon = sz1.left(iCC);
+
+		if(
+				szCommon.contains(__literal("/src/"),Qt::CaseInsensitive) ||
+				szCommon.contains(__literal("/source/"),Qt::CaseInsensitive) ||
+				szCommon.contains(__literal("/sources/"),Qt::CaseInsensitive)
+			)
 		{
-			sz1.remove(0,1);
-			sz2.remove(0,1);
-		}
-		
-		if(sz1.contains(__ascii("src/")) || sz2.contains(__ascii("src/")))
-		{
-			bAngular = true;
+			// have common "src" root. assume same project
+			bAngular = false;
 		} else {
-			int iSeps1 = sz1.count(QDir::separator());
-			int iSeps2 = sz2.count(QDir::separator());
+			
+			sz1.remove(0,iCC);
+			sz2.remove(0,iCC);
+			
+			if(sz1.contains(__ascii("src/")) || sz2.contains(__ascii("src/")))
+			{
+				bAngular = true;
+			} else {
+				// if there are more than 4 levels of difference, assume it's a different project.
 
-			bAngular = (iSeps1 + iSeps2) > 4;
+				int iSeps1 = sz1.count(QDir::separator());
+				int iSeps2 = sz2.count(QDir::separator());
+	
+				bAngular = (iSeps1 + iSeps2) > 4;
+			}
 		}
 	}
-	
+
 	_p->pBUseAngularParenthesis->setChecked(bAngular);
 }
