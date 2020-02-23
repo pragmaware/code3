@@ -141,3 +141,14 @@ extern bool ptagMakeCtagsOutputFilesep (ptagDesc *desc, const void *data CTAGS_A
 #endif
 	return writePseudoTag (desc, sep, "slash or backslash", NULL);
 }
+
+extern void writerCheckOptions (void)
+{
+	if (writer->checkOptions)
+		writer->checkOptions (writer);
+}
+
+extern bool writerPrintPtagByDefault (void)
+{
+	return writer->printPtagByDefault;
+}

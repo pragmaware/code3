@@ -44,15 +44,21 @@
 /* Add the name of any new parser definition function here */
 #define PARSER_LIST \
 	AsmParser, \
+	AspParser, \
 	BasicParser, \
+	ClojureParser, \
 	CMakeParser, \
 	CParser, \
 	CppParser, \
 	CPreProParser, \
 	CssParser, \
 	CsharpParser, \
+	CtagsParser, \
+	CobolParser, \
 	CUDAParser, \
 	DParser, \
+	DiffParser, \
+	FortranParser, \
 	GoParser, \
 	HtmlParser, \
 	JavaParser, \
@@ -60,19 +66,21 @@
 	JavaScriptParser, \
 	JsonParser, \
 	ObjcParser, \
+	OldCppParser, \
+	OldCParser, \
 	PascalParser, \
 	PerlParser, \
 	Perl6Parser, \
 	PhpParser, \
 	PythonParser, \
 	QtMocParser, \
+	RParser, \
 	RubyParser, \
 	RustParser, \
-	SchemeParser, \
-	SqlParser, \
+	ShParser, \
 	TclParser, \
-	TclOOParser, \
 	TypeScriptParser, \
+	VeraParser, \
 	VerilogParser, \
 	SystemVerilogParser, \
 	VhdlParser

@@ -40,6 +40,7 @@ struct sTagWriter {
 							const char *const pattern,
 							const char *const parserName,
 							void *clientData);
+	bool printPtagByDefault;
 	void * (* preWriteEntry) (tagWriter *writer, MIO * mio,
 							  void *clientData);
 
@@ -50,6 +51,8 @@ struct sTagWriter {
 	void (* rescanFailedEntry) (tagWriter *writer, unsigned long validTagNum,
 								void *clientData);
 	bool (* treatFieldAsFixed) (int fieldType);
+
+	void (* checkOptions) (tagWriter *writer);
 
 #ifdef WIN32
 	enum filenameSepOp (* overrideFilenameSeparator) (enum filenameSepOp currentSetting);
@@ -82,7 +85,7 @@ void writerRescanFailed (unsigned long validTagNum);
 
 extern const char *outputDefaultFileName (void);
 
-extern void truncateTagLineAfterTag (char *const line, const char *const token,
+extern size_t truncateTagLineAfterTag (char *const line, const char *const token,
 			     const bool discardNewline);
 extern void abort_if_ferror(MIO *const fp);
 
@@ -92,6 +95,9 @@ extern bool ptagMakeCtagsOutputFilesep (ptagDesc *desc, const void *data);
 
 extern bool writerCanPrintPtag (void);
 extern bool writerDoesTreatFieldAsFixed (int fieldType);
+
+extern void writerCheckOptions (void);
+extern bool writerPrintPtagByDefault (void);
 
 #ifdef WIN32
 extern enum filenameSepOp getFilenameSeparator (enum filenameSepOp currentSetting);

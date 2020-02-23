@@ -236,14 +236,14 @@ static optionDescription LongOptionDescription [] = {
  {1,"  -V   Equivalent to --verbose."},
  {1,"  -x   Print a tabular cross reference file to standard output."},
  {1,"  --alias-<LANG>=[+|-]aliasPattern"},
- {1,"      Add a pattern detecting a name, can be used as an alternative name"},
- {1,"      for LANG."},
+ {1,"       Add a pattern detecting a name, can be used as an alternative name"},
+ {1,"       for LANG."},
  {1,"  --append=[yes|no]"},
  {1,"       Should tags should be appended to existing tag file [no]?"},
  {1,"  --etags-include=file"},
- {1,"      Include reference to 'file' in Emacs-style tag file (requires -e)."},
+ {1,"       Include reference to 'file' in Emacs-style tag file (requires -e)."},
  {1,"  --exclude=pattern"},
- {1,"      Exclude files and directories matching 'pattern'."},
+ {1,"       Exclude files and directories matching 'pattern'."},
  {0,"  --excmd=number|pattern|mix|combine"},
 #ifdef MACROS_USE_PATTERNS
  {0,"       Uses the specified type of EX command to locate tags [pattern]."},
@@ -251,18 +251,15 @@ static optionDescription LongOptionDescription [] = {
  {0,"       Uses the specified type of EX command to locate tags [mix]."},
 #endif
  {1,"  --extras=[+|-]flags"},
- {1,"      Include extra tag entries for selected information (flags: \"fFgpqrs\") [F]."},
+ {1,"       Include extra tag entries for selected information (flags: \"fFgpqrs\") [F]."},
  {1,"  --extras-<LANG|all>=[+|-]flags"},
- {1,"      Include <LANG> own extra tag entries for selected information"},
- {1,"      (flags: see the output of --list-extras=<LANG> option)."},
+ {1,"       Include <LANG> own extra tag entries for selected information"},
+ {1,"       (flags: see the output of --list-extras=<LANG> option)."},
  {1,"  --fields=[+|-]flags"},
- {1,"      Include selected extension fields (flags: \"aCeEfFikKlmnNpPrRsStxzZ\") [fks]."},
+ {1,"       Include selected extension fields (flags: \"aCeEfFikKlmnNpPrRsStxzZ\") [fks]."},
  {1,"  --fields-<LANG|all>=[+|-]flags"},
- {1,"      Include selected <LANG> own extension fields"},
- {1,"      (flags: see the output of --list-fields=<LANG> option)."},
- {1,"  --file-scope=[yes|no]"},
- {1,"       Should tags scoped only for a single file (e.g. \"static\" tags)"},
- {1,"       be included in the output [yes]?"},
+ {1,"       Include selected <LANG> own extension fields"},
+ {1,"       (flags: see the output of --list-fields=<LANG> option)."},
  {1,"  --filter=[yes|no]"},
  {1,"       Behave as a filter, reading file names from standard input and"},
  {1,"       writing tags to standard output [no]."},
@@ -289,9 +286,9 @@ static optionDescription LongOptionDescription [] = {
  {1,"       Should code within #if 0 conditional branches be parsed [no]?"},
 #ifdef HAVE_ICONV
  {1,"  --input-encoding=encoding"},
- {1,"      Specify encoding of all input files."},
+ {1,"       Specify encoding of all input files."},
  {1,"  --input-encoding-<LANG>=encoding"},
- {1,"      Specify encoding of the LANG input files."},
+ {1,"       Specify encoding of the LANG input files."},
 #endif
  {1,"  --kinddef-<LANG>=letter,name,desc"},
  {1,"       Define new kind for <LANG>."},
@@ -374,11 +371,11 @@ static optionDescription LongOptionDescription [] = {
  {1,"  --options-maybe=path"},
  {1,"       Do the same as --options but this doesn't make an error for non-existing file."},
  {1,"  --optlib-dir=[+]DIR"},
- {1,"      Add or set DIR to optlib search path."},
+ {1,"       Add or set DIR to optlib search path."},
 #ifdef HAVE_ICONV
  {1,"  --output-encoding=encoding"},
- {1,"      The encoding to write the tag file in. Defaults to UTF-8 if --input-encoding"},
- {1,"      is specified, otherwise no conversion is performed."},
+ {1,"       The encoding to write the tag file in. Defaults to UTF-8 if --input-encoding"},
+ {1,"       is specified, otherwise no conversion is performed."},
 #endif
  {0,"  --output-format=u-ctags|e-ctags|etags|xref"
 #ifdef HAVE_JANSSON
@@ -445,7 +442,7 @@ static optionDescription ExperimentalLongOptionDescription [] = {
  {1,"       Echo MSG to standard error. Useful to debug the chain"},
  {1,"       of loading option files."},
  {1,"  --_extradef-<LANG>=name,desc"},
- {1,"       Define new extra for <LANG>. \"--extra-<LANG>=+{name}\" enables it."},
+ {1,"       Define new extra for <LANG>. \"--extras-<LANG>=+{name}\" enables it."},
  {1,"  --_fatal-warnings"},
  {1,"       Make all warnings fatal."},
  {1,"  --_fielddef-<LANG>=name,description"},
@@ -576,7 +573,8 @@ static const char *const StageDescription [] = {
 	[OptionLoadingStageDosCnf] = "DOS .cnf file",
 	[OptionLoadingStageEtc] = "file under /etc (e.g. ctags.conf)",
 	[OptionLoadingStageLocalEtc] = "file under /usr/local/etc (e.g. ctags.conf)",
-	[OptionLoadingStageHomeRecursive] = "file(s) under HOME",
+	[OptionLoadingStageXdg] = "file(s) under $XDG_CONFIG_HOME and $HOME/.config",
+	[OptionLoadingStageHomeRecursive] = "file(s) under $HOME",
 	[OptionLoadingStageCurrentRecursive] = "file(s) under the current directory",
 	[OptionLoadingStagePreload] = "optlib preload files",
 	[OptionLoadingStageEnvVar] = "environment variable",
@@ -751,6 +749,7 @@ extern void checkOptions (void)
 		if (Option.tagFileName != NULL)
 			error (WARNING, "%s ignores output tag file name", notice);
 	}
+	writerCheckOptions ();
 }
 
 extern langType getLanguageComponentInOptionFull (const char *const option,
@@ -1182,7 +1181,7 @@ static void processExcmdOption (
 			if (strcmp(parameter, "combine") == 0)
 				Option.locate = EX_COMBINE;
 			else
-				error (FATAL, "Invalid value for \"%s\" option", option);
+				error (FATAL, "Invalid value for \"%s\" option: %s", option, parameter);
 			break;
 	}
 }
@@ -2198,7 +2197,8 @@ static void processListRolesOptions (const char *const option CTAGS_ATTR_UNUSED,
 
 	kindspecs = sep + 1;
 	if (strncmp (parameter, "all.", 4) == 0
-	    || strncmp (parameter, "*.", 1) == 0
+		/* Handle the case if no language is specified.
+		 * This case is not documented. */
 	    || strncmp (parameter, ".", 1) == 0)
 		lang = LANG_AUTO;
 	else
@@ -2690,9 +2690,21 @@ static void processPatternLengthLimit(const char *const option, const char *cons
 		error (FATAL, "-%s: Invalid pattern length limit", option);
 }
 
-static void setBooleanToXtag(booleanOption *const option, bool value)
+static void setBooleanToXtagWithWarning(booleanOption *const option, bool value)
 {
 	/* WARNING/TODO: This function breaks capsulization. */
+
+	char x = 0;
+
+	if (strcmp (option->name, "file-tags") == 0)
+		x = 'f';
+	else if (strcmp (option->name, "file-scope") == 0)
+		x = 'F';
+
+	if (x)
+		error (WARNING, "\"--%s\" option is obsolete; use \"--extras=%c%c\" instead",
+			   option->name, value? '+': '-', x);
+
 	xtagType t = (xtagType)option->pValue;
 	enableXtag (t, value);
 }
@@ -2774,8 +2786,8 @@ static parametricOption ParametricOptions [] = {
 
 static booleanOption BooleanOptions [] = {
 	{ "append",         &Option.append,                 true,  STAGE_ANY },
-	{ "file-scope",     ((bool *)XTAG_FILE_SCOPE),   false, STAGE_ANY, setBooleanToXtag },
-	{ "file-tags",      ((bool *)XTAG_FILE_NAMES),   false, STAGE_ANY, setBooleanToXtag },
+	{ "file-scope",     ((bool *)XTAG_FILE_SCOPE),   false, STAGE_ANY, setBooleanToXtagWithWarning },
+	{ "file-tags",      ((bool *)XTAG_FILE_NAMES),   false, STAGE_ANY, setBooleanToXtagWithWarning },
 	{ "filter",         &Option.filter,                 true,  STAGE_ANY },
 	{ "guess-language-eagerly", &Option.guessLanguageEagerly, false, STAGE_ANY },
 	{ "line-directives",&Option.lineDirectives,         false, STAGE_ANY },
@@ -3522,11 +3534,23 @@ static char* prependEnvvar (const char *path, const char* envvar)
 	char *full_path = NULL;
 
 	const char* const envval = getenv (envvar);
-	if (envval)
+	if (envval && strlen (envval))
 		full_path = combinePathAndFile(envval, path);
 
 	return full_path;
 }
+
+#ifndef WIN32
+static char *getConfigForXDG (const char *path CTAGS_ATTR_UNUSED,
+							  const char* extra CTAGS_ATTR_UNUSED)
+{
+	char *r = prependEnvvar ("ctags", "XDG_CONFIG_HOME");
+	if (r)
+		return r;
+
+	return prependEnvvar (".config/ctags", "HOME");
+}
+#endif
 
 #ifdef WIN32
 static char *getConfigAtHomeOnWindows (const char *path,
@@ -3544,9 +3568,11 @@ static char *getConfigAtHomeOnWindows (const char *path,
 		vStringCatS (windowsHome, homeDrive);
 		vStringCatS (windowsHome, homePath);
 
-		char *tmp = combinePathAndFile (vStringValue(windowsHome), path);
-		vStringDelete (windowsHome);
+		char *tmp = vStringIsEmpty (windowsHome)
+			? NULL
+			: combinePathAndFile (vStringValue(windowsHome), path);
 
+		vStringDelete (windowsHome);
 		return tmp;
 	}
 	return NULL;
@@ -3559,7 +3585,7 @@ static void preload (struct preloadPathElt *pathList)
 	stringList* loaded;
 
 	loaded = stringListNew ();
-	for (i = 0; pathList[i].path != NULL; ++i)
+	for (i = 0; pathList[i].path != NULL || pathList[i].makePath != NULL; ++i)
 	{
 		struct preloadPathElt *elt = pathList + i;
 		preloadMakePathFunc maker = elt->makePath;
@@ -3600,6 +3626,14 @@ static struct preloadPathElt preload_path_list [] = {
 		.stage = OptionLoadingStageCustom,
 	},
 #endif
+#ifndef WIN32
+	{
+		.path = NULL,
+		.isDirectory = true,
+		.makePath = getConfigForXDG,
+		.stage = OptionLoadingStageXdg,
+	},
+#endif
 	{
 		.path = ".ctags.d",
 		.isDirectory = true,
@@ -3628,7 +3662,10 @@ static struct preloadPathElt preload_path_list [] = {
 		.makePath = NULL,
 		.stage = OptionLoadingStageCurrentRecursive,
 	},
-	{ .path = NULL },
+	{
+		.path = NULL,
+		.makePath = NULL,
+	},
 };
 
 static void parseConfigurationFileOptions (void)
