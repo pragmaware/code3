@@ -101,11 +101,16 @@ public:
 		// example:
 		//    MACRONA test2.cpp 3;" kind:macro line:3 language:C++ file:
 		Macro = (1 << 11),
+
+		// leaf
+		// ctags kind:tparam (template<class X>)
+		// examples:
+		TemplateParameter = (1 << 12),
 		
 		// using namespace something
-		ImportedScope = (1 << 12),
+		ImportedScope = (1 << 13),
 
-		InvalidType = (1 << 13)
+		InvalidType = (1 << 14)
 	};
 
 	// The language.

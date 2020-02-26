@@ -114,7 +114,41 @@ C3SymbolCTagsParser::C3SymbolCTagsParser()
 	_p->hKindMap.insert("parameter",C3Symbol::LocalVariable);
 	_p->hKindMap.insert("variable",C3Symbol::GlobalVariable);
 	_p->hKindMap.insert("using",C3Symbol::ImportedScope);
+	_p->hKindMap.insert("tparam",C3Symbol::TemplateParameter);
+
+	/*
 	
+	FIXME: USE THE SHORT FORMS - LESS SPACE - FASTER TO PARSE
+	
+	BUT THESE STRONGLY DEPEND ON THE LANGUAGE!
+	
+	d  macro definitions
+	e  enumerators (values inside an enumeration)
+	f  function definitions
+	g  enumeration names
+	h  included header files
+	l  local variables [off]
+	m  class, struct, and union members
+	p  function prototypes [off]
+	s  structure names
+	t  typedefs
+	u  union names
+	v  variable definitions
+	x  external and forward variable declarations [off]
+	z  function parameters inside function definitions [off]
+	L  goto labels [off]
+	D  parameters inside macro definitions [off]
+	c  classes
+	n  namespaces
+	A  namespace aliases [off]
+	N  names imported via using scope::symbol [off]
+	U  using namespace statements [off]
+	Z  template parameters [off]
+	
+	FIXME: Namespace aliases!
+	
+	*/
+		
 	_p->hAccessMap.insert("public",C3Symbol::AccessLevelPublic);
 	_p->hAccessMap.insert("protected",C3Symbol::AccessLevelProtected);
 	_p->hAccessMap.insert("private",C3Symbol::AccessLevelPrivate);

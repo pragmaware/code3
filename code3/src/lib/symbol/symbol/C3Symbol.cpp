@@ -140,6 +140,12 @@ QString C3Symbol::typeString() const
 			return szMacro;
 		}
 		break;
+		case TemplateParameter:
+		{
+			static QString szTParam = __tr("template parameter");
+			return szTParam;
+		}
+		break;
 		case ImportedScope:
 		{
 			static QString szImportedScope = __tr("imported scope");

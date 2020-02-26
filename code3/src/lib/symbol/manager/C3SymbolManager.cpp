@@ -973,7 +973,7 @@ void C3SymbolManager::storeLockedSelectSymbolsForCppCompleteVisibleSymbolsInScop
 			case C3Symbol::FunctionDefinition:
 				// local variables
 				fnSymbolCallback(
-						uTypeMask & C3Symbol::LocalVariable,
+						uTypeMask & (C3Symbol::LocalVariable | C3Symbol::TemplateParameter),
 						dynamic_cast<C3SymbolScope *>(pScope)->symbols(),
 						pContext->szText,
 						3, // score
@@ -985,7 +985,7 @@ void C3SymbolManager::storeLockedSelectSymbolsForCppCompleteVisibleSymbolsInScop
 				fnSymbolCallback(
 						uTypeMask & 
 							(C3Symbol::Class | C3Symbol::Union | C3Symbol::TypeDefinition |
-							C3Symbol::Namespace | C3Symbol::MemberVariable |
+							C3Symbol::Namespace | C3Symbol::MemberVariable | C3Symbol::TemplateParameter |
 							C3Symbol::FunctionDefinition | C3Symbol::LocalVariable |
 							C3Symbol::FunctionPrototype | C3Symbol::Enumeration | C3Symbol::EnumerationMember),
 						pScope->symbols(),
@@ -1003,7 +1003,7 @@ void C3SymbolManager::storeLockedSelectSymbolsForCppCompleteVisibleSymbolsInScop
 								pBaseClasses,
 								pContext,
 								fnSymbolCallback,
-								uTypeMask &
+								uTypeMask & // no template parameters here
 									(C3Symbol::Class | C3Symbol::Union | C3Symbol::TypeDefinition |
 									C3Symbol::Namespace | C3Symbol::MemberVariable | C3Symbol::FunctionDefinition |
 									C3Symbol::FunctionPrototype | C3Symbol::Enumeration | C3Symbol::EnumerationMember),
@@ -1149,7 +1149,7 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 						pFileContext,
 						pGlobalScope,
 						fnSymbolCallback,
-						C3Symbol::Class | C3Symbol::Union | C3Symbol::TypeDefinition | C3Symbol::Macro,
+						C3Symbol::Class | C3Symbol::Union | C3Symbol::TypeDefinition | C3Symbol::Macro | C3Symbol::TemplateParameter,
 						uBaseFlags
 					);
 
