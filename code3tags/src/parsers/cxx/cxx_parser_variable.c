@@ -102,6 +102,8 @@ CXXToken * cxxParserFindFirstPossiblyNestedAndQualifiedIdentifier(
 //
 bool cxxParserExtractVariableDeclarations(CXXTokenChain * pChain,unsigned int uFlags)
 {
+	int iCorkIndex = CORK_NIL;
+
 	CXX_DEBUG_ENTER();
 
 	if(pChain->iCount < 1)
@@ -435,7 +437,6 @@ bool cxxParserExtractVariableDeclarations(CXXTokenChain * pChain,unsigned int uF
 				}
 
 				t = t->pNext;
-				pRemoveStart = t;
 			break;
 			default:
 				// Must be identifier
@@ -726,13 +727,10 @@ bool cxxParserExtractVariableDeclarations(CXXTokenChain * pChain,unsigned int uF
 				pszProperties = cxxTagSetProperties(uProperties);
 			}
 
-			if(
-					bGotTemplate &&
-					cxxTagFieldEnabled(CXXTagCPPFieldTemplate)
-				)
-				cxxTagHandleTemplateField();
+			if(bGotTemplate)
+				cxxTagHandleTemplateFields();
 
-			cxxTagCommit();
+			iCorkIndex = cxxTagCommit();
 
 			if(pTypeToken)
 				cxxTokenDestroy(pTypeToken);
@@ -791,11 +789,22 @@ bool cxxParserExtractVariableDeclarations(CXXTokenChain * pChain,unsigned int uF
 
 		if(cxxTokenTypeIsOneOf(t,CXXTokenTypeSemicolon | CXXTokenTypeOpeningBracket))
 		{
+			if (iCorkIndex != CORK_NIL)
+			{
+				cxxParserSetEndLineForTagInCorkQueue (iCorkIndex, t->iLineNumber);
+				iCorkIndex = CORK_NIL;
+			}
 			CXX_DEBUG_LEAVE_TEXT("Noting else");
 			return bGotVariable;
 		}
 
 		// Comma. Might have other declarations here.
+		if (iCorkIndex != CORK_NIL)
+		{
+			cxxParserSetEndLineForTagInCorkQueue (iCorkIndex, t->iLineNumber);
+			iCorkIndex = CORK_NIL;
+		}
+
 		CXX_DEBUG_PRINT("At a comma, might have other declarations here");
 
 		t = t->pNext;
@@ -807,6 +816,17 @@ bool cxxParserExtractVariableDeclarations(CXXTokenChain * pChain,unsigned int uF
 			CXX_DEBUG_LEAVE_TEXT("Could not properly fix type name for next token: stopping here");
 			return bGotVariable;
 		}
+
+		// *, &, && and similar stuff do not "propagate" to the next type
+		while(
+				pRemoveStart->pPrev &&
+				cxxTokenTypeIsOneOf(
+						pRemoveStart->pPrev,
+						CXXTokenTypeStar | CXXTokenTypeAnd |
+						CXXTokenTypeMultipleAnds | CXXTokenTypeSquareParenthesisChain
+					)
+			)
+			pRemoveStart = pRemoveStart->pPrev;
 
 		cxxTokenChainDestroyRange(pChain,pRemoveStart,t->pPrev);
 	}

@@ -59,6 +59,7 @@ bool cxxParserParseNamespace(void)
 	}
 
 	cxxParserNewStatement(); // always a new statement
+	cppBeginStatement(); // but we're in the middle of it
 
 	int iScopeCount = 0;
 
@@ -141,7 +142,8 @@ bool cxxParserParseNamespace(void)
 
 					cxxTagSetField(
 							CXXTagCPPFieldAliasedName,
-							vStringValue(pAliasedName->pszWord)
+							vStringValue(pAliasedName->pszWord),
+							false
 						);
 
 					cxxTagCommit();
