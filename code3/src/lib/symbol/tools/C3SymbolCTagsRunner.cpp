@@ -25,9 +25,9 @@
 #include <QElapsedTimer>
 #include <QFileInfo>
 
-#define DEBUG_RUNNER 1
+//#define DEBUG_RUNNER 1
 
-#define DEBUG_RUNNER_WITH_CALLGRIND 1
+//#define DEBUG_RUNNER_WITH_CALLGRIND 1
 
 
 
