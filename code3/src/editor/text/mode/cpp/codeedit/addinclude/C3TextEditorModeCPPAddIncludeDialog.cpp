@@ -118,6 +118,8 @@ void C3TextEditorModeCPPAddIncludeDialog::onSymbolIdentified(QList<C3TextEditorS
 			continue;
 		if(szPath.endsWith(__ascii(".cxx"),Qt::CaseInsensitive))
 			continue;
+		if(szPath.endsWith(__ascii(".lxx"),Qt::CaseInsensitive))
+			continue; // opencascade
 		if(szPath.endsWith(__ascii(".cc"),Qt::CaseInsensitive))
 			continue;
 	

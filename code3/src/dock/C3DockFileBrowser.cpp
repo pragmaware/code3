@@ -194,6 +194,7 @@ C3DockFileBrowser::C3DockFileBrowser(QWidget * pParent)
 	_p->hIconMap.insert("js","js.png");
 	_p->hIconMap.insert("key","key.png");
 	_p->hIconMap.insert("less","less.png");
+	_p->hIconMap.insert("lxx","cpp.png"); // opencascade headers
 	_p->hIconMap.insert("mid","mid.png");
 	_p->hIconMap.insert("mp3","mp3.png");
 	_p->hIconMap.insert("mp4","mp4.png");

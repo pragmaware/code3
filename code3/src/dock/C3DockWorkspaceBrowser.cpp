@@ -105,6 +105,7 @@ C3DockWorkspaceBrowser::C3DockWorkspaceBrowser(QWidget * pParent)
 
 	_p->hGroupByFileExtension.insert("cpp",__tr("C/C++ implementation files"));
 	_p->hGroupByFileExtension.insert("cxx",__tr("C/C++ implementation files"));
+	_p->hGroupByFileExtension.insert("lxx",__tr("C/C++ implementation files"));
 	_p->hGroupByFileExtension.insert("cc",__tr("C/C++ implementation files"));
 	_p->hGroupByFileExtension.insert("c",__tr("C/C++ implementation files"));
 	_p->hGroupByFileExtension.insert("h",__tr("C/C++ header files"));

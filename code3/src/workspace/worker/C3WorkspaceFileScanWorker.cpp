@@ -212,6 +212,7 @@ QString C3WorkspaceFileScanWorker::runInternal()
 	_p->hValidExtensions.insert("cc",1);
 	_p->hValidExtensions.insert("c",1);
 	_p->hValidExtensions.insert("cxx",1);
+	_p->hValidExtensions.insert("lxx",1); // opencascade
 	_p->hValidExtensions.insert("h",1);
 	_p->hValidExtensions.insert("hpp",1);
 	_p->hValidExtensions.insert("hh",1);

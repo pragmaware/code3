@@ -202,6 +202,9 @@ QString C3Link::toHtml() const
 	QString szPath = C3Workspace::currentWorkspace()->toWorkspaceDependantPath(path());
 	QString szLocation = location();
 	
+	if(szPath.length() > 80)
+		szPath = __literal("...%1").arg(szPath.mid(szPath.length() - 80));
+	
 	szText = reformatSignature(szText,value("symbol").toString());
 
 	if(!szLocation.isEmpty())

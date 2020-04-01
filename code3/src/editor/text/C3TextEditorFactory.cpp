@@ -281,6 +281,7 @@ void C3TextEditorFactory::fillModeByExtensionMap()
 	_p->oModeByExtensionMap.insert("cu","cpp"); // CUDA
 	_p->oModeByExtensionMap.insert("cpp","cpp");
 	_p->oModeByExtensionMap.insert("cxx","cpp");
+	_p->oModeByExtensionMap.insert("lxx","cpp"); // opencascade
 	_p->oModeByExtensionMap.insert("h","cpp");
 	_p->oModeByExtensionMap.insert("hh","cpp");
 	_p->oModeByExtensionMap.insert("hpp","cpp");
