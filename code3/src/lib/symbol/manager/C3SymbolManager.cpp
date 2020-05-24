@@ -36,7 +36,7 @@
 #include <QElapsedTimer>
 #include <C3TextEditorMode.h>
 
-#define DEBUG_SYMBOL_MANAGER
+//#define DEBUG_SYMBOL_MANAGER
 
 #ifdef DEBUG_SYMBOL_MANAGER
 	#define SYMBOL_MANAGER_TRACE_FUNCTION C3_TRACE_FUNCTION 
@@ -178,7 +178,7 @@ void C3SymbolManager::abortAllCTagsWorkers()
 
 void C3SymbolManager::processResetSymbolStoreRequest(C3SymbolManagerRequestResetSymbolStore * pRequest)
 {
-	SYMBOL_MANAGER_TRACE_FUNCTION;
+	//SYMBOL_MANAGER_TRACE_FUNCTION;
 
 	_p->oStoreMutex.lock();
 	delete _p->pStore;

@@ -39,6 +39,7 @@ class C3CompletionStore;
 class C3ExternalCommand;
 class C3SettingsUserHighlightingSet;
 class C3SymbolManagerRequest;
+class QFileInfo;
 
 ///
 /// \class C3Workspace
@@ -244,6 +245,8 @@ private:
 	QString defaultWorkspacePath();
 	
 	QString checkFileExistence(const QString &szFileName,const QString &szPath);
+
+	bool isExcludedDirectory(const QFileInfo &inf);
 
 signals:
 	// internal signal used in inter-thread communication

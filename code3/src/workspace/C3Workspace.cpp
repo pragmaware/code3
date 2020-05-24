@@ -1264,6 +1264,9 @@ void C3Workspace::matchFilesRecursive(const QString &szFilePart,const QString &s
 	{
 		if(fi.isDir())
 		{
+			if(isExcludedDirectory(fi))
+				continue;
+
 			if(iCurrentDepth < 12)
 				matchFilesRecursive(szFilePart,fi.absoluteFilePath(),lRet,iCurrentDepth + 1);
 			continue;
@@ -1283,6 +1286,21 @@ QString C3Workspace::checkFileExistence(const QString &szFileName,const QString 
 	if(QFile::exists(szFullPath))
 		return szFullPath;
 	return QString();
+}
+
+bool C3Workspace::isExcludedDirectory(const QFileInfo &inf)
+{
+	QString sName = __literal("%1/").arg(inf.fileName());
+
+	// FIXME: optimize this? cache directories? use a hash table?
+	Q_FOREACH(const QString &s,_p->lFileExclusionPatterns)
+	{
+		if(!s.endsWith(QChar('/')))
+			continue;
+		if(s == sName)
+			return true;
+	}
+	return false;
 }
 
 QString C3Workspace::findFileRecursive(const QString &szFileName,const QString &szPath,int iCurrentDepth)
@@ -1306,6 +1324,9 @@ QString C3Workspace::findFileRecursive(const QString &szFileName,const QString &
 	{
 		if(!fi.isDir())
 			continue; // ?
+			
+		if(isExcludedDirectory(fi))
+			continue;
 	
 		szRet = findFileRecursive(szFileName,fi.absoluteFilePath(),iCurrentDepth + 1);
 		if(!szRet.isEmpty())

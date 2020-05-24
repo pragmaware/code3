@@ -23,7 +23,7 @@
 #include <QStringList>
 #include <QElapsedTimer>
 
-#define DEBUG_SYMBOL_STORE
+//#define DEBUG_SYMBOL_STORE
 
 C3SymbolStore::C3SymbolStore()
 	:
