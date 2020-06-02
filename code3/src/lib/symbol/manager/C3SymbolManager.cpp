@@ -1136,8 +1136,23 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 		if(pLeft->szOperator.isEmpty())
 		{
 			// no left operator
+			if(pLeft->szText == m_szNew)
+			{
+				// we complete constructors too...
+				storeLockedSelectSymbolsForCppCompleteVisibleSymbolsInScope(
+						pFile,
+						pContext,
+						pFileContext,
+						pGlobalScope,
+						fnSymbolCallback,
+						C3Symbol::Class | C3Symbol::Union | C3Symbol::TypeDefinition | C3Symbol::Macro | C3Symbol::TemplateParameter | C3Symbol::FunctionPrototype,
+						uBaseFlags | MatchConstructorsOnly
+					);
+
+				return true;
+			}
+
 			if(
-					(pLeft->szText == m_szNew) ||
 					(pLeft->szText == m_szConst) ||
 					(pLeft->szText == m_szStatic) ||
 					(pLeft->szText == m_szInline)
@@ -2202,6 +2217,8 @@ void C3SymbolManager::storeLockedAddSymbolInfos(
 
 	C3SymbolMap::Iterator it = pSymbols->lowerBound(szIdentifier);
 
+	bool bMatchConstructorsOnly = uFlags & MatchConstructorsOnly;
+
 	while(it != end)
 	{
 		C3Symbol * pSym = *it;
@@ -2242,6 +2259,19 @@ void C3SymbolManager::storeLockedAddSymbolInfos(
 				return;
 			}
 			continue;
+		}
+
+		if(bMatchConstructorsOnly && (pSym->type() & (C3Symbol::FunctionPrototype | C3Symbol::FunctionDefinition)))
+		{
+			if(!pSym->resolvedContainingScope())
+			{
+				continue;
+			}
+			if(pSym->resolvedContainingScope()->identifier() != pSym->identifier())
+			{
+				// not the same name of the scope
+				continue;
+			}
 		}
 
 #ifdef DEBUG_SYMBOL_MANAGER
