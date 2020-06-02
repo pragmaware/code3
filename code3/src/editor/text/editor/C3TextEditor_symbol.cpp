@@ -26,6 +26,7 @@
 #include "C3TextEditorSymbolContext.h"
 #include "C3MainWindow.h"
 #include "C3FindWidget.h"
+#include "C3TextEditorModeParser.h"
 
 #include <QHash>
 #include <QAction>
@@ -262,6 +263,8 @@ bool C3TextEditor::computeSymbolContext(
 
 	int iLinesVisited = 1;
 
+	// Note that all the modes share the flag for SingleLineComments (tricky!)
+
 #define PREVIOUS_LINE() \
 	do { \
 		iLinesVisited++; \
@@ -277,6 +280,11 @@ bool C3TextEditor::computeSymbolContext(
 		} \
 		iRow--; \
 		pLine = _p->lLines.at(iRow); \
+		if((pLine->lBlocks.count() > 0) && (pLine->lBlocks.last()->uFlags & C3TextEditorModeParser::InCPPSingleLineComment)) \
+		{ \
+			oContext.removeEmptyLeftContext(); \
+			return true; \
+		} \
 		b = pLine->szText.unicode(); \
 		e = b + pLine->szText.length(); \
 		p = e - 1; \

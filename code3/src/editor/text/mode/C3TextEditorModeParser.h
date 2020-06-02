@@ -58,64 +58,70 @@ public:
 
 	// WARNING: BlockFlags of PHP,CSS,Javascript and HTML must not collide
 	// WARNING: Block flag 1 can't be used since it's already used by the line block flags
+	// WARNING: Bit 1 must always be assigned to single line comments (if present in the language)
 	enum BlockFlags : unsigned int
 	{
 		// Must not share bit with XML/Javascript/PHP
-		InCSSMultiLineComment = (1 << 1),
+		// do NOT use bit 1 - that must be assigned to single line comments
+		InCSSMultiLineComment = (1 << 2),
 		
 		// Must not share bit with CSS/Javascript/PHP
-		InXMLTag = (1 << 2),
-		InXMLMultiLineComment = (1 << 3),
-		InXMLMultiLineDoubleQuoteString = (1 << 4),
-		InXMLMultiLineSingleQuoteString = (1 << 5),
-		InXMLJavascript = (1 << 6),
-		InXMLCSS = (1 << 7),
-		InXMLPHP = (1 << 8),
-		InXMLCData = (1 << 9),
+		// do NOT use bit 1 - that must be assigned to single line comments
+		InXMLTag = (1 << 3),
+		InXMLMultiLineComment = (1 << 4),
+		InXMLMultiLineDoubleQuoteString = (1 << 5),
+		InXMLMultiLineSingleQuoteString = (1 << 6),
+		InXMLJavascript = (1 << 7),
+		InXMLCSS = (1 << 8),
+		InXMLPHP = (1 << 9),
+		InXMLCData = (1 << 10),
 		
 		// Must not share bit with CSS/XML/PHP
-		InJavascriptMultiLineComment = (1 << 10),
+		InJavascriptMultiLineComment = (1 << 11),
 
 		// Must not share bit with CSS/Javascript/XML
-		InPHPMultiLineComment = (1 << 11),
+		InPHPMultiLineComment = (1 << 12),
 		
 		// CMake mode is independent so it shares bits with other modes
-		InCMakeMultiLineComment = (1 << 1),
-		InCMakeMultiLineString = (1 << 2),
+		// do NOT use bit 1 - that must be assigned to single line comments
+		InCMakeMultiLineComment = (1 << 2),
+		InCMakeMultiLineString = (1 << 3),
 
 		// Chatscript mode is independent so it shares bits with other modes
-		ChatScriptSeenFirstToken = (1 << 1), // already seen a token, following tokens can't handle the ":" character (a: s: etc.)
+		// do NOT use bit 1 - that must be assigned to single line comments
+		ChatScriptSeenFirstToken = (1 << 2), // already seen a token, following tokens can't handle the ":" character (a: s: etc.)
 		
 		// Bash mode is independent so it shares bits with other modes.
-		InBashMultiLineWeakQuoteString = (1 << 1),
-		InBashMultiLineStrongQuoteString = (1 << 2),
-		InBashExpandedHeredoc = (1 << 3),
-		InBashUnexpandedHeredoc = (1 << 4),
+		// do NOT use bit 1 - that must be assigned to single line comments
+		InBashMultiLineWeakQuoteString = (1 << 2),
+		InBashMultiLineStrongQuoteString = (1 << 3),
+		InBashExpandedHeredoc = (1 << 4),
+		InBashUnexpandedHeredoc = (1 << 5),
 
 		// CPP mode is independent so it shares bits with other modes.
-		InCPPMultiLineComment = (1 << 1),
+		InCPPSingleLineComment = (1 << 1), // not inter-line
 		InCPPPreprocessor = (1 << 2), // this flag is used only in the "line continuation" block of a preprocessor line. Other blocks are unaffected
 		InCPPIncludeFile = (1 << 3), // this is not inter-line
 		InCPPPreprocessorToken = (1 << 4), // again not inter-line
-		InCPPSingleLineComment = (1 << 5), // not inter-line
+		InCPPMultiLineComment = (1 << 5),
 		InCPPString = (1 << 6), // not inter-line
 		
 		// ASM mode is independent so it shares bits with other modes.
-		InASMPreprocessor = (1 << 1),
+		InASMSingleLineComment = (1 << 1),
 		InASMIncludeFile = (1 << 2),
 		InASMPreprocessorToken = (1 << 3),
-		InASMSingleLineComment = (1 << 4),
+		InASMPreprocessor = (1 << 4),
 		InASMString = (1 << 5),
 		InASMMultiLineComment = (1 << 6),
 
 		// Java mode is independent so it shares bits with other modes.
-		InJavaMultiLineComment = (1 << 1),
-		InJavaSingleLineComment = (1 << 2), // not inter-line
+		InJavaSingleLineComment = (1 << 1), // not inter-line
+		InJavaMultiLineComment = (1 << 2),
 		InJavaString = (1 << 3), // not inter-line
 		
 		// SQL mode is independent so it shares bits with other modes.
-		InSQLMultiLineComment = (1 << 1),
-		InSQLSingleLineComment = (1 << 2),
+		InSQLSingleLineComment = (1 << 1),
+		InSQLMultiLineComment = (1 << 2),
 		InSQLSingleQuoteString = (1 << 4),
 		InSQLDoubleQuoteString = (1 << 8),
 		InSQLBackTickString = (1 << 16),
