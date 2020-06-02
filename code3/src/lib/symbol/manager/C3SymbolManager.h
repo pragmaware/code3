@@ -143,8 +143,8 @@ private:
 		MatchInTheMiddle = 2,
 		// Case insensitive works only with MatchInTheMiddle
 		MatchCaseInsensitive = 4,
-		// Withing the function definitions / prototypes, match only constructors
-		MatchConstructorsOnly = 8
+		// For classes, also match constructor definitions
+		MatchConstructors = 8
 	};
 	
 	void storeLockedAddCompletions(

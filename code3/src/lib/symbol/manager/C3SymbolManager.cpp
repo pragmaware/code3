@@ -1145,8 +1145,9 @@ bool C3SymbolManager::storeLockedSelectSymbolsForCpp(
 						pFileContext,
 						pGlobalScope,
 						fnSymbolCallback,
-						C3Symbol::Class | C3Symbol::Union | C3Symbol::TypeDefinition | C3Symbol::Macro | C3Symbol::TemplateParameter | C3Symbol::FunctionPrototype,
-						uBaseFlags | MatchConstructorsOnly
+						C3Symbol::Class | C3Symbol::Union | C3Symbol::TypeDefinition |
+							C3Symbol::Macro | C3Symbol::TemplateParameter,
+						uBaseFlags | MatchConstructors
 					);
 
 				return true;
@@ -2217,7 +2218,7 @@ void C3SymbolManager::storeLockedAddSymbolInfos(
 
 	C3SymbolMap::Iterator it = pSymbols->lowerBound(szIdentifier);
 
-	bool bMatchConstructorsOnly = uFlags & MatchConstructorsOnly;
+	bool bMatchConstructors = uFlags & MatchConstructors;
 
 	while(it != end)
 	{
@@ -2259,19 +2260,6 @@ void C3SymbolManager::storeLockedAddSymbolInfos(
 				return;
 			}
 			continue;
-		}
-
-		if(bMatchConstructorsOnly && (pSym->type() & (C3Symbol::FunctionPrototype | C3Symbol::FunctionDefinition)))
-		{
-			if(!pSym->resolvedContainingScope())
-			{
-				continue;
-			}
-			if(pSym->resolvedContainingScope()->identifier() != pSym->identifier())
-			{
-				// not the same name of the scope
-				continue;
-			}
 		}
 
 #ifdef DEBUG_SYMBOL_MANAGER
@@ -2331,6 +2319,19 @@ void C3SymbolManager::storeLockedAddSymbolInfos(
 
 				pInfoList->append(li);
 			}
+		} else if((pSym->type() == C3Symbol::Class) && (bMatchConstructors))
+		{
+			// add constructors too
+			storeLockedAddSymbolInfos(
+					pInfoList,
+					oRange,
+					C3Symbol::FunctionDefinition | C3Symbol::FunctionPrototype,
+					((C3SymbolClass *)pSym)->symbols(),
+					pSym->identifier(),
+					uScore,
+					uFlags,
+					bAddSymbolPointers
+				);
 		}
 	}
 }
