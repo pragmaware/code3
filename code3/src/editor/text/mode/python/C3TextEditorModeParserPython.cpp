@@ -355,7 +355,6 @@ void C3TextEditorModeParserPython::computeMetadata()
 			case '&':
 			case '%':
 			case '-':
-			case ';':
 			case '/':
 			case ',':
 			case '.':
@@ -376,7 +375,6 @@ void C3TextEditorModeParserPython::computeMetadata()
 						(u != (ushort)'|') &&
 						(u != (ushort)'&') &&
 						(u != (ushort)'%') &&
-						(u != (ushort)';') &&
 						(u != (ushort)',') &&
 						(u != (ushort)'/') &&
 						(u != (ushort)'.') &&
@@ -386,6 +384,19 @@ void C3TextEditorModeParserPython::computeMetadata()
 					m_p->p++;
 				}
 				BLOCK(b,m_p->p - b,oOperatorTextColor,0);
+			}
+			break;
+			case ';':
+			{
+				m_p->p++;
+				while(m_p->p < m_p->e)
+				{
+					ushort u = m_p->p->unicode();
+					if(u != (ushort)']')
+						break;
+					m_p->p++;
+				}
+				BLOCK(b,m_p->p - b,oErrorTextColor,0);
 			}
 			break;
 			case '\t':
