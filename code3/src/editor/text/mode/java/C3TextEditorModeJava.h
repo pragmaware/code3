@@ -58,7 +58,7 @@ protected:
 
 	virtual void computeMetadata();
 
-	virtual void maybeCompletion(const C3TextEditorRowColumn &rc);
+//	virtual void maybeCompletion(const C3TextEditorRowColumn &rc);
 
 }; // class C3TextEditorModeJava
 

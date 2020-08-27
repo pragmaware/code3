@@ -121,7 +121,7 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 	lArgs.append(__literal("-R"));
 	lArgs.append(__literal("-u"));
 	lArgs.append(__literal("-G")); // guess language eagerly : will open the file and look at first line even if extensionless (needed for STL)
-	lArgs.append(__literal("--languages=c,c++,c#,java,php,javascript,cuda,cpreprocessor"));
+	lArgs.append(__literal("--languages=c,c++,c#,java,php,javascript,cuda,cpreprocessor,python"));
 	lArgs.append(__literal("--excmd=pattern"));
 	lArgs.append(__literal("--extras=-qf"));
 	lArgs.append(__literal("-D"));
@@ -147,6 +147,7 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 	lArgs.append(__literal("--php-kinds=cdfinltv"));
 	lArgs.append(__literal("--javascript-kinds=fcmpv"));
 	lArgs.append(__literal("--java-kinds=cefgilmp"));
+	lArgs.append(__literal("--python-kinds=cfmvzl"));
 	lArgs.append(__literal("--kinds-CPreProcessor=*"));
 	lArgs.append(__literal("--fields=NFPaeiKlmnrSstzZ"));
 	// FIXME: We aren't using the properties now!

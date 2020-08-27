@@ -64,15 +64,32 @@ void C3TextEditorModeParserPython::buildIdentifierColorHash()
 	KEYWORD("print");
 	KEYWORD("raise");
 	KEYWORD("return");
+	KEYWORD("self");
 	KEYWORD("try");
 	KEYWORD("while");
 	KEYWORD("with");
 	KEYWORD("yield");
 
+	KEYWORD("True");
+	KEYWORD("False");
+	KEYWORD("None");
 
-	BUILTIN_OBJECT("True");
-	BUILTIN_OBJECT("False");
-	BUILTIN_OBJECT("None");
+	/*
+	QColor oKeywordTextColor; // Keywords
+	QColor oUserKeywordTextColor; // User Keywords
+	QColor oBuiltinTypeTextColor; // Types
+	QColor oUserTypeTextColor; // User Types
+	QColor oBuiltinObjectTextColor; // Objects
+	QColor oUserObjectTextColor; // User Objects
+	*/
+
+
+	BUILTIN_OBJECT("__main__");
+	BUILTIN_OBJECT("__module__");
+	BUILTIN_OBJECT("__init__");
+	BUILTIN_OBJECT("__dict__");
+	
+	//BUILTIN_TYPE("int");
 
 	//BUILTIN_OBJECT("ValueError");
 	//BUILTIN_OBJECT("IOError");

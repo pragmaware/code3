@@ -53,6 +53,7 @@ void C3TextEditorModeJava::computeMetadata()
 	m_pParser->computeMetadata();
 }
 
+/*
 void C3TextEditorModeJava::maybeCompletion(const C3TextEditorRowColumn &rc)
 {
 	C3TextEditorSymbolContext * pContext = new C3TextEditorSymbolContext();
@@ -67,3 +68,4 @@ void C3TextEditorModeJava::maybeCompletion(const C3TextEditorRowColumn &rc)
 
 	C3TextEditorModeWithSymbolAnalysis::symbolCompletion(pContext,C3Symbol::Java);
 }
+*/

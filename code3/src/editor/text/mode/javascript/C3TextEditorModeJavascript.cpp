@@ -44,6 +44,7 @@ void C3TextEditorModeJavascript::computeMetadata()
 	m_pParser->computeMetadata();
 }
 
+/*
 void C3TextEditorModeJavascript::maybeCompletion(const C3TextEditorRowColumn &rc)
 {
 	C3TextEditorSymbolContext * pContext = new C3TextEditorSymbolContext();
@@ -58,3 +59,4 @@ void C3TextEditorModeJavascript::maybeCompletion(const C3TextEditorRowColumn &rc
 
 	C3TextEditorModeWithSymbolAnalysis::symbolCompletion(pContext,C3Symbol::Javascript);
 }
+*/
