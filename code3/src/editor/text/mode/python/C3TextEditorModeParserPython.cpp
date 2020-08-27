@@ -155,7 +155,8 @@ void C3TextEditorModeParserPython::computeBlocksParseIdentifier()
 		else if(pBlock->szText.startsWith(szM))
 			pBlock->pColor = &(m_p->pCoreData->pOptions->oMUnderscoreIdentifierTextColor);
 		else if(pBlock->szText.startsWith(szUnderscore))
-			pBlock->pColor = &(m_p->pCoreData->pOptions->oUnderscoreIdentifierTextColor);
+			//pBlock->pColor = &(m_p->pCoreData->pOptions->oUnderscoreIdentifierTextColor);
+			pBlock->pColor = &(m_p->pCoreData->pOptions->oMUnderscoreIdentifierTextColor); // python convention: more like "m_" (private)
 		else
 			pBlock->pColor = &(m_p->pCoreData->pOptions->oTextColor);
 	}
