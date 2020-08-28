@@ -217,10 +217,11 @@ bool C3TextOutputWidget::tryToOpenFileInText(const QString &szText)
 		QRegularExpressionMatch match = rx.match(szText);
 		if(match.hasMatch())
 		{
-			QString szFile = match.captured(0).trimmed();
-			QString szLine = match.captured(1).trimmed();
-			/*qDebug("Trying file (%s)",szCaptured.toUtf8().data());*/
-			if(tryToOpenFile(__literal("%1:%2").arg(szFile).arg(szLine)))
+			QString szFile = match.captured(1).trimmed();
+			QString szLine = match.captured(2).trimmed();
+			QString szFull = __literal("%1:%2").arg(szFile).arg(szLine);
+			qDebug("Trying file (%s)",szFull.toUtf8().data());
+			if(tryToOpenFile(szFull))
 				return true;
 		}
 	}
