@@ -213,7 +213,7 @@ bool C3TextOutputWidget::tryToOpenFileInText(const QString &szText)
 	
 	// python: File "build_data_sets.py", line 754,
 	{
-		QRegularExpression rx("File \"([A-Za-z0-9\\-\\+_\\./ ]+)\", line ([0-9]+),");
+		QRegularExpression rx("File \"([A-Za-z0-9\\-\\+_\\./ ]+)\", line ([0-9]+)");
 		QRegularExpressionMatch match = rx.match(szText);
 		if(match.hasMatch())
 		{
