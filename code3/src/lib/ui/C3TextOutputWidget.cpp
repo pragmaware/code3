@@ -211,6 +211,20 @@ bool C3TextOutputWidget::tryToOpenFileInText(const QString &szText)
 	// relative, with spaces, with extension, not at beginning, with a leading space
 	TRY_REGEXP(" [A-Za-z0-9\\-\\+_\\./ ]+\\.[A-Za-z]+(:[0-9]+([:,][0-9]+)?)?");
 	
+	// python: File "build_data_sets.py", line 754,
+	{
+		QRegularExpression rx("File \"([A-Za-z0-9\\-\\+_\\./ ]+)\", line ([0-9]+),");
+		QRegularExpressionMatch match = rx.match(szText);
+		if(match.hasMatch())
+		{
+			QString szFile = match.captured(0).trimmed();
+			QString szLine = match.captured(1).trimmed();
+			/*qDebug("Trying file (%s)",szCaptured.toUtf8().data());*/
+			if(tryToOpenFile(__literal("%1:%2").arg(szFile).arg(szLine)))
+				return true;
+		}
+	}
+	
 	return false;
 }
 
