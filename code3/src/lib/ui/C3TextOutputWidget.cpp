@@ -166,7 +166,11 @@ bool C3TextOutputWidget::tryToOpenFile(const QString &szPath)
 		return false;
 	}
 	
-	QString szFound = C3Workspace::currentWorkspace()->findFile(szFixedPath,QString(),false);
+	C3Workspace::FindFileOptions opt;
+	opt.pDeadline = new QDeadlineTimer(10000);
+	opt.bMustExistInCompletionStore = false;
+	
+	QString szFound = C3Workspace::currentWorkspace()->findFile(szFixedPath,&opt);
 
 	if(szFound.isEmpty())
 	{

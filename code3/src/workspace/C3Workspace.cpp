@@ -1303,18 +1303,31 @@ bool C3Workspace::isExcludedDirectory(const QFileInfo &inf)
 	return false;
 }
 
-QString C3Workspace::findFileRecursive(const QString &szFileName,const QString &szPath,int iCurrentDepth)
+QString C3Workspace::findFileRecursive(
+		const QString &szFileName,
+		const QString &szPath,
+		FindFileOptions * pOptions,
+		int iCurrentDepth
+	)
 {
 	//qDebug("Find file recursive in %s",szPath.toUtf8().data());
 
 	QString szRet;
 
-	if(iCurrentDepth > 12)
-		return szRet; // too deep
-	
 	szRet = checkFileExistence(szFileName,szPath);
 	if(!szRet.isEmpty())
 		return szRet;
+
+	if(pOptions)
+	{
+		if(iCurrentDepth >= pOptions->iMaximumDepth)
+			return szRet; // too deep
+		if(pOptions->pDeadline && pOptions->pDeadline->hasExpired())
+			return szRet; // expired
+	} else {
+		if(iCurrentDepth >= 12)
+			return szRet; // too deep
+	}
 	
 	QDir d(szPath);
 
@@ -1328,7 +1341,7 @@ QString C3Workspace::findFileRecursive(const QString &szFileName,const QString &
 		if(isExcludedDirectory(fi))
 			continue;
 	
-		szRet = findFileRecursive(szFileName,fi.absoluteFilePath(),iCurrentDepth + 1);
+		szRet = findFileRecursive(szFileName,fi.absoluteFilePath(),pOptions,iCurrentDepth + 1);
 		if(!szRet.isEmpty())
 			return szRet;
 	}
@@ -1336,7 +1349,10 @@ QString C3Workspace::findFileRecursive(const QString &szFileName,const QString &
 	return QString();
 }
 
-QString C3Workspace::findFile(const QString &szFileName,const QString &szPathHint,bool bMustExistInCompletionStore)
+QString C3Workspace::findFile(
+		const QString &szFileName,
+		FindFileOptions * pOptions
+	)
 {
 	//qDebug("Find file %s",szFileName.toUtf8().data());
 
@@ -1345,9 +1361,9 @@ QString C3Workspace::findFile(const QString &szFileName,const QString &szPathHin
 	if(szFileName.isEmpty())
 		return szRet;
 	
-	if(!szPathHint.isEmpty())
+	if(pOptions && !pOptions->sPathHint.isEmpty())
 	{
-		szRet = findFileRecursive(szFileName,szPathHint);
+		szRet = findFileRecursive(szFileName,pOptions->sPathHint,pOptions);
 		if(!szRet.isEmpty())
 			return szRet;
 	}
@@ -1355,7 +1371,7 @@ QString C3Workspace::findFile(const QString &szFileName,const QString &szPathHin
 	if(isDefault())
 		return szRet; // FIXME: maybe look in the current directory (if different than szPathHint) ?
 
-	if(bMustExistInCompletionStore)
+	if((!pOptions) || pOptions->bMustExistInCompletionStore)
 	{
 		if(!_p->pFileCompletionStore)
 			return szRet; // no completion store here
@@ -1367,7 +1383,7 @@ QString C3Workspace::findFile(const QString &szFileName,const QString &szPathHin
 		}
 	}
 
-	szRet = findFileRecursive(szFileName,_p->szRootPath);
+	szRet = findFileRecursive(szFileName,_p->szRootPath,pOptions);
 	if(!szRet.isEmpty())
 		return szRet;
 
@@ -1378,7 +1394,7 @@ QString C3Workspace::findFile(const QString &szFileName,const QString &szPathHin
 			return szRet;
 	}
 	
-	if(bMustExistInCompletionStore)
+	if((!pOptions) || pOptions->bMustExistInCompletionStore)
 	{
 		// hum hum... was in the completion store but no longer found???
 		qDebug("File %s was in completion store but I can't find it anymore",szFileName.toUtf8().data());

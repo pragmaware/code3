@@ -435,7 +435,7 @@ private:
 	void fillEditMenuAddCopyCutAndPaste(QMenu * pMenu);
 	void fillEditMenuAddUndo(QMenu * pMenu);
 
-	QString relatedFilePathWithExtension(const QString &szExt,bool bTryHarder);
+	QString relatedFilePathWithExtension(const QString &szExt,bool bTryHarder,void * pFindFileOptions);
 
 	void markMatchingParenthesisInternal();
 

@@ -29,6 +29,7 @@
 #include <QHash>
 #include <QVariant>
 #include <QStringList>
+#include <QDeadlineTimer>
 
 
 class C3WorkspacePrivate;
@@ -165,9 +166,40 @@ public:
 	// Load a default workspace.
 	void loadDefault();
 
+	class FindFileOptions
+	{
+	public:
+		QString sPathHint;
+		int iMaximumDepth;
+		bool bMustExistInCompletionStore;
+		QDeadlineTimer * pDeadline;
+	public:
+		FindFileOptions()
+		{
+			iMaximumDepth = 12;
+			bMustExistInCompletionStore = true;
+			pDeadline = NULL;
+		}
+		
+		~FindFileOptions()
+		{
+			if(pDeadline)
+				delete pDeadline;
+		}
+	};
+
 	// Find a file in the workspace (or external include directories)
-	QString findFile(const QString &szFileName,const QString &szPathHint = QString(),bool bMustExistInCompletionStore = true);
-	QString findFileRecursive(const QString &szFileName,const QString &szPath,int iCurrentDepth = 0);
+	QString findFile(
+			const QString &szFileName,
+			FindFileOptions * pOptions = NULL
+		);
+
+	QString findFileRecursive(
+			const QString &szFileName,
+			const QString &szPath,
+			FindFileOptions * pOptions = NULL,
+			int iCurrentDepth = 0
+		);
 
 	void matchFilesRecursive(const QString &szFilePart,const QString &szPath,QList<QString> &lRet,int iCurrentDepth = 0);
 	void matchFiles(const QString &szFilePart,QList<QString> &lRet);

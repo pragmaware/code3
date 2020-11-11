@@ -932,8 +932,10 @@ void C3TextEditor::computeFontMetrics()
 		_p->fFontZeroSequenceWidths[i] = _p->pFontMetrics->width(szZeroes.left(i));
 }
 
-QString C3TextEditor::relatedFilePathWithExtension(const QString &szExt,bool bTryHarder)
+QString C3TextEditor::relatedFilePathWithExtension(const QString &szExt,bool bTryHarder,void * pFindFileOptions)
 {
+	C3Workspace::FindFileOptions * pOptions = (C3Workspace::FindFileOptions *)pFindFileOptions;
+
 	QFileInfo inf(path());
 	
 	QChar sep = QDir::separator();
@@ -948,7 +950,9 @@ QString C3TextEditor::relatedFilePathWithExtension(const QString &szExt,bool bTr
 	szName.append(QChar('.'));
 	szName.append(szExt);
 
-	QString szRet = C3Workspace::currentWorkspace()->findFile(szName,inf.absolutePath());
+	pOptions->sPathHint = inf.absolutePath();
+
+	QString szRet = C3Workspace::currentWorkspace()->findFile(szName,pOptions);
 	if(!szRet.isEmpty())
 		return szRet;
 
@@ -962,7 +966,7 @@ QString C3TextEditor::relatedFilePathWithExtension(const QString &szExt,bool bTr
 	szName.append(QChar('.'));
 	szName.append(szExt.toUpper());
 
-	szRet = C3Workspace::currentWorkspace()->findFile(szName,inf.absolutePath());
+	szRet = C3Workspace::currentWorkspace()->findFile(szName,pOptions);
 	if(!szRet.isEmpty())
 		return szRet;
 
@@ -998,37 +1002,40 @@ QString C3TextEditor::relatedFilePath(bool bTryHarder)
 	static QString szHh("hh");
 	static QString szHpp("hpp");
 	static QString szHxx("hxx");
+	
+	C3Workspace::FindFileOptions opt;
+	opt.pDeadline = new QDeadlineTimer(6000); // 6 sec max
 
 	if((szSuffix == szCpp) || (szSuffix == szC) || (szSuffix == szCc) || (szSuffix == szCxx) || (szSuffix == szM))
 	{
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szH,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szH,bTryHarder,&opt);
 		if(!_p->szCachedRelatedFilePath.isEmpty())
 			return _p->szCachedRelatedFilePath;
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szHh,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szHh,bTryHarder,&opt);
 		if(!_p->szCachedRelatedFilePath.isEmpty())
 			return _p->szCachedRelatedFilePath;
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szHxx,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szHxx,bTryHarder,&opt);
 		if(!_p->szCachedRelatedFilePath.isEmpty())
 			return _p->szCachedRelatedFilePath;
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szHpp,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szHpp,bTryHarder,&opt);
 		return _p->szCachedRelatedFilePath;
 	}
 
 	if((szSuffix == szH) || (szSuffix == szHh) || (szSuffix == szHxx) || (szSuffix == szHpp))
 	{
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szC,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szC,bTryHarder,&opt);
 		if(!_p->szCachedRelatedFilePath.isEmpty())
 			return _p->szCachedRelatedFilePath;
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szCpp,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szCpp,bTryHarder,&opt);
 		if(!_p->szCachedRelatedFilePath.isEmpty())
 			return _p->szCachedRelatedFilePath;
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szCc,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szCc,bTryHarder,&opt);
 		if(!_p->szCachedRelatedFilePath.isEmpty())
 			return _p->szCachedRelatedFilePath;
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szCxx,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szCxx,bTryHarder,&opt);
 		if(!_p->szCachedRelatedFilePath.isEmpty())
 			return _p->szCachedRelatedFilePath;
-		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szM,bTryHarder);
+		_p->szCachedRelatedFilePath = relatedFilePathWithExtension(szM,bTryHarder,&opt);
 		return _p->szCachedRelatedFilePath;
 	}
 
