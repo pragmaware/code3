@@ -2,6 +2,8 @@
 # GENERAL CMAKE CONFIGURATION
 #################################################################################################
 
+project(code3)
+
 # Set conventional loops
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
