@@ -179,8 +179,10 @@ public:
 		// Don't filter the symbols depending on context. Just complete it.
 		SymbolCompletionNoContextFilter = 1,
 		SymbolCompletionMatchInTheMiddle = 2,
+		// Match in the middle, but only if the text is longer than 1 character, otherwise match at beginning only
+		SymbolCompletionMatchInTheMiddleIfLongerThanOne = 4,
 		// The case insensitive match works only if matching in the middle
-		SymbolCompletionMatchCaseInsensitive = 4
+		SymbolCompletionMatchCaseInsensitive = 8
 	};
 
 	//

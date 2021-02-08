@@ -313,7 +313,7 @@ void C3TextEditor::backspace()
 
 	_p->pMode->triggerSymbolCompletion(
 			_p->oCursor,
-			C3TextEditorMode::SymbolCompletionMatchInTheMiddle | C3TextEditorMode::SymbolCompletionMatchCaseInsensitive
+			C3TextEditorMode::SymbolCompletionMatchInTheMiddleIfLongerThanOne | C3TextEditorMode::SymbolCompletionMatchCaseInsensitive
 		);
 
 	endVisualStateChange(DontHideCompletionWidget);
@@ -367,7 +367,7 @@ void C3TextEditor::del()
 
 	_p->pMode->triggerSymbolCompletion(
 			_p->oCursor,
-			C3TextEditorMode::SymbolCompletionMatchInTheMiddle | C3TextEditorMode::SymbolCompletionMatchCaseInsensitive
+			C3TextEditorMode::SymbolCompletionMatchInTheMiddleIfLongerThanOne | C3TextEditorMode::SymbolCompletionMatchCaseInsensitive
 		);
 
 	endVisualStateChange(DontHideCompletionWidget);
@@ -698,7 +698,7 @@ void C3TextEditor::insertTypedText(const QString &szText)
 		} else {
 			_p->pMode->triggerSymbolCompletion(
 					_p->oCursor,
-					C3TextEditorMode::SymbolCompletionMatchInTheMiddle | C3TextEditorMode::SymbolCompletionMatchCaseInsensitive
+					C3TextEditorMode::SymbolCompletionMatchInTheMiddleIfLongerThanOne | C3TextEditorMode::SymbolCompletionMatchCaseInsensitive
 				);
 		}
 	}

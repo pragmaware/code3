@@ -351,7 +351,11 @@ int C3TextEditorCompletionWidget::showChoices(
 
 	int iMaxLength = 0;
 
-	bool bMatchInTheMiddle = uFlags & C3TextEditorMode::SymbolCompletionMatchInTheMiddle;
+	bool bMatchInTheMiddle = (uFlags & C3TextEditorMode::SymbolCompletionMatchInTheMiddle) ||
+		(
+			(uFlags & C3TextEditorMode::SymbolCompletionMatchInTheMiddleIfLongerThanOne) &&
+			(szTextToComplete.length() > 1)
+		);
 	Qt::CaseSensitivity eCaseSensitivity = (uFlags & C3TextEditorMode::SymbolCompletionMatchCaseInsensitive) ?
 				Qt::CaseInsensitive :
 				Qt::CaseSensitive;

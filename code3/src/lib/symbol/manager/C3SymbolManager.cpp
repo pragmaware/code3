@@ -1548,6 +1548,11 @@ void C3SymbolManager::processPerformCompletionRequest(C3SymbolManagerRequestPerf
 		uCompletionFlags |= MatchCaseInsensitive;
 	if(pRequest->flags() & C3TextEditorMode::SymbolCompletionMatchInTheMiddle)
 		uCompletionFlags |= MatchInTheMiddle;
+	else if(pRequest->flags() & C3TextEditorMode::SymbolCompletionMatchInTheMiddleIfLongerThanOne)
+	{
+		if(pContext->szText.length() > 1)
+			uCompletionFlags |= MatchInTheMiddle;
+	}
 
 	QList<C3TextEditorCompletion *> * pCompletions = new QList<C3TextEditorCompletion *>();
 
