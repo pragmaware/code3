@@ -626,7 +626,7 @@ C3SymbolScope * C3SymbolManager::resolveP(
 
 	// Try to look for SomethingElsePrivate * m_... instead
 
-	static QLatin1Literal sPrivate2("Private *");
+	static QLatin1String sPrivate2("Private *");
 	
 	if(pTypeScope->symbols())
 	{

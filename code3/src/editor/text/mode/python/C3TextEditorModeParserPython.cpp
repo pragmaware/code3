@@ -277,7 +277,7 @@ void C3TextEditorModeParserPython::computeMetadata()
 					default:
 						m_p->p--;
 						m_p->uInterLineFlags |= InPythonDoubleQuoteString;
-						computeBlocksParseString('"',&(m_p->pCoreData->pOptions->oStringTextColor));
+						computeBlocksParseStringWithCFormat('"',&(m_p->pCoreData->pOptions->oStringTextColor));
 						m_p->uInterLineFlags &= ~InPythonDoubleQuoteString;
 					break;
 				}

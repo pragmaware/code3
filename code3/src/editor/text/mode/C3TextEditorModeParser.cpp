@@ -400,9 +400,11 @@ void C3TextEditorModeParser::computeBlocksParseString(ushort uDelimiter,QColor *
 				if(m_p->p->unicode() == (ushort)'\t')
 				{
 					// special case of \<tab>
+					iBlockCount++;
 					createBlock(b,m_p->p - b,pColor,0);
 					b = m_p->p;
 					m_p->p++;
+					iBlockCount++;
 					createBlock(b,m_p->p - b,pColor,C3TextEditorLine::Block::IsTabBlock);
 					b = m_p->p;
 				} else {
@@ -480,6 +482,169 @@ mark_as_unterminated_string:
 	return;
 
 }
+
+
+void C3TextEditorModeParser::computeBlocksParseStringWithCFormat(ushort uDelimiter,QColor * pColor)
+{
+	// This is called with m_p->p pointing at the initial delimiter (which may be different from the final one)
+
+	const QChar * b = m_p->p;
+	
+	if(m_p->p->unicode() == uDelimiter)
+		m_p->p++; // initial delimiter
+	// else we assume that we were pointing to something different which *MIGHT* also be a tab or an escape.
+
+	int iBlockCount = 0;
+	
+	while(m_p->p < m_p->e)
+	{
+		ushort uChar = m_p->p->unicode();
+		if(uChar == uDelimiter)
+		{
+			m_p->p++;
+			createBlock(b,m_p->p - b,pColor,0);
+			return;
+		}
+	
+		switch(uChar)
+		{
+			case '\\':
+				m_p->p++;
+				if(m_p->p >= m_p->e)
+					goto mark_as_unterminated_string; // unterminated string
+				if(m_p->p->unicode() == (ushort)'\t')
+				{
+					// special case of \<tab>
+					iBlockCount++;
+					createBlock(b,m_p->p - b,pColor,0);
+					b = m_p->p;
+
+					m_p->p++;
+					iBlockCount++;
+					createBlock(b,m_p->p - b,pColor,C3TextEditorLine::Block::IsTabBlock);
+					b = m_p->p;
+				} else {
+					m_p->p++; // skip escape
+				}
+			break;
+			case '\t':
+			{
+				if(m_p->p > b)
+				{
+					createBlock(b,m_p->p - b,pColor,0);
+					b = m_p->p;
+				}
+				m_p->p++;
+				while(m_p->p < m_p->e)
+				{
+					if(m_p->p->unicode() != (ushort)'\t')
+						break;
+					m_p->p++;
+				}
+	
+				iBlockCount++;
+				createBlock(b,m_p->p - b,pColor,C3TextEditorLine::Block::IsTabBlock);
+				b = m_p->p;
+			}
+			break;
+			case '%':
+			{
+				const QChar * pSave = m_p->p;
+			
+				m_p->p++;
+				if(m_p->p >= m_p->e)
+					goto mark_as_unterminated_string; // unterminated string
+
+				if(m_p->p->unicode() == '.')
+				{
+					m_p->p++;
+					if(m_p->p >= m_p->e)
+						goto mark_as_unterminated_string; // unterminated string
+				}
+
+				if(m_p->p->isLetterOrNumber())
+				{
+					if(pSave > b)
+					{
+						iBlockCount++;
+						createBlock(b,pSave - b,pColor,0);
+						b = pSave;
+					}
+
+					const QChar * tmpEnd = m_p->p + 3;
+					if(tmpEnd > m_p->e)
+						tmpEnd = m_p->e;
+	
+					while(m_p->p < tmpEnd)
+					{
+						if(m_p->p->isLetter())
+						{
+							m_p->p++;
+							break;
+						}
+						if(!m_p->p->isNumber())
+							break;
+						m_p->p++;
+					}
+					
+					createBlock(b,m_p->p - b,&(m_p->pCoreData->pOptions->oVariableInStringTextColor),0);
+					b = m_p->p;
+				}
+			}
+			break;
+			default:
+			{
+				// non tab
+				m_p->p++;
+				
+				// We avoid creating blocks longer than 256 characters. This improves painting performance with veeeery long lines.
+				const QChar * tmpEnd = m_p->p + 256;
+				if(tmpEnd > m_p->e)
+					tmpEnd = m_p->e;
+				
+				while(m_p->p < tmpEnd)
+				{
+					ushort u = m_p->p->unicode();
+					if(
+							(u == (ushort)'\t') ||
+							(u == (ushort)'\\') ||
+							(u == (ushort)'%') ||
+							(u == uDelimiter)
+						)
+						break;
+					m_p->p++;
+				}
+
+				iBlockCount++;
+				createBlock(b,m_p->p - b,pColor,0);
+				b = m_p->p;
+			}
+			break;
+		}
+	}
+
+mark_as_unterminated_string:
+
+	// uDelimiter 0 is used explicitly to mark everything as error
+	if(uDelimiter == 0)
+		pColor = &(m_p->pCoreData->pOptions->oErrorTextColor);
+	else
+		pColor = &(m_p->pCoreData->pOptions->oUnterminatedStringTextColor);
+
+	QLinkedList<C3TextEditorLine::Block *>::iterator it = m_p->pLine->lBlocks.end();
+	while(iBlockCount > 0)
+	{
+		iBlockCount--;
+		it--;
+		(*it)->pColor = pColor;
+	}
+
+	if(m_p->p > b)
+		createBlock(b,m_p->p - b,pColor,0);
+	return;
+
+}
+
 
 void C3TextEditorModeParser::computeBlocksSkipWhiteSpace()
 {

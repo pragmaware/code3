@@ -192,6 +192,10 @@ protected:
 	// This function should be called when pointing at the initial delimiter (which may de different than uDelimiter)
 	void computeBlocksParseString(ushort uDelimiter,QColor * pColor);
 
+	// Parse any kind of string expecting uDelimiter as terminator and handling the % format strings
+	// This function should be called when pointing at the initial delimiter (which may de different than uDelimiter)
+	void computeBlocksParseStringWithCFormat(ushort uDelimiter,QColor * pColor);
+
 	// Parse a number. This is something in the form DDDD or DDDD.DDDD or .DDDD or .eDDD
 	void computeBlocksParseNumber();
 	

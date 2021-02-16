@@ -507,7 +507,7 @@ preprocessor_check_complete:
 			break;
 			case '"':
 				m_p->uInterLineFlags |= InCPPString;
-				computeBlocksParseString('"',&(m_p->pCoreData->pOptions->oStringTextColor));
+				computeBlocksParseStringWithCFormat('"',&(m_p->pCoreData->pOptions->oStringTextColor));
 				m_p->uInterLineFlags &= ~InCPPString;
 			break;
 			case '{':
