@@ -89,6 +89,7 @@ QStringList C3Settings::defaultFileExclusionPatterns()
 	lRet.append(".git/");
 	lRet.append(".svn/");
 	lRet.append("CMakeFiles/");
+	lRet.append("node_modules/");
 	
 	return lRet;
 }
