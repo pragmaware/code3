@@ -27,6 +27,11 @@ bool C3TextEditor::supportsFindOperations()
 	return true;
 }
 
+bool C3TextEditor::findOperationInitialSearchInSelection()
+{
+	return !_p->oSelection.isEmpty();
+}
+
 QString C3TextEditor::findOperationGetInitialSearchString()
 {
 	// first line of selection

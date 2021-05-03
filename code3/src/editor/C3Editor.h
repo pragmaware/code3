@@ -112,6 +112,7 @@ public:
 	virtual void fillFXMenu(QMenu * pMenu);
 
 	virtual bool supportsFindOperations();
+	virtual bool findOperationInitialSearchInSelection();
 	virtual QString findOperationGetInitialSearchString();
 	virtual bool findOperationRun(C3FindOperation * pOperation);
 	virtual bool findOperationReplace(C3FindOperation * pOperation,const QString &szText);

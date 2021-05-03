@@ -372,10 +372,9 @@ void C3FindWidget::showEvent(QShowEvent * e)
 	{
 		QString szInitial = pEditor->findOperationGetInitialSearchString();
 		if(!szInitial.isEmpty())
-		{
 			_p->pSearchStringComboBox->lineEdit()->setText(szInitial);
+		if(pEditor->findOperationInitialSearchInSelection())
 			comboBoxSelectByData(_p->pSearchScopeComboBox,__utf8("selection"));
-		}
 		_p->pSearchStringComboBox->lineEdit()->selectAll();
 	}
 

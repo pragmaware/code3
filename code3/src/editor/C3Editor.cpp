@@ -75,6 +75,11 @@ bool C3Editor::supportsFindOperations()
 	return false;
 }
 
+bool C3Editor::findOperationInitialSearchInSelection()
+{
+	return false;
+}
+
 QString C3Editor::findOperationGetInitialSearchString()
 {
 	return QString();
