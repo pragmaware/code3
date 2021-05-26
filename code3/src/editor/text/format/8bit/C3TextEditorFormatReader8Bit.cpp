@@ -24,8 +24,8 @@
 
 #include <string.h> // memcpy
 
-// We read in 1Meg chunks
-#define BUFFER_SIZE (1024 * 1024)
+// We read in 4Meg chunks
+#define BUFFER_SIZE (4 * 1024 * 1024)
 
 class C3TextEditorFormatReader8BitPrivate
 {

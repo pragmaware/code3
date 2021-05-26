@@ -107,7 +107,7 @@ void C3TextEditor::slotReaderWakeUp()
 		} else {
 			if(_p->bContentWasAlteredDuringRead)
 			{
-				warning(__tr("The contents of the file %1 were altering in the read process. %2. The file was opened in read-only mode.").arg(path()).arg(_p->szReadAlterationReason));
+				warning(__tr("The contents of the file %1 were altered in the read process. %2. The file was opened in read-only mode.").arg(path()).arg(_p->szReadAlterationReason));
 				setReadOnly(true);
 			} else {
 				setReadOnly(false);
