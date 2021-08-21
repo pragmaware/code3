@@ -246,8 +246,8 @@ void C3TextEditorModeCPPSharedData::setDefaultUserHighlightingSet(C3SettingsUser
 	sl->append("signals");
 	sl->append("slots");
 	sl->append("foreach");
-	sl->append("# CC keyword extensions");
 	sl->append("cc_foreach");
+	sl->append("st_foreach");
 
 	sl = pSet->subset("cppUserTypes");
 
@@ -471,9 +471,10 @@ void C3TextEditorModeCPPSharedData::setDefaultUserHighlightingSet(C3SettingsUser
 
 	sl = pSet->subset("cppUserCustom2");
 
-	sl->append("# Cc^ classes");
 	sl->append("Cc");
 	sl->append("Cc^");
+	sl->append("St");
+	sl->append("St^");
 
 	sl = pSet->subset("cppUserCustom3");
 	sl->append("# Qt macros");
@@ -487,5 +488,10 @@ void C3TextEditorModeCPPSharedData::setDefaultUserHighlightingSet(C3SettingsUser
 	sl->append("CCMATH_^");
 	sl->append("CCDB_^");
 	sl->append("CCNET_^");
+	sl->append("ST_^");
+	sl->append("STUI_^");
+	sl->append("STMATH_^");
+	sl->append("STDB_^");
+	sl->append("STNET_^");
 
 }

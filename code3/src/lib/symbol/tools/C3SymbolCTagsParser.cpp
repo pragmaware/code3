@@ -854,6 +854,9 @@ bool C3SymbolCTagsParser::parseLine(const char * pLine,int len,QString &szError)
 
 						// the scope also contains "class:" "namespace:" etc.. prefix.
 					
+						// FIXME: discard anything in the "prototype:" scope. We don't use the parameters nor the template arguments here.
+						// FIXME: Do we want to keep them? Can we use them in some way?
+					
 						const char * x = pAfterColon;
 						while((x < p) && (*x != ':'))
 							x++;
