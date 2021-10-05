@@ -486,6 +486,13 @@ void C3ExternalCommandManager::handleProcessOutput(
 		{
 			line++;
 		
+
+			if(szLine.length() > 2048)
+			{
+				szLine = szLine.mid(0,2048);
+				szLine += __literal("...");
+			}
+				
 			QString szCaptured;
 		
 #define TRY_REGEXP(_szRegexp) \
@@ -517,6 +524,7 @@ void C3ExternalCommandManager::handleProcessOutput(
 		
 			// relative, with spaces, with extension, not at beginning, with a leading space
 			//TRY_REGEXP(" [A-Za-z0-9\\-\\+_\\./ ]+\\.[A-Za-z]+(:[0-9]+([:,][0-9]+)?)?");
+	
 	
 			// no match
 			pConsole->appendText(
