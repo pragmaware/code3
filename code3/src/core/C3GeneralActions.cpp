@@ -128,6 +128,16 @@ C3GeneralActions::C3GeneralActions(C3MainWindow * pMainWindow)
 		);
 
 	CREATE_ACTION(
+			m_pToggleFindWidgetGrepAction,
+			"edit-find.png",
+			__tr("Grep in Workspace..."),
+			__tr("Toggle the find & replace window in grep mode"),
+			SLOT(toggleFindWidgetGrep()),
+			Qt::CTRL + Qt::SHIFT + Qt::Key_F
+		);
+
+
+	CREATE_ACTION(
 			m_pWorkspaceSaveAsAction,
 			"document-save-as.png",
 			__tr("Save As..."),
@@ -328,6 +338,11 @@ void C3GeneralActions::documentClose()
 void C3GeneralActions::toggleFindWidget()
 {
 	m_pMainWindow->toggleFindWidget();
+}
+
+void C3GeneralActions::toggleFindWidgetGrep()
+{
+	m_pMainWindow->toggleFindWidget(C3MainWindow::ShowFindWidgetSwitchToGrepInWorkspaceMode);
 }
 
 void C3GeneralActions::workspaceSaveAs()

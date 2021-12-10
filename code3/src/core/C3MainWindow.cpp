@@ -411,10 +411,13 @@ void C3MainWindow::closeEvent(QCloseEvent * e)
 	QMainWindow::closeEvent(e);
 }
 
-C3FindWidget * C3MainWindow::showFindWidget()
+C3FindWidget * C3MainWindow::showFindWidget(int iFlags)
 {
 	_p->pCentralWidget->showFindWidget();
 	C3GeneralActions::instance()->toggleFindWidgetAction()->setText(__tr("Hide Find and Replace"));
+	C3GeneralActions::instance()->toggleFindWidgetGrepAction()->setText(__tr("Hide Find and Replace"));
+	if(iFlags & ShowFindWidgetSwitchToGrepInWorkspaceMode)
+		_p->pCentralWidget->findWidget()->switchToGrepInWorkspaceMode();
 	return _p->pCentralWidget->findWidget();
 }
 
@@ -422,14 +425,15 @@ void C3MainWindow::hideFindWidget()
 {
 	_p->pCentralWidget->hideFindWidget();
 	C3GeneralActions::instance()->toggleFindWidgetAction()->setText(__tr("Find and Replace..."));
+	C3GeneralActions::instance()->toggleFindWidgetGrepAction()->setText(__tr("Grep in Workspace..."));
 }
 
-void C3MainWindow::toggleFindWidget()
+void C3MainWindow::toggleFindWidget(int iFlags)
 {
 	if(_p->pCentralWidget->findWidgetVisible())
 		hideFindWidget();
 	else
-		showFindWidget();
+		showFindWidget(iFlags);
 }
 
 bool C3MainWindow::findWidgetVisible()

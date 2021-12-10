@@ -84,8 +84,13 @@ public:
 	// Returns the best guess directory for saving files. This is actually the file browser directory.
 	QString currentDirectory();
 
-	void toggleFindWidget();
-	C3FindWidget * showFindWidget();
+	enum ShowFindWidgetFlags
+	{
+		ShowFindWidgetSwitchToGrepInWorkspaceMode = 1
+	};
+
+	void toggleFindWidget(int iFlags = 0);
+	C3FindWidget * showFindWidget(int iFlags = 0);
 	void hideFindWidget();
 	bool findWidgetVisible();
 	

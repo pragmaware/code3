@@ -60,6 +60,7 @@ public:
 	void currentEditorChanged();
 	void editorClosed(C3Editor * pEditor);
 
+	void switchToGrepInWorkspaceMode();
 	void grepInWorkspace(const QString &szText);
 	void grepInCurrentDirectory(const QString &szText);
 

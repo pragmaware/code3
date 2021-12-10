@@ -62,6 +62,7 @@ private:
 	QAction * m_pDocumentNewAction;
 	QAction * m_pDocumentCloseAction;
 	QAction * m_pToggleFindWidgetAction;
+	QAction * m_pToggleFindWidgetGrepAction;
 
 	QAction * m_pWorkspaceOpenAction;
 	QAction * m_pWorkspaceCloseAction;
@@ -139,6 +140,12 @@ public:
 	{
 		return m_pToggleFindWidgetAction;
 	}
+	
+	
+	QAction * toggleFindWidgetGrepAction()
+	{
+		return m_pToggleFindWidgetGrepAction;
+	}
 
 	QAction * documentSaveAction()
 	{
@@ -198,6 +205,7 @@ public slots:
 	void documentNew();
 
 	void toggleFindWidget();
+	void toggleFindWidgetGrep();
 
 	void workspaceOpen();
 	void workspaceSaveAs();

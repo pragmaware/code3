@@ -215,6 +215,13 @@ C3FindWidget::~C3FindWidget()
 	delete _p;
 }
 
+void C3FindWidget::switchToGrepInWorkspaceMode()
+{
+	comboBoxSelectByData(_p->pSearchScopeComboBox,__ascii("grep.workspace"));
+	comboBoxSelectByData(_p->pSearchCaseSensitivityComboBox,__ascii("casesensitive"));
+	comboBoxSelectByData(_p->pSearchTypeComboBox,__ascii("string"));
+}
+
 void C3FindWidget::grepInWorkspace(const QString &szText)
 {
 	grepInScope(szText,__ascii("grep.workspace"));
