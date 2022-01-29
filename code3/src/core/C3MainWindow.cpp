@@ -284,6 +284,7 @@ void C3MainWindow::createMenuBar()
 
 	_p->pEditMenu = _p->pMenuBar->addMenu(__tr("Edit"));
 	_p->pEditMenu->addAction(_p->pGeneralActions->toggleFindWidgetAction());
+	_p->pEditMenu->addAction(_p->pGeneralActions->toggleFindWidgetGrepAction());
 
 	QObject::connect(_p->pEditMenu,SIGNAL(aboutToShow()),this,SLOT(slotEditMenuAboutToShow()));
 
@@ -349,6 +350,7 @@ void C3MainWindow::slotEditMenuAboutToShow()
 	}
 
 	_p->pEditMenu->addAction(_p->pGeneralActions->toggleFindWidgetAction());
+	_p->pEditMenu->addAction(_p->pGeneralActions->toggleFindWidgetGrepAction());
 }
 
 void C3MainWindow::slotFXMenuAboutToShow()

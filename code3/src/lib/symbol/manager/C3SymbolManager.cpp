@@ -2506,75 +2506,78 @@ C3SymbolManagerClassDescription * C3SymbolManager::storeLockedDescribeClass(C3Sy
 		pDescription->uLastMemberFunctionInDeclarationLine[i] = 0;
 	}
 
-	foreach(C3Symbol * pSym,*(pClass->symbols()))
+	if(pClass->symbols())
 	{
-		C3Symbol::AccessLevel eAccessLevel = pSym->accessLevel();
-	
-		switch(pSym->type())
+		foreach(C3Symbol * pSym,*(pClass->symbols()))
 		{
-			case C3Symbol::MemberVariable:
-				pDescription->bFoundMemberVariableDeclarations[C3Symbol::AccessLevelUnknown] = true;
-				if(pDescription->uFirstMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] > pSym->lineNumber())
-					pDescription->uFirstMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->lineNumber();
-				if(pDescription->uLastMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] < pSym->endLineNumber())
-					pDescription->uLastMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->endLineNumber();
-
-				if(eAccessLevel != C3Symbol::AccessLevelUnknown)
-				{
-					pDescription->bFoundMemberVariableDeclarations[eAccessLevel] = true;
-					if(pDescription->uFirstMemberVariableDeclarationLine[eAccessLevel] > pSym->lineNumber())
-						pDescription->uFirstMemberVariableDeclarationLine[eAccessLevel] = pSym->lineNumber();
-					if(pDescription->uLastMemberVariableDeclarationLine[eAccessLevel] < pSym->endLineNumber())
-						pDescription->uLastMemberVariableDeclarationLine[eAccessLevel] = pSym->endLineNumber();
-				}
-			break;
-			case C3Symbol::FunctionDefinition:
-				if(pSym->filePath() != pDescription->szDeclaratonFile)
-				{
-					if(pDescription->szDefinitionFile.isEmpty())
-						pDescription->szDefinitionFile = pSym->filePath();
-					else if(pSym->filePath().length() < pDescription->szDefinitionFile.length())
-						pDescription->szDefinitionFile = pSym->filePath();
-				} else {
-					if(
-						(pSym->endLineNumber() <= pDescription->uDeclarationEndLine) &&
-						(pSym->lineNumber() >= pDescription->uDeclarationStartLine)
-					)
+			C3Symbol::AccessLevel eAccessLevel = pSym->accessLevel();
+		
+			switch(pSym->type())
+			{
+				case C3Symbol::MemberVariable:
+					pDescription->bFoundMemberVariableDeclarations[C3Symbol::AccessLevelUnknown] = true;
+					if(pDescription->uFirstMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] > pSym->lineNumber())
+						pDescription->uFirstMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->lineNumber();
+					if(pDescription->uLastMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] < pSym->endLineNumber())
+						pDescription->uLastMemberVariableDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->endLineNumber();
+	
+					if(eAccessLevel != C3Symbol::AccessLevelUnknown)
 					{
-						// it's inside the class declaration!
-						pDescription->bFoundMemberFunctionsInDeclaration[C3Symbol::AccessLevelUnknown] = true;
-						if(pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] > pSym->lineNumber())
-							pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->lineNumber();
-						if(pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] < pSym->endLineNumber())
-							pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->endLineNumber();
-						
-						if(eAccessLevel != C3Symbol::AccessLevelUnknown)
+						pDescription->bFoundMemberVariableDeclarations[eAccessLevel] = true;
+						if(pDescription->uFirstMemberVariableDeclarationLine[eAccessLevel] > pSym->lineNumber())
+							pDescription->uFirstMemberVariableDeclarationLine[eAccessLevel] = pSym->lineNumber();
+						if(pDescription->uLastMemberVariableDeclarationLine[eAccessLevel] < pSym->endLineNumber())
+							pDescription->uLastMemberVariableDeclarationLine[eAccessLevel] = pSym->endLineNumber();
+					}
+				break;
+				case C3Symbol::FunctionDefinition:
+					if(pSym->filePath() != pDescription->szDeclaratonFile)
+					{
+						if(pDescription->szDefinitionFile.isEmpty())
+							pDescription->szDefinitionFile = pSym->filePath();
+						else if(pSym->filePath().length() < pDescription->szDefinitionFile.length())
+							pDescription->szDefinitionFile = pSym->filePath();
+					} else {
+						if(
+							(pSym->endLineNumber() <= pDescription->uDeclarationEndLine) &&
+							(pSym->lineNumber() >= pDescription->uDeclarationStartLine)
+						)
 						{
-							pDescription->bFoundMemberFunctionsInDeclaration[eAccessLevel] = true;
-							if(pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] > pSym->lineNumber())
-								pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] = pSym->lineNumber();
-							if(pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] < pSym->endLineNumber())
-								pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] = pSym->endLineNumber();
+							// it's inside the class declaration!
+							pDescription->bFoundMemberFunctionsInDeclaration[C3Symbol::AccessLevelUnknown] = true;
+							if(pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] > pSym->lineNumber())
+								pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->lineNumber();
+							if(pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] < pSym->endLineNumber())
+								pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->endLineNumber();
+							
+							if(eAccessLevel != C3Symbol::AccessLevelUnknown)
+							{
+								pDescription->bFoundMemberFunctionsInDeclaration[eAccessLevel] = true;
+								if(pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] > pSym->lineNumber())
+									pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] = pSym->lineNumber();
+								if(pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] < pSym->endLineNumber())
+									pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] = pSym->endLineNumber();
+							}
 						}
 					}
-				}
-			break;
-			case C3Symbol::FunctionPrototype:
-				pDescription->bFoundMemberFunctionsInDeclaration[C3Symbol::AccessLevelUnknown] = true;
-				if(pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] > pSym->lineNumber())
-					pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->lineNumber();
-				if(pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] < pSym->endLineNumber())
-					pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->endLineNumber();
-				
-				if(eAccessLevel != C3Symbol::AccessLevelUnknown)
-				{
-					pDescription->bFoundMemberFunctionsInDeclaration[eAccessLevel] = true;
-					if(pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] > pSym->lineNumber())
-						pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] = pSym->lineNumber();
-					if(pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] < pSym->endLineNumber())
-						pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] = pSym->endLineNumber();
-				}
-			break;
+				break;
+				case C3Symbol::FunctionPrototype:
+					pDescription->bFoundMemberFunctionsInDeclaration[C3Symbol::AccessLevelUnknown] = true;
+					if(pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] > pSym->lineNumber())
+						pDescription->uFirstMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->lineNumber();
+					if(pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] < pSym->endLineNumber())
+						pDescription->uLastMemberFunctionInDeclarationLine[C3Symbol::AccessLevelUnknown] = pSym->endLineNumber();
+					
+					if(eAccessLevel != C3Symbol::AccessLevelUnknown)
+					{
+						pDescription->bFoundMemberFunctionsInDeclaration[eAccessLevel] = true;
+						if(pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] > pSym->lineNumber())
+							pDescription->uFirstMemberFunctionInDeclarationLine[eAccessLevel] = pSym->lineNumber();
+						if(pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] < pSym->endLineNumber())
+							pDescription->uLastMemberFunctionInDeclarationLine[eAccessLevel] = pSym->endLineNumber();
+					}
+				break;
+			}
 		}
 	}
 
