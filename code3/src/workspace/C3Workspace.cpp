@@ -68,7 +68,7 @@ C3Workspace::C3Workspace()
 	_p->pFileScanWorker = NULL;
 	_p->pResetSymbolStoreRequest = NULL;
 	_p->tAutoSaveTimer.start();
-	_p->iTimeToNextAutoSave = 300000; // 5 mins
+	_p->iTimeToNextAutoSave = 4200000; // 7 mins
 	_p->tFileScanTimer.start();
 	_p->iTimeToNextFileScan = 360000; // 6 mins
 	_p->tSymbolScanTimer.start();
@@ -194,7 +194,7 @@ void C3Workspace::abortSymbolManagerReset()
 
 void C3Workspace::slotHeartbeat()
 {
-	if(_p->tAutoSaveTimer.elapsed() > _p->iTimeToNextAutoSave) // 5 mins
+	if(_p->tAutoSaveTimer.elapsed() > _p->iTimeToNextAutoSave) // 7 mins
 	{
 		if(isDefault())
 		{
@@ -210,7 +210,7 @@ void C3Workspace::slotHeartbeat()
 		error(__tr("Could not auto-save workspace: %1").arg(szError));
 
 		_p->tAutoSaveTimer.restart();
-		_p->iTimeToNextAutoSave = 300000; // 5 mins
+		_p->iTimeToNextAutoSave = 420000; // 7 mins
 	}
 
 	if((_p->tFileScanTimer.elapsed() > _p->iTimeToNextFileScan) && (!_p->pFileScanWorker))
