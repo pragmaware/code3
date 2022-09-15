@@ -41,6 +41,19 @@ void C3TextEditorModeParserDart::buildIdentifierColorHash()
 	BUILTIN_TYPE("bool");
 	BUILTIN_TYPE("double");
 	BUILTIN_TYPE("void");
+	BUILTIN_TYPE("String");
+	BUILTIN_TYPE("List");
+	BUILTIN_TYPE("Set");
+	BUILTIN_TYPE("Map");
+	BUILTIN_TYPE("Symbol");
+	BUILTIN_TYPE("Null");
+	BUILTIN_TYPE("Object");
+	BUILTIN_TYPE("Enum");
+	BUILTIN_TYPE("Future");
+	BUILTIN_TYPE("Stream");
+	BUILTIN_TYPE("Iterable");
+	BUILTIN_TYPE("Never");
+
 
 	KEYWORD("abstract");
 	KEYWORD("as");
@@ -57,6 +70,7 @@ void C3TextEditorModeParserDart::buildIdentifierColorHash()
 	KEYWORD("default");
 	KEYWORD("deferred");
 	KEYWORD("do");
+	KEYWORD("dynamic");
 	KEYWORD("else");
 	KEYWORD("enum");
 	KEYWORD("export");
