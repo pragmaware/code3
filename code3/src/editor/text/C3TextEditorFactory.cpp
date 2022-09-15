@@ -31,6 +31,7 @@
 #include "C3TextEditorModeCMake.h"
 #include "C3TextEditorModeBash.h"
 #include "C3TextEditorModePython.h"
+#include "C3TextEditorModeDart.h"
 #include "C3TextEditorModeXML.h"
 #include "C3TextEditorModeVHDL.h"
 #include "C3TextEditorModeCPPSharedData.h"
@@ -251,6 +252,7 @@ void C3TextEditorFactory::fillModeMap()
 	ADD_MODE("cmake","CMake",C3TextEditorModeCMake);
 	ADD_MODE("cpp","C/C++",C3TextEditorModeCPP);
 	ADD_MODE("css","CSS",C3TextEditorModeCSS);
+	ADD_MODE("dart","Dart",C3TextEditorModeDart);
 	ADD_MODE("html","HTML",C3TextEditorModeHTML);
 	ADD_MODE("java","Java",C3TextEditorModeJava);
 	ADD_MODE("js","Javascript",C3TextEditorModeJavascript);
@@ -266,6 +268,7 @@ void C3TextEditorFactory::fillModeByExtensionMap()
 {
 	_p->oModeByExtensionMap.insert("js","js");
 	_p->oModeByExtensionMap.insert("json","js"); // FIXME?
+	_p->oModeByExtensionMap.insert("dart","dart");
 	_p->oModeByExtensionMap.insert("html","html");
 	_p->oModeByExtensionMap.insert("xhtml","html");
 	_p->oModeByExtensionMap.insert("htm","html");

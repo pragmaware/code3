@@ -80,6 +80,7 @@ C3SymbolCTagsParser::C3SymbolCTagsParser()
 	_p->hLanguageMap.insert("c#",C3Symbol::CSharp);
 	_p->hLanguageMap.insert("CSharp",C3Symbol::CSharp);
 	_p->hLanguageMap.insert("csharp",C3Symbol::CSharp);
+	_p->hLanguageMap.insert("dart",C3Symbol::Javascript);
 	_p->hLanguageMap.insert("Java",C3Symbol::Java);
 	_p->hLanguageMap.insert("java",C3Symbol::Java);
 	_p->hLanguageMap.insert("JAVA",C3Symbol::Java);

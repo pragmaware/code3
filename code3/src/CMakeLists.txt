@@ -19,6 +19,7 @@
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cpp/codeedit/genenumswitch
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/cpp/codeedit/membergen
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/css
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/dart
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/html
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/java
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/javascript
@@ -133,6 +134,8 @@ SET(
 		editor/text/mode/cpp/codeedit/membergen/C3TextEditorModeCPPMemberVariableGeneratorDialog.cpp
 		editor/text/mode/css/C3TextEditorModeCSS.cpp
 		editor/text/mode/css/C3TextEditorModeParserCSS.cpp
+		editor/text/mode/dart/C3TextEditorModeDart.cpp
+		editor/text/mode/dart/C3TextEditorModeParserDart.cpp
 		editor/text/mode/html/C3TextEditorModeHTML.cpp
 		editor/text/mode/java/C3TextEditorModeJava.cpp
 		editor/text/mode/java/C3TextEditorModeParserJava.cpp

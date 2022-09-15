@@ -124,6 +124,7 @@ bool C3SymbolCTagsRunner::runJob(C3SymbolCTagsRunnerJob * pJob)
 	lArgs.append(__literal("--languages=c,c++,c#,java,php,javascript,cuda,cpreprocessor,python"));
 	lArgs.append(__literal("--excmd=pattern"));
 	lArgs.append(__literal("--extras=-qf"));
+	lArgs.append(__literal("--map-javascript=+.dart"));
 	lArgs.append(__literal("-D"));
 	lArgs.append(__literal("Q_REQUIRED_RESULT"));
 	lArgs.append(__literal("-D"));

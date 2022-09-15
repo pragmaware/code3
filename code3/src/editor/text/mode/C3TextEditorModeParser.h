@@ -81,6 +81,10 @@ public:
 
 		// Must not share bit with CSS/Javascript/XML
 		InPHPMultiLineComment = (1 << 12),
+
+		// Dart mode is independent so it shares bits with other modes
+		// do NOT use bit 1 - that must be assigned to single line comments
+		InDartMultiLineComment = (1 << 2),
 		
 		// CMake mode is independent so it shares bits with other modes
 		// do NOT use bit 1 - that must be assigned to single line comments
@@ -142,6 +146,7 @@ public:
 		SQLInterLineFlagMask = InSQLMultiLineComment | InSQLSingleQuoteString | InSQLDoubleQuoteString | InSQLBackTickString,
 		CSSInterLineFlagMask = InCSSMultiLineComment,
 		JavascriptInterLineFlagMask = InJavascriptMultiLineComment,
+		DartInterLineFlagMask = InDartMultiLineComment,
 		XMLInterLineFlagMask = InXMLCData | InXMLTag | InXMLMultiLineDoubleQuoteString | InXMLMultiLineSingleQuoteString | InXMLMultiLineComment | InXMLJavascript | InXMLCSS | InXMLPHP | CSSInterLineFlagMask | JavascriptInterLineFlagMask,
 		PHPInterLineFlagMask = XMLInterLineFlagMask | InPHPMultiLineComment,
 		CPPInterLineFlagMask = InCPPMultiLineComment | InCPPPreprocessor,

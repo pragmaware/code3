@@ -1,6 +1,6 @@
 ﻿//=============================================================================
 //
-//   File : C3TextEditorModeParserJavascript.cpp
+//   File : C3TextEditorModeParserDart.cpp
 //   Creation Date : sab 31 ott 2015 23:10:30
 //   Project : Code 3
 //   Author : Szymon Tomasz Stefanek <sts at pragmaware dot net>
@@ -15,154 +15,101 @@
 //
 //=============================================================================
 
-#include "C3TextEditorModeParserJavascript.h"
+#include "C3TextEditorModeParserDart.h"
 
 #include "C3TextEditorOptions.h"
 
-C3TextEditorModeParserJavascript::C3TextEditorModeParserJavascript(C3TextEditorModeParserState * pParserState)
+C3TextEditorModeParserDart::C3TextEditorModeParserDart(C3TextEditorModeParserState * pParserState)
 	: C3TextEditorModeParser(pParserState)
 {
 }
 
-C3TextEditorModeParserJavascript::~C3TextEditorModeParserJavascript()
+C3TextEditorModeParserDart::~C3TextEditorModeParserDart()
 {
 }
 
-void C3TextEditorModeParserJavascript::buildIdentifierColorHash()
+void C3TextEditorModeParserDart::buildIdentifierColorHash()
 {
 #define IDENTIFIER(_szIdentifier,_oColor) \
 	m_hIdentifierColorHash.insert(__utf8(_szIdentifier),&(m_p->pCoreData->pOptions->_oColor))
 
 #define KEYWORD(_szKeyword) IDENTIFIER(_szKeyword,oKeywordTextColor)
 #define BUILTIN_OBJECT(_szKeyword) IDENTIFIER(_szKeyword,oBuiltinObjectTextColor)
+#define BUILTIN_TYPE(_szKeyword) IDENTIFIER(_szKeyword,oBuiltinTypeTextColor)
+
+	BUILTIN_TYPE("int");
+	BUILTIN_TYPE("bool");
+	BUILTIN_TYPE("double");
+	BUILTIN_TYPE("void");
 
 	KEYWORD("abstract");
-	KEYWORD("arguments");
+	KEYWORD("as");
+	KEYWORD("assert");
+	KEYWORD("async");
 	KEYWORD("await");
-	KEYWORD("boolean");
 	KEYWORD("break");
-	KEYWORD("byte");
 	KEYWORD("case");
 	KEYWORD("catch");
-	KEYWORD("char");
 	KEYWORD("class");
 	KEYWORD("const");
-	KEYWORD("constructor");
 	KEYWORD("continue");
-	KEYWORD("debugger");
+	KEYWORD("covariant");
 	KEYWORD("default");
-	KEYWORD("delete");
+	KEYWORD("deferred");
 	KEYWORD("do");
-	KEYWORD("double");
 	KEYWORD("else");
 	KEYWORD("enum");
-	KEYWORD("eval");
 	KEYWORD("export");
 	KEYWORD("extends");
+	KEYWORD("extension");
+	KEYWORD("external");
 	KEYWORD("false");
 	KEYWORD("final");
 	KEYWORD("finally");
-	KEYWORD("float");
 	KEYWORD("for");
 	KEYWORD("function");
-	KEYWORD("goto");
+	KEYWORD("Function");
+	KEYWORD("get");
+	KEYWORD("hide");
 	KEYWORD("if");
-	KEYWORD("implements");
 	KEYWORD("import");
 	KEYWORD("in");
-	KEYWORD("Infinity"); // not properly a keyword: member of global object
-	KEYWORD("instanceof");
-	KEYWORD("int");
 	KEYWORD("interface");
-	KEYWORD("let");
-	KEYWORD("long");
-	KEYWORD("NaN"); // not properly a keyword: member of global object
-	KEYWORD("native");
+	KEYWORD("is");
+	KEYWORD("late");
+	KEYWORD("library");
+	KEYWORD("mixin");
 	KEYWORD("new");
 	KEYWORD("null");
-	KEYWORD("package");
-	KEYWORD("private");
-	KEYWORD("protected");
-	KEYWORD("public");
+	KEYWORD("operator");
+	KEYWORD("part");
+	KEYWORD("required");
+	KEYWORD("rethrow");
 	KEYWORD("return");
-	KEYWORD("short");
+	KEYWORD("show");
 	KEYWORD("static");
 	KEYWORD("super");
 	KEYWORD("switch");
-	KEYWORD("synchronized");
+	KEYWORD("sync");
 	KEYWORD("this");
 	KEYWORD("throw");
-	KEYWORD("throws");
-	KEYWORD("transient");
 	KEYWORD("true");
 	KEYWORD("try");
-	KEYWORD("typeof");
-	KEYWORD("undefined"); // not properly a keyword: member of global object
+	KEYWORD("typedef");
 	KEYWORD("var");
-	KEYWORD("void");
-	KEYWORD("volatile");
 	KEYWORD("while");
 	KEYWORD("with");
 	KEYWORD("yield");
 
-	BUILTIN_OBJECT("Function");
-	BUILTIN_OBJECT("Boolean");
-	BUILTIN_OBJECT("Symbol");
-	BUILTIN_OBJECT("Error");
-	BUILTIN_OBJECT("EvalError");
-	BUILTIN_OBJECT("RangeError");
-	BUILTIN_OBJECT("ReferenceError");
-	BUILTIN_OBJECT("SyntaxError");
-	BUILTIN_OBJECT("TypeError");
-	BUILTIN_OBJECT("URIError");
-	BUILTIN_OBJECT("Date");
-	BUILTIN_OBJECT("Array");
-	BUILTIN_OBJECT("Int8Array");
-	BUILTIN_OBJECT("Uint8Array");
-	BUILTIN_OBJECT("Uint8ClampedArray");
-	BUILTIN_OBJECT("Int16Array");
-	BUILTIN_OBJECT("Uint16Array");
-	BUILTIN_OBJECT("Int32Array");
-	BUILTIN_OBJECT("Uint32Array");
-	BUILTIN_OBJECT("Float32Array");
-	BUILTIN_OBJECT("Float64Array");
-	BUILTIN_OBJECT("Object");
-	BUILTIN_OBJECT("Number");
-	BUILTIN_OBJECT("String");
-	BUILTIN_OBJECT("RegExp");
-	BUILTIN_OBJECT("Math");
-	BUILTIN_OBJECT("Map");
-	BUILTIN_OBJECT("Set");
-	BUILTIN_OBJECT("WeakMap");
-	BUILTIN_OBJECT("WeakSet");
-	BUILTIN_OBJECT("ArrayBuffer");
-	BUILTIN_OBJECT("DataView");
-	BUILTIN_OBJECT("JSON");
-	BUILTIN_OBJECT("Promise");
-	BUILTIN_OBJECT("Generator");
-	BUILTIN_OBJECT("GeneratorFunction");
-	BUILTIN_OBJECT("Reflect");
-	BUILTIN_OBJECT("Proxy");
-	BUILTIN_OBJECT("Intl");
-	BUILTIN_OBJECT("Collator");
-	BUILTIN_OBJECT("DateTimeFormat");
-	BUILTIN_OBJECT("NumberFormat");
-	BUILTIN_OBJECT("jQuery");
+	///BUILTIN_OBJECT("Function");
 
-	// sure?
-	BUILTIN_OBJECT("window");
-	BUILTIN_OBJECT("document");
-	BUILTIN_OBJECT("navigator");
-	BUILTIN_OBJECT("location");
-	BUILTIN_OBJECT("history");
-	BUILTIN_OBJECT("screen");
 
 }
 
 #define BLOCK(_pBegin,_iLength,_oColor,_uSpecialFlags) \
 		createBlock(_pBegin,_iLength,&(m_p->pCoreData->pOptions->_oColor),_uSpecialFlags)
 
-void C3TextEditorModeParserJavascript::computeBlocksParseRegExp()
+void C3TextEditorModeParserDart::computeBlocksParseRegExp()
 {
 	const QChar * b = m_p->p;
 	
@@ -241,7 +188,7 @@ unterminated_regexp:
 		BLOCK(b,m_p->p - b,oRegExpTextColor,0);
 }
 
-void C3TextEditorModeParserJavascript::computeBlocksParseIdentifier()
+void C3TextEditorModeParserDart::computeBlocksParseIdentifier()
 {
 	Q_ASSERT(m_p->p->isLetter() || (m_p->p->unicode() == (ushort)'_'));
 	
@@ -272,9 +219,9 @@ void C3TextEditorModeParserJavascript::computeBlocksParseIdentifier()
 	}
 }
 
-void C3TextEditorModeParserJavascript::computeMetadata()
+void C3TextEditorModeParserDart::computeMetadata()
 {
-	bool bInJavascriptMultiLineComment = m_p->uInterLineFlags & InJavascriptMultiLineComment;
+	bool bInDartMultiLineComment = m_p->uInterLineFlags & InDartMultiLineComment;
 
 	if(m_p->p == m_p->e)
 	{
@@ -288,9 +235,9 @@ void C3TextEditorModeParserJavascript::computeMetadata()
 
 	while(m_p->p < m_p->e)
 	{
-		if(m_p->uInterLineFlags & InJavascriptMultiLineComment)
+		if(m_p->uInterLineFlags & InDartMultiLineComment)
 		{
-			computeBlocksParseCLikeMultiLineComment(InJavascriptMultiLineComment);
+			computeBlocksParseCLikeMultiLineComment(InDartMultiLineComment);
 			continue;
 		}
 
@@ -311,12 +258,12 @@ void C3TextEditorModeParserJavascript::computeMetadata()
 				switch(m_p->p->unicode())
 				{
 					case '*':
-						m_p->uInterLineFlags |= InJavascriptMultiLineComment;
+						m_p->uInterLineFlags |= InDartMultiLineComment;
 						m_p->p++;
 						BLOCK(b,m_p->p - b,oMultiLineCommentTextColor,0);
 						if(m_p->p >= m_p->e)
 							return;
-						computeBlocksParseCLikeMultiLineComment(InJavascriptMultiLineComment);
+						computeBlocksParseCLikeMultiLineComment(InDartMultiLineComment);
 						bRegExpMayFollow = true; // not true in corner cases
 					break;
 					case '/':
