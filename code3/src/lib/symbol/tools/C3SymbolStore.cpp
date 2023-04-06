@@ -468,7 +468,9 @@ void C3SymbolStore::buildSymbolsByLanguageForSymbolList(C3SymbolList &lSymbolLis
 	
 				if(szScope != szLastNotFoundScope)
 				{
+#ifdef DEBUG_SYMBOL_STORE
 					qDebug("WARNING: Scope %s not found",szScope.toUtf8().data());
+#endif
 					szLastNotFoundScope = szScope;
 				}
 				continue;
