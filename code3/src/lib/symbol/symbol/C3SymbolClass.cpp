@@ -55,7 +55,7 @@ QString C3SymbolClass::description() const
 
 }
 
-#define DEBUG_RESOLVE_BASE_CLASSES 1
+//#define DEBUG_RESOLVE_BASE_CLASSES 1
 
 QList<C3SymbolClass *> * C3SymbolClass::resolveBaseClasses()
 {
