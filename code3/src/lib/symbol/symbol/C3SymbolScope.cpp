@@ -37,7 +37,7 @@ bool C3SymbolScope::isScope() const
 	return true;
 }
 
-#define DEBUG_RESOLVE_TYPE_TO_CLASS 1
+//#define DEBUG_RESOLVE_TYPE_TO_CLASS 1
 
 C3SymbolScope * C3SymbolScope::resolveTypeToScope(const QString &szType)
 {
@@ -297,20 +297,20 @@ C3Symbol * C3SymbolScope::findSymbolInThisScopeContainingScopesBaseClassesAndExc
 		C3SymbolScope * pGlobalScope
 	)
 {
-	C3_TRACE_FUNCTION;
+	//C3_TRACE_FUNCTION;
 	
-	C3_TRACE("Lookup %s in %s",szIdentifier.toUtf8().data(),description().toUtf8().data());
+	//C3_TRACE("Lookup %s in %s",szIdentifier.toUtf8().data(),description().toUtf8().data());
 
 	if(this == pGlobalScope)
 	{
-		C3_TRACE("This is the global scope!");
+		//C3_TRACE("This is the global scope!");
 		return NULL;
 	}
 
 	C3Symbol * pSym = findSymbol(szIdentifier,uTypeMask);
 	if(pSym)
 	{
-		C3_TRACE("Got: %s",pSym->description().toUtf8().data());
+		//C3_TRACE("Got: %s",pSym->description().toUtf8().data());
 		return pSym;
 	}
 
@@ -328,7 +328,7 @@ C3Symbol * C3SymbolScope::findSymbolInThisScopeContainingScopesBaseClassesAndExc
 				pSym = pBase->findSymbolInThisScopeContainingScopesBaseClassesAndExcludeGlobalScope(szIdentifier,uTypeMask,pGlobalScope);
 				if(pSym)
 				{
-					C3_TRACE("Got: %s",pSym->description().toUtf8().data());
+					//C3_TRACE("Got: %s",pSym->description().toUtf8().data());
 					return pSym;
 				}
 			}
@@ -337,13 +337,13 @@ C3Symbol * C3SymbolScope::findSymbolInThisScopeContainingScopesBaseClassesAndExc
 
 	if(!m_pContainingScope)
 	{
-		C3_TRACE("No containing scope");
+		//C3_TRACE("No containing scope");
 		return NULL;
 	}
 	
 	if(m_pContainingScope == pGlobalScope)
 	{
-		C3_TRACE("Containing scope is global scope");
+		//C3_TRACE("Containing scope is global scope");
 		return NULL;
 	}
 
