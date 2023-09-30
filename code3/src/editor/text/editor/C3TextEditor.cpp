@@ -1975,7 +1975,7 @@ void C3TextEditor::saveCursorAndScrollBarState(CursorAndScrollBarState &oState)
 
 void C3TextEditor::restoreCursorAndScrollBarState(const CursorAndScrollBarState &oState)
 {
-	qDebug("RESTORE %d,%d %d,%d",oState.oCursorPos.row,oState.oCursorPos.col,oState.iYOffset,oState.iXOffset);
+	//qDebug("RESTORE %d,%d %d,%d",oState.oCursorPos.row,oState.oCursorPos.col,oState.iYOffset,oState.iXOffset);
 	cursorMoveTo(oState.oCursorPos,false);
 	setScrollRowOffset(oState.iYOffset);
 	setScrollColumnOffset(oState.iXOffset);
@@ -2066,7 +2066,7 @@ bool C3TextEditor::saveTemporaryFile(const QString &szFilePath,QString &szError,
 		}
 	}
 
-	qDebug("[C3TextEditor][%s] Saved temporary file to %s",path().toUtf8().data(),szFilePath.toUtf8().data());
+	//qDebug("[C3TextEditor][%s] Saved temporary file to %s",path().toUtf8().data(),szFilePath.toUtf8().data());
 
 	return true;
 }
