@@ -44,6 +44,31 @@
 			_p->oCursor.row = 0; \
 	} while(0)
 
+QString C3TextEditor::figureOutTab()
+{
+	int iRow =  _p->oCursor.row;
+
+	int iAttempts = 10;
+	while((iAttempts > 0) && (iRow >= 0))
+	{
+		C3TextEditorLine * pLine = _p->lLines.at(iRow);
+		Q_ASSERT(pLine);
+
+		if(!pLine->szText.isEmpty())
+		{
+			if(pLine->szText.startsWith(QChar('\t')))
+				return QString("\t");
+			if(pLine->szText.startsWith(QChar(' ')))
+				return QString(_p->iTabStopSize,QChar(' '));
+		}
+
+		iRow--;
+	}
+	
+	// default
+	return QString("\t");
+}
+
 void C3TextEditor::tab()
 {
 	if(readOnly())
@@ -51,13 +76,12 @@ void C3TextEditor::tab()
 
 	if(_p->oSelection.isEmpty())
 	{
-		insertText("\t");
+		insertText(figureOutTab());
 		return;
 	}
 
 	indent();
 }
-
 
 void C3TextEditor::indent()
 {
@@ -88,8 +112,7 @@ void C3TextEditor::indent()
 
 	C3TextEditorLine * pLine;
 	
-	QChar tab('\t');
-	QString szTab = tab;
+	QString szTab = figureOutTab();
 
 	qreal fMaximumInitialLineWidth = 0.0;
 	qreal fMaximumFinalLineWidth = 0.0;
@@ -109,7 +132,7 @@ void C3TextEditor::indent()
 						)
 				);
 	
-			pLine->szText.insert(0,tab);
+			pLine->szText.insert(0,szTab);
 	
 			if(pLine->fWidth > fMaximumInitialLineWidth)
 				fMaximumInitialLineWidth = pLine->fWidth;
@@ -159,8 +182,7 @@ void C3TextEditor::unindent()
 
 	C3TextEditorLine * pLine;
 	
-	QChar tab('\t');
-	QString szTab = tab;
+	QString szTab = figureOutTab();
 	
 	qreal fMaximumInitialLineWidth = 0.0;
 	qreal fMaximumFinalLineWidth = 0.0;
@@ -172,7 +194,7 @@ void C3TextEditor::unindent()
 		{
 			pLine = _p->lLines.at(iRow);
 	
-			if(pLine->szText.startsWith(tab))
+			if(pLine->szText.startsWith(szTab))
 			{
 				pushUndo(
 						new C3TextEditorUndo(
@@ -182,7 +204,7 @@ void C3TextEditor::unindent()
 							)
 					);
 		
-				pLine->szText.remove(0,1);
+				pLine->szText.remove(0,szTab.length());
 	
 				if((iRow == _p->oSelection.end.row) && (_p->oSelection.end.col > 0))
 					_p->oSelection.end.col--;

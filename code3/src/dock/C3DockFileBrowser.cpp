@@ -47,6 +47,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QFileDialog>
 
 C3DockFileBrowser * C3DockFileBrowser::m_pInstance = NULL;
 
@@ -446,6 +447,8 @@ void C3DockFileBrowser::slotContextMenuRequested(const QPoint &pnt)
 	
 			if(iTotalCount == 1)
 				ADD_ACTION(__utf8("rename"),__tr("Rename"));
+
+			ADD_ACTION(__utf8("move"),__tr("Move"));
 	
 			ADD_ACTION(__utf8("delete"),__tr("Delete"));
 	
@@ -539,6 +542,12 @@ void C3DockFileBrowser::slotContextMenuActionTriggered(QAction * pAction)
 	if(szId == __utf8("rename"))
 	{
 		renameSelected();
+		return;
+	}
+
+	if(szId == __utf8("move"))
+	{
+		moveSelected();
 		return;
 	}
 
@@ -915,6 +924,69 @@ void C3DockFileBrowser::renameSelected()
 
 	C3Workspace::currentWorkspace()->notifyRescanNeeded();
 }
+
+void C3DockFileBrowser::moveSelected()
+{
+	QList<QListWidgetItem *> lSelected = _p->pListWidget->selectedItems();
+	if(lSelected.isEmpty())
+		return;
+
+	QString dir = QFileDialog::getExistingDirectory(
+				this,
+				__tr("Open Directory"),
+				_p->szDirectory,
+				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+			);
+
+	if(dir.isEmpty())
+		return;
+
+	if(dir == _p->szDirectory)
+		return;
+
+	Q_FOREACH(QListWidgetItem * it,lSelected)
+	{
+		QList<C3Editor *> lOpen;
+	
+		QString szOldPath = C3FileUtils::mergePathComponents(_p->szDirectory,it->text());
+		QString szNewPath = C3FileUtils::mergePathComponents(dir,it->text());
+	
+		QHash<QString,QVariant> hData = it->data(Qt::UserRole).toHash();
+	
+		if(hData.value("isDirectory").toBool())
+			C3Workspace::currentWorkspace()->findAllEditorsInDirectory(szOldPath,lOpen);
+		else
+			C3Workspace::currentWorkspace()->findAllEditors(szOldPath,lOpen);
+	
+		if(!lOpen.isEmpty())
+		{
+			foreach(C3Editor * ed,lOpen)
+			{
+				if(!C3Workspace::currentWorkspace()->closeEditor(ed,true))
+					return;
+			}
+		}
+	
+		QDir d(_p->szDirectory);
+		if(!d.rename(szOldPath,szNewPath))
+		{
+			QMessageBox::StandardButton eButton = QMessageBox::critical(
+					this,
+					__tr("Rename Item"),
+					__tr("Failed to rename the item '%1'").arg(szOldPath),
+					QMessageBox::Ok
+				);
+			
+			break;
+		}
+	}
+
+	reload();
+	//selectItem(szFileName);
+
+	C3Workspace::currentWorkspace()->notifyRescanNeeded();
+}
+
 
 void C3DockFileBrowser::deleteSelected()
 {

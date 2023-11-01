@@ -58,7 +58,7 @@ public:
 
 	// WARNING: BlockFlags of PHP,CSS,Javascript and HTML must not collide
 	// WARNING: Block flag 1 can't be used since it's already used by the line block flags
-	// WARNING: Bit 1 must always be assigned to single line comments (if present in the language)
+	// WARNING: Bit with shift 1 must always be assigned to single line comments (if present in the language)
 	enum BlockFlags : unsigned int
 	{
 		// Must not share bit with XML/Javascript/PHP
@@ -134,15 +134,18 @@ public:
 		InPythonSingleLineComment = (1 << 1),
 		InPythonSingleQuoteString = (1 << 2),
 		InPythonDoubleQuoteString = (1 << 4),
-		InPythonTripleSingleQuoteString = (1 << 6),
-		InPythonTripleDoubleQuoteString = (1 << 16),
+		InPythonTripleSingleQuoteString = (1 << 5),
+		InPythonTripleDoubleQuoteString = (1 << 6),
+		InPythonJustAfterColon = (1 << 7),
+		InPythonTripleSingleQuoteComment = (1 << 8),
+		InPythonTripleDoubleQuoteComment = (1 << 9),
 		
 		// VHDL mode is independent so it shared bits with other modes.
 		InVHDLSingleLineComment = (1 << 1),
 		InVHDLDoubleQuoteString = (1 << 2),
 		InVHDLSingleQuoteString = (1 << 3),
 
-		PythonInterLineFlagMask = InPythonTripleSingleQuoteString | InPythonTripleDoubleQuoteString,
+		PythonInterLineFlagMask = InPythonTripleSingleQuoteString | InPythonTripleDoubleQuoteString | InPythonJustAfterColon | InPythonTripleSingleQuoteComment | InPythonTripleDoubleQuoteComment,
 		SQLInterLineFlagMask = InSQLMultiLineComment | InSQLSingleQuoteString | InSQLDoubleQuoteString | InSQLBackTickString,
 		CSSInterLineFlagMask = InCSSMultiLineComment,
 		JavascriptInterLineFlagMask = InJavascriptMultiLineComment,

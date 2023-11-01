@@ -251,7 +251,7 @@ QString C3SymbolManagerCTagsWorker::runInternal()
 		C3Symbol * pSym = f->symbols().last();
 		if((!pSym) || (pSym->identifier() != _p->szMagicSymbol))
 		{
-			qDebug("ctags invocation didn't find the magic symbol %s",_p->szMagicSymbol.toUtf8().data());
+			//qDebug("ctags invocation didn't find the magic symbol %s",_p->szMagicSymbol.toUtf8().data());
 			qDeleteAll(*(_p->pFiles));
 			szError = __ascii("Possible syntax error");
 			_p->pFiles->clear();

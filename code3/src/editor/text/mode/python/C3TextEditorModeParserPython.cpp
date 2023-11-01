@@ -126,6 +126,19 @@ void C3TextEditorModeParserPython::computeBlocksParseTripleQuoteMultiLineString(
 		);
 }
 
+void C3TextEditorModeParserPython::computeBlocksParseTripleQuoteMultiLineComment(const char * szTripleDelimiter,unsigned int uInterLineFlag)
+{
+	Q_ASSERT(m_p->uInterLineFlags & uInterLineFlag);
+
+	computeBlocksParseMultiLineBlockWithLongTerminator(
+			szTripleDelimiter,
+			3,
+			uInterLineFlag,
+			&(m_p->pCoreData->pOptions->oMultiLineCommentTextColor),
+			ParseMultiLineBlockWithLongTerminatorHandleEscapeSequences
+		);
+}
+
 void C3TextEditorModeParserPython::computeBlocksParseIdentifier()
 {
 	Q_ASSERT(m_p->p->isLetter() || (m_p->p->unicode() == (ushort)'_'));
@@ -174,18 +187,32 @@ void C3TextEditorModeParserPython::computeMetadata()
 
 	while(m_p->p < m_p->e)
 	{
-		if(m_p->uInterLineFlags & InPythonTripleSingleQuoteString)
+		if(m_p->uInterLineFlags & (InPythonTripleSingleQuoteString | InPythonTripleDoubleQuoteString | InPythonTripleSingleQuoteComment | InPythonTripleDoubleQuoteComment))
 		{
-			computeBlocksParseTripleQuoteMultiLineString("\'\'\'",InPythonTripleSingleQuoteString);
-			continue;
+			if(m_p->uInterLineFlags & InPythonTripleSingleQuoteString)
+			{
+				computeBlocksParseTripleQuoteMultiLineString("\'\'\'",InPythonTripleSingleQuoteString);
+				continue;
+			}
+			if(m_p->uInterLineFlags & InPythonTripleDoubleQuoteString)
+			{
+				computeBlocksParseTripleQuoteMultiLineString("\"\"\"",InPythonTripleDoubleQuoteString);
+				continue;
+			}
+			if(m_p->uInterLineFlags & InPythonTripleSingleQuoteComment)
+			{
+				computeBlocksParseTripleQuoteMultiLineComment("\'\'\'",InPythonTripleSingleQuoteComment);
+				continue;
+			}
+	
+			if(m_p->uInterLineFlags & InPythonTripleDoubleQuoteComment)
+			{
+				computeBlocksParseTripleQuoteMultiLineComment("\"\"\"",InPythonTripleDoubleQuoteComment);
+				continue;
+			}
 		}
-		if(m_p->uInterLineFlags & InPythonTripleDoubleQuoteString)
-		{
-			computeBlocksParseTripleQuoteMultiLineString("\"\"\"",InPythonTripleDoubleQuoteString);
-			continue;
-		}
-
-		// not in multiline comment
+		
+		// not in multiline string/comment
 	
 		const QChar * b = m_p->p;
 
@@ -211,16 +238,22 @@ void C3TextEditorModeParserPython::computeMetadata()
 						switch(m_p->p->unicode())
 						{
 							case '\'':
+							{
 								m_p->p++;
 
-								m_p->uInterLineFlags |= InPythonTripleSingleQuoteString;
+								unsigned int uFlag = (m_p->uInterLineFlags & InPythonJustAfterColon) ? InPythonTripleSingleQuoteComment : InPythonTripleSingleQuoteString;
+
+								m_p->uInterLineFlags &= ~InPythonJustAfterColon;
+
+								m_p->uInterLineFlags |= uFlag;
 								BLOCK(b,m_p->p - b,oStringTextColor,0);
 
 								if(m_p->p >= m_p->e)
 									return;
 
 								// multi line single quote string
-								computeBlocksParseTripleQuoteMultiLineString("\'\'\'",InPythonTripleSingleQuoteString);
+								computeBlocksParseTripleQuoteMultiLineString("\'\'\'",uFlag);
+							}
 							break;
 							default:
 								BLOCK(b,m_p->p - b,oStringTextColor,0);
@@ -235,8 +268,8 @@ void C3TextEditorModeParserPython::computeMetadata()
 						m_p->uInterLineFlags &= ~InPythonSingleQuoteString;
 					break;
 				}
+				continue;
 			break;
-
 			case '\"':
 				m_p->p++;
 				if(m_p->p >= m_p->e)
@@ -257,16 +290,22 @@ void C3TextEditorModeParserPython::computeMetadata()
 						switch(m_p->p->unicode())
 						{
 							case '\"':
+							{
 								m_p->p++;
 
-								m_p->uInterLineFlags |= InPythonTripleDoubleQuoteString;
+								unsigned int uFlag = (m_p->uInterLineFlags & InPythonJustAfterColon) ? InPythonTripleDoubleQuoteComment : InPythonTripleDoubleQuoteString;
+
+								m_p->uInterLineFlags &= ~InPythonJustAfterColon;
+
+								m_p->uInterLineFlags |= uFlag;
 								BLOCK(b,m_p->p - b,oStringTextColor,0);
 
 								if(m_p->p >= m_p->e)
 									return;
 
 								// multi line single quote string
-								computeBlocksParseTripleQuoteMultiLineString("\"\"\"",InPythonTripleDoubleQuoteString);
+								computeBlocksParseTripleQuoteMultiLineString("\"\"\"",uFlag);
+							}
 							break;
 							default:
 								BLOCK(b,m_p->p - b,oStringTextColor,0);
@@ -281,7 +320,42 @@ void C3TextEditorModeParserPython::computeMetadata()
 						m_p->uInterLineFlags &= ~InPythonDoubleQuoteString;
 					break;
 				}
+				continue;
 			break;
+			case '\t':
+			{
+				m_p->p++;
+				while(m_p->p < m_p->e)
+				{
+					if(m_p->p->unicode() != (ushort)'\t')
+						break;
+					m_p->p++;
+				}
+	
+				BLOCK(b,m_p->p - b,oTextColor,C3TextEditorLine::Block::IsTabBlock);
+				continue;
+			}
+			break;
+			case ' ':
+			{
+				m_p->p++;
+				while(m_p->p < m_p->e)
+				{
+					if(m_p->p->unicode() != (ushort)' ')
+						break;
+					m_p->p++;
+				}
+	
+				BLOCK(b,m_p->p - b,oTextColor,0);
+				continue;
+			}
+			break;
+		}
+
+		m_p->uInterLineFlags &= ~InPythonJustAfterColon;
+
+		switch(m_p->p->unicode())
+		{
 			case '#':
 				m_p->uInterLineFlags |= InPythonSingleLineComment;
 				computeBlocksParseSingleLineComment();
@@ -344,8 +418,21 @@ void C3TextEditorModeParserPython::computeMetadata()
 				BLOCK(b,m_p->p - b,oArrayDelimiterTextColor,0);
 			}
 			break;
-			case '=':
 			case ':':
+			{
+				m_p->p++;
+				while(m_p->p < m_p->e)
+				{
+					ushort u = m_p->p->unicode();
+					if(u != (ushort)':')
+						break;
+					m_p->p++;
+				}
+				m_p->uInterLineFlags |= InPythonJustAfterColon;
+				BLOCK(b,m_p->p - b,oOperatorTextColor,0);
+			}
+			break;
+			case '=':
 			case '*':
 			case '+':
 			case '?':
@@ -398,32 +485,6 @@ void C3TextEditorModeParserPython::computeMetadata()
 					m_p->p++;
 				}
 				BLOCK(b,m_p->p - b,oErrorTextColor,0);
-			}
-			break;
-			case '\t':
-			{
-				m_p->p++;
-				while(m_p->p < m_p->e)
-				{
-					if(m_p->p->unicode() != (ushort)'\t')
-						break;
-					m_p->p++;
-				}
-	
-				BLOCK(b,m_p->p - b,oTextColor,C3TextEditorLine::Block::IsTabBlock);
-			}
-			break;
-			case ' ':
-			{
-				m_p->p++;
-				while(m_p->p < m_p->e)
-				{
-					if(m_p->p->unicode() != (ushort)' ')
-						break;
-					m_p->p++;
-				}
-	
-				BLOCK(b,m_p->p - b,oTextColor,0);
 			}
 			break;
 			default:

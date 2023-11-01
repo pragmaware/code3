@@ -62,6 +62,7 @@ private:
 	void computeBlocksParseIdentifier();
 
 	void computeBlocksParseTripleQuoteMultiLineString(const char * szTripleDelimiter,unsigned int uInterLineFlag);
+	void computeBlocksParseTripleQuoteMultiLineComment(const char * szTripleDelimiter,unsigned int uInterLineFlag);
 	
 	void buildIdentifierColorHash();
 

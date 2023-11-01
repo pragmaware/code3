@@ -439,6 +439,8 @@ private:
 	QString relatedFilePathWithExtension(const QString &szExt,bool bTryHarder,void * pFindFileOptions);
 
 	void markMatchingParenthesisInternal();
+	
+	QString figureOutTab();
 
 }; // class C3TextEditor
 

@@ -89,6 +89,7 @@ private:
 	void openAllFilesInCurrentDirectory(bool bRecursive);
 	void openAllFilesInDirectory(const QString &szDir,bool bRecursive);
 	void renameSelected();
+	void moveSelected();
 	void svnMvSelected();
 	void svnRmSelected();
 	void deleteSelected();
