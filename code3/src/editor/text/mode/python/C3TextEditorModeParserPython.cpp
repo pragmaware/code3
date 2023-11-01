@@ -246,7 +246,11 @@ void C3TextEditorModeParserPython::computeMetadata()
 								m_p->uInterLineFlags &= ~InPythonJustAfterColon;
 
 								m_p->uInterLineFlags |= uFlag;
-								BLOCK(b,m_p->p - b,oStringTextColor,0);
+								
+								if(uFlag == InPythonTripleSingleQuoteComment)
+									BLOCK(b,m_p->p - b,oMultiLineCommentTextColor,0);
+								else
+									BLOCK(b,m_p->p - b,oStringTextColor,0);
 
 								if(m_p->p >= m_p->e)
 									return;
@@ -298,8 +302,11 @@ void C3TextEditorModeParserPython::computeMetadata()
 								m_p->uInterLineFlags &= ~InPythonJustAfterColon;
 
 								m_p->uInterLineFlags |= uFlag;
-								BLOCK(b,m_p->p - b,oStringTextColor,0);
 
+								if(uFlag == InPythonTripleDoubleQuoteComment)
+									BLOCK(b,m_p->p - b,oMultiLineCommentTextColor,0);
+								else
+									BLOCK(b,m_p->p - b,oStringTextColor,0);
 								if(m_p->p >= m_p->e)
 									return;
 
