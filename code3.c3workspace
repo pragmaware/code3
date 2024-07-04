@@ -2,7 +2,7 @@
     "externalCommands": [
         {
             "clearOutputOnStart": true,
-            "command": "make -j4 || exit 1\necho %%password%% | sudo -S make install\n",
+            "command": "make -j16 || exit 1\necho %%password%% | sudo -S make install\n",
             "highlightPaths": true,
             "icon": "build",
             "id": "{38fbfd35-bc80-493a-a059-7a8b19632142}",

@@ -308,6 +308,8 @@ void C3TextEditorFactory::fillModeByExtensionMap()
 	_p->oModeByExtensionMap.insert("sh","bash");
 	_p->oModeByExtensionMap.insert("asm","asm");
 	_p->oModeByExtensionMap.insert("s","asm"); // FIXME! Not true! this is GAS syntax, which is different
+	_p->oModeByExtensionMap.insert("dts","cpp"); // FIXME
+	_p->oModeByExtensionMap.insert("dtsi","cpp"); // FIXME
 }
 
 QString C3TextEditorFactory::guessBestModeByExtension(const QString &szLowerCaseExt)
@@ -401,6 +403,8 @@ void C3TextEditorFactory::fillExtensionMap()
 	_p->oExtensionMap.insert("asm",PerfectMatch);
 	_p->oExtensionMap.insert("s",PerfectMatch);
 	_p->oExtensionMap.insert("S",PerfectMatch);
+	_p->oExtensionMap.insert("dts",PerfectMatch);
+	_p->oExtensionMap.insert("dtsi",PerfectMatch);
 	
 	_p->oFileNameMap.insert("readme",PerfectMatch);
 	_p->oFileNameMap.insert("license",PerfectMatch);
@@ -434,6 +438,10 @@ int C3TextEditorFactory::score(
 	{
 		if(d.startsWith("#!/"))
 			return PerfectMatch; // shell script or something similar
+		if(d.startsWith("#@"))
+			return Appropriate; // shell script or something similar
+		if(d.startsWith("# "))
+			return Appropriate; // shell script or something similar
 		if(d.startsWith("<?xml"))
 			return Appropriate; // likely to be xml
 		if(d.startsWith("<?php"))

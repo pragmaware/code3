@@ -243,6 +243,10 @@ QString C3TextEditor::guessBestMode(const QByteArray &data)
 			return __utf8("bash");
 		if(data.startsWith("#if"))
 			return __utf8("cpp");
+		if(data.startsWith("#@")) // likely a .config file with bash style syntax
+			return __utf8("bash");
+		if(data.startsWith("# ")) // likely something with a comment
+			return __utf8("bash");
 	}
 	
 	if(data.startsWith("<"))
