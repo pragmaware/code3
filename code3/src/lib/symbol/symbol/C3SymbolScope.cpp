@@ -84,7 +84,7 @@ C3SymbolScope * C3SymbolScope::resolveTypeToScope(const QString &szType)
 			
 			pPartScope = pGlobalScope;
 
-			szType.indexOf(szDoubleColon);
+			idx = szType.indexOf(szDoubleColon);
 		}
 
 		while(idx >= 0)

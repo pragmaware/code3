@@ -125,7 +125,7 @@ void C3TextEditorModeCPPAddIncludeDialog::onSymbolIdentified(QList<C3TextEditorS
 	
 		int idx = szPath.lastIndexOf(QChar('/'));
 		if(idx < 0)
-			szPath.lastIndexOf(QChar('\\'));
+			idx = szPath.lastIndexOf(QChar('\\'));
 		
 		if(idx >= 0)
 		{
@@ -135,7 +135,7 @@ void C3TextEditorModeCPPAddIncludeDialog::onSymbolIdentified(QList<C3TextEditorS
 			{
 				int idx2 = szPath.lastIndexOf(QChar('/'),idx-1);
 				if(idx2 < 0)
-					szPath.lastIndexOf(QChar('\\'),idx-1);
+					idx2 = szPath.lastIndexOf(QChar('\\'),idx-1);
 
 				if(idx2 >= 0)
 					hFiles.insert(szPath.mid(idx2+1),&(pInfo->oLink));
