@@ -21,7 +21,6 @@
 
 void C3TextEditorOptionsColors::loadColors(QSettings &s)
 {
-
 #define LOAD_COLOR(_oObject,_szOptionName,_iDefaultR,_iDefaultG,_iDefaultB) \
 	do { \
 		QVariant v = s.value(_szOptionName); \
@@ -77,12 +76,11 @@ void C3TextEditorOptionsColors::loadColors(QSettings &s)
 	LOAD_COLOR(oFixmeTodoTextColor,"fixmeToDoTextColor",255,150,12);
 	LOAD_COLOR(oHeredocTextColor,"heredocTextColor",140,162,235);
 	LOAD_COLOR(oVariableInHeredocTextColor,"variableInHeredocTextColor",207,151,235);
-
+	LOAD_COLOR(oSpecialFunctionTextColor,"specialFunctionTextColor",110,200,130);
 }
 
 void C3TextEditorOptionsColors::saveColors(QSettings &s)
 {
-
 #define SAVE_COLOR(_oObject,_szOptionName) \
 	do { \
 		s.setValue(_szOptionName,QVariant(_oObject)); \
@@ -132,12 +130,11 @@ void C3TextEditorOptionsColors::saveColors(QSettings &s)
 	SAVE_COLOR(oFixmeTodoTextColor,"fixmeToDoTextColor");
 	SAVE_COLOR(oHeredocTextColor,"heredocTextColor");
 	SAVE_COLOR(oVariableInHeredocTextColor,"variableInHeredocTextColor");
-
+	SAVE_COLOR(oSpecialFunctionTextColor,"specialFunctionTextColor");
 }
 
 void C3TextEditorOptionsColors::copyColors(const C3TextEditorOptionsColors &src)
 {
-
 	oMarginTextColor = src.oMarginTextColor;
 	oMarginBackgroundColor = src.oMarginBackgroundColor;
 	oMarginActiveTextColor = src.oMarginActiveTextColor;
@@ -182,6 +179,5 @@ void C3TextEditorOptionsColors::copyColors(const C3TextEditorOptionsColors &src)
 	oFixmeTodoTextColor = src.oFixmeTodoTextColor;
 	oHeredocTextColor = src.oHeredocTextColor;
 	oVariableInHeredocTextColor = src.oVariableInHeredocTextColor;
-
+	oSpecialFunctionTextColor = src.oSpecialFunctionTextColor;
 }
-

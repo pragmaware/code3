@@ -35,6 +35,7 @@ class C3TextEditorModeCPPSharedData;
 class C3TextEditorModeASMSharedData;
 class C3TextEditorModePHPSharedData;
 class C3TextEditorModeJavaSharedData;
+class C3TextEditorModeRustSharedData;
 class C3TextEditorModeVHDLSharedData;
 
 class QMenu;
@@ -104,6 +105,7 @@ public:
 
 	C3TextEditorModeCPPSharedData * modeCPPSharedData();
 	C3TextEditorModeJavaSharedData * modeJavaSharedData();
+	C3TextEditorModeRustSharedData * modeRustSharedData();
 	C3TextEditorModeVHDLSharedData * modeVHDLSharedData();
 	C3TextEditorModePHPSharedData * modePHPSharedData();
 	C3TextEditorModeASMSharedData * modeASMSharedData();

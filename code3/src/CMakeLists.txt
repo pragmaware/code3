@@ -26,6 +26,7 @@
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/php
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/plaintext
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/python
+		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/rust
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/sql
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/xml
 		${CMAKE_CURRENT_SOURCE_DIR}/editor/text/mode/vhdl
@@ -148,6 +149,9 @@ SET(
 		editor/text/mode/plaintext/C3TextEditorModePlainText.cpp
 		editor/text/mode/python/C3TextEditorModePython.cpp
 		editor/text/mode/python/C3TextEditorModeParserPython.cpp
+		editor/text/mode/rust/C3TextEditorModeRust.cpp
+		editor/text/mode/rust/C3TextEditorModeParserRust.cpp
+		editor/text/mode/rust/C3TextEditorModeRustSharedData.cpp
 		editor/text/mode/sql/C3TextEditorModeSQL.cpp
 		editor/text/mode/sql/C3TextEditorModeParserSQL.cpp
 		editor/text/mode/xml/C3TextEditorModeXML.cpp

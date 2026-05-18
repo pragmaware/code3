@@ -404,7 +404,15 @@ var aDescriptors = [
 		green: 151,
 		blue: 235
 	},
-
+	{
+		id: "specialFunctionTextColor",
+		variable: "oSpecialFunctionTextColor",
+		name: "Special Function",
+		description: "Color of special functions of the language, e.g. macros in Rust",
+		reg: 120,
+		green: 200,
+		blue: 130
+	}
 ];
 
 var l = aDescriptors.length;

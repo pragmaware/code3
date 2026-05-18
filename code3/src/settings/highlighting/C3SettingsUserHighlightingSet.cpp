@@ -23,6 +23,7 @@
 #include <QJsonArray>
 #include <C3TextEditorModePHPSharedData.h>
 #include <C3TextEditorModeJavaSharedData.h>
+#include <C3TextEditorModeRustSharedData.h>
 
 C3SettingsUserHighlightingSet::C3SettingsUserHighlightingSet()
 {
@@ -106,4 +107,5 @@ void C3SettingsUserHighlightingSet::setDefaults()
 	C3TextEditorModeCPPSharedData::setDefaultUserHighlightingSet(this);
 	C3TextEditorModePHPSharedData::setDefaultUserHighlightingSet(this);
 	C3TextEditorModeJavaSharedData::setDefaultUserHighlightingSet(this);
+	C3TextEditorModeRustSharedData::setDefaultUserHighlightingSet(this);
 }

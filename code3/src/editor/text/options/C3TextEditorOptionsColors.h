@@ -73,6 +73,7 @@ public:
 	QColor oFixmeTodoTextColor; // FIXME/TODO Markers
 	QColor oHeredocTextColor; // Heredocs
 	QColor oVariableInHeredocTextColor; // Variable in Heredoc
+	QColor oSpecialFunctionTextColor; // macros in rust, for example
 
 public:
 	void loadColors(QSettings &s);

@@ -2,18 +2,18 @@
 # GENERAL CMAKE CONFIGURATION
 #################################################################################################
 
-project(code3)
+# Minimum cmake version
+cmake_minimum_required(VERSION 3.10)
+
 
 # Set conventional loops
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-# Minimum cmake version
-cmake_minimum_required(VERSION 3.0.2)
 
 # CMake policy: Automatically link Qt executables to qtmain.lib target on Windows
 cmake_policy(SET CMP0020 NEW)
 # CMake policy: Ignore COMPILE_DEFINITIONS_<Config> properties.
 cmake_policy(SET CMP0043 NEW)
+cmake_policy(SET CMP0177 NEW)
 
 #################################################################################################
 # GENERAL VARIABLES

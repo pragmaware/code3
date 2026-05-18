@@ -123,6 +123,7 @@ public:
 		Javascript,
 		CSharp,
 		Python,
+		Rust,
 
 		InvalidLanguage,
 		LanguageCount = InvalidLanguage

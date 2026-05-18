@@ -144,6 +144,9 @@ C3TextEditorOptionsWidgetColors::C3TextEditorOptionsWidgetColors(const QString &
 	_p->lEditors.append(ed);
 	ed = w->addColorEditor(__tr("Variable in Heredoc"),&(_p->oColors.oVariableInHeredocTextColor));
 	_p->lEditors.append(ed);
+	ed = w->addColorEditor(__tr("Special Functions"),&(_p->oColors.oSpecialFunctionTextColor));
+	_p->lEditors.append(ed);
+	
 
 	w->addSpaceEater();
 

@@ -28,6 +28,7 @@
 #include "C3TextEditorModeCPP.h"
 #include "C3TextEditorModeSQL.h"
 #include "C3TextEditorModeJava.h"
+#include "C3TextEditorModeRust.h"
 #include "C3TextEditorModeCMake.h"
 #include "C3TextEditorModeBash.h"
 #include "C3TextEditorModePython.h"
@@ -39,6 +40,7 @@
 #include "C3TextEditorModeASMSharedData.h"
 #include "C3TextEditorModeVHDLSharedData.h"
 #include "C3TextEditorModeJavaSharedData.h"
+#include "C3TextEditorModeRustSharedData.h"
 #include "C3TextEditorOptionsWidgetColors.h"
 #include "C3TextEditorOptionsWidgetFonts.h"
 #include "C3TextEditorModeASM.h"
@@ -65,7 +67,7 @@ public:
 	C3TextEditorModeASMSharedData * pModeASMSharedData;
 	C3TextEditorModeVHDLSharedData * pModeVHDLSharedData;
 	C3TextEditorModeJavaSharedData * pModeJavaSharedData;
-
+	C3TextEditorModeRustSharedData * pModeRustSharedData;
 };
 
 #define _p m_pC3TEF
@@ -84,6 +86,7 @@ C3TextEditorFactory::C3TextEditorFactory()
 	_p->pModePHPSharedData = NULL;
 	_p->pModeASMSharedData = NULL;
 	_p->pModeJavaSharedData = NULL;
+	_p->pModeRustSharedData = NULL;
 	_p->pModeVHDLSharedData = NULL;
 
 	fillExtensionMap();
@@ -105,6 +108,8 @@ C3TextEditorFactory::~C3TextEditorFactory()
 		delete _p->pModePHPSharedData;
 	if(_p->pModeJavaSharedData)
 		delete _p->pModeJavaSharedData;
+	if(_p->pModeRustSharedData)
+		delete _p->pModeRustSharedData;
 	if(_p->pModeVHDLSharedData)
 		delete _p->pModeVHDLSharedData;
 	if(_p->pModeASMSharedData)
@@ -167,6 +172,17 @@ C3TextEditorModeJavaSharedData * C3TextEditorFactory::modeJavaSharedData()
 	_p->pModeJavaSharedData->rebuildColorHashes();
 
 	return _p->pModeJavaSharedData;
+}
+
+C3TextEditorModeRustSharedData * C3TextEditorFactory::modeRustSharedData()
+{
+	if(_p->pModeRustSharedData)
+		return _p->pModeRustSharedData;
+	
+	_p->pModeRustSharedData = new C3TextEditorModeRustSharedData(this);
+	_p->pModeRustSharedData->rebuildColorHashes();
+
+	return _p->pModeRustSharedData;
 }
 
 C3TextEditorOptions * C3TextEditorFactory::options()
@@ -255,6 +271,7 @@ void C3TextEditorFactory::fillModeMap()
 	ADD_MODE("dart","Dart",C3TextEditorModeDart);
 	ADD_MODE("html","HTML",C3TextEditorModeHTML);
 	ADD_MODE("java","Java",C3TextEditorModeJava);
+	ADD_MODE("rust","Rust",C3TextEditorModeRust);
 	ADD_MODE("js","Javascript",C3TextEditorModeJavascript);
 	ADD_MODE("php","PHP",C3TextEditorModePHP);
 	ADD_MODE("sql","SQL",C3TextEditorModeSQL);
@@ -307,6 +324,7 @@ void C3TextEditorFactory::fillModeByExtensionMap()
 	_p->oModeByExtensionMap.insert("po","bash"); // FIXME?
 	_p->oModeByExtensionMap.insert("sh","bash");
 	_p->oModeByExtensionMap.insert("asm","asm");
+	_p->oModeByExtensionMap.insert("rs","rust");
 	_p->oModeByExtensionMap.insert("s","asm"); // FIXME! Not true! this is GAS syntax, which is different
 	_p->oModeByExtensionMap.insert("dts","cpp"); // FIXME
 	_p->oModeByExtensionMap.insert("dtsi","cpp"); // FIXME
@@ -388,6 +406,7 @@ void C3TextEditorFactory::fillExtensionMap()
 	_p->oExtensionMap.insert("pyw",PerfectMatch);
 	_p->oExtensionMap.insert("conf",PerfectMatch);
 	_p->oExtensionMap.insert("rc",PerfectMatch);
+	_p->oExtensionMap.insert("rs",PerfectMatch);
 	_p->oExtensionMap.insert("ini",PerfectMatch);
 	_p->oExtensionMap.insert("diff",PerfectMatch);
 	_p->oExtensionMap.insert("patch",PerfectMatch);

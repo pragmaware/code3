@@ -122,6 +122,11 @@ public:
 		InJavaSingleLineComment = (1 << 1), // not inter-line
 		InJavaMultiLineComment = (1 << 2),
 		InJavaString = (1 << 3), // not inter-line
+
+		// Rust mode is independent so it shares bits with other modes.
+		InRustSingleLineComment = (1 << 1), // not inter-line
+		InRustMultiLineComment = (1 << 2),
+		InRustString = (1 << 3), // not inter-line
 		
 		// SQL mode is independent so it shares bits with other modes.
 		InSQLSingleLineComment = (1 << 1),
@@ -154,6 +159,7 @@ public:
 		PHPInterLineFlagMask = XMLInterLineFlagMask | InPHPMultiLineComment,
 		CPPInterLineFlagMask = InCPPMultiLineComment | InCPPPreprocessor,
 		JavaInterLineFlagMask = InJavaMultiLineComment,
+		RustInterLineFlagMask = InRustMultiLineComment,
 		CMakeInterLineFlagMask = InCMakeMultiLineComment | InCMakeMultiLineString,
 		ChatScriptInterLineFlagMask = 0,
 		ASMInternLineFlagMask = InASMMultiLineComment | InASMPreprocessor,

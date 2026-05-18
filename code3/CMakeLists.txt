@@ -1,12 +1,12 @@
-project(ssex)
+project(code3)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 set(PACKAGE "Code3")
 set(NICENAME "Code 3")
-set(VERSION_MAJOR "1")
-set(VERSION_BRANCH "1.0")
-set(VERSION_RELEASE "1.0.0")
+set(VERSION_MAJOR "2")
+set(VERSION_BRANCH "2.0")
+set(VERSION_RELEASE "2.0.0")
 set(VERSION_CODENAME "Pragma")
 
 if(UNIX)
