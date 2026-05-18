@@ -240,7 +240,7 @@ void C3TextEditorViewport::paintEvent(QPaintEvent * e)
 
 			p.drawLine(iX,iTopY+1,iX,iBottomY-2);
 			p.drawLine(iX+1,iTopY+1,iX+1,iBottomY-2);
-			p.drawLine(iX-3,iTopY+1,iX+4,iTopY);
+			p.drawLine(iX-3,iTopY+1,iX+4,iTopY+1);
 			p.drawLine(iX-3,iBottomY-1,iX+4,iBottomY-1);
 		}
 
